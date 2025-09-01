@@ -16,6 +16,7 @@ import CircleLoader from "../../../../../components/common/CircleLoader";
 import EmptyState from "../../../../../components/common/EmptyState";
 import GallerySection from "../app/_components/sections/GallerySection.tsx";
 import ContactSection from "../app/_components/sections/ContactSection";
+import HeroSectionEditable from "../app/_components/sections/HeroSectionEditable";
 const usePage = (slug: string | null) => {
   const params = useParams<{ id: string }>();
   const { data: pageData, loading } = useQuery(GET_CMS_PAGE, {
@@ -40,7 +41,7 @@ const usePage = (slug: string | null) => {
       case "tours":
         return <ToursSection section={section} />;
       case "hero":
-        return <HeroSection section={section} />;
+        return <HeroSectionEditable section={section} />;
       case "form":
         return <FormSection section={section} />;
       case "youtube":
@@ -59,7 +60,11 @@ const usePage = (slug: string | null) => {
   };
 
   const PageContent = () => {
-    if (!sections || (sections.length === 0 && slug === "home") || (sections.length === 0 && slug === "about")) {
+    if (
+      !sections ||
+      (sections.length === 0 && slug === "home") ||
+      (sections.length === 0 && slug === "about")
+    ) {
       return <EmptyState title="No contents available" />;
     }
     if (loading) {
@@ -71,7 +76,11 @@ const usePage = (slug: string | null) => {
     }
     return (
       <Suspense fallback={<CircleLoader />}>
-        {sections && sections.length > 0 && sections.map((section: Section, index: number) => <div key={index}>{renderSection(section)}</div>)}
+        {sections &&
+          sections.length > 0 &&
+          sections.map((section: Section, index: number) => (
+            <div key={index}>{renderSection(section)}</div>
+          ))}
       </Suspense>
     );
   };

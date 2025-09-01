@@ -210,7 +210,7 @@ const DynamicForm: React.FC<DynamicFormProps> = ({
                 description,
                 column,
               } = field;
-              console.log(validation, text, "field");
+              console.log(validation, text, type, "field");
               switch (type) {
                 case "input":
                   return (
