@@ -1,0 +1,225 @@
+"use client";
+
+import { useMemo } from "react";
+import Link from "next/link";
+import Image from "next/image";
+import {
+  useProductsQuery,
+  type ProductSummary,
+} from "../../../graphql/products";
+import { Section } from "../../../types/sections";
+import { templateUrl } from "../../../../../../../lib/utils";
+import {
+  Card,
+  CardContent,
+  CardDescription,
+  CardFooter,
+  CardHeader,
+  CardTitle,
+} from "@/components/ui/card";
+import { Button } from "@/components/ui/button";
+import { Badge } from "@/components/ui/badge";
+import EmptyState from "../../../../../../../components/common/EmptyState";
+import { useCart } from "../../../lib/CartContext";
+
+const toCurrency = (value?: number | null) => {
+  if (typeof value !== "number" || Number.isNaN(value)) {
+    return "—";
+  }
+  return `₮${Math.round(value).toLocaleString()}`;
+};
+
+const ProductsSection = ({ section }: { section: Section }) => {
+  const limit = Number(section.config?.limit ?? 6);
+  const categoryId = section.config?.categoryId || null;
+  const tag = section.config?.tag || null;
+  const { addToCart } = useCart();
+
+  const { data, loading, error } = useProductsQuery({
+    variables: {
+      perPage: limit,
+      page: 1,
+      categoryId: categoryId || undefined,
+      tag: tag || undefined,
+      sortField: "createdAt",
+      sortDirection: -1,
+    },
+    fetchPolicy: "cache-first",
+  });
+
+  const products = useMemo(() => {
+    const payload = data?.poscProducts as unknown;
+    if (!payload) {
+      return [];
+    }
+    if (Array.isArray(payload)) {
+      return payload;
+    }
+    // @ts-expect-error legacy shape
+    return payload.products ?? [];
+  }, [data]);
+
+  const title = section.config?.title || "Latest products";
+  const description = section.config?.description || "";
+
+  if (!loading && !error && products.length === 0) {
+    return (
+      <section className="py-16">
+        <div className="container mx-auto max-w-6xl px-4">
+          <EmptyState
+            title="No products available"
+            description="Try adjusting your filters or add products from POS."
+          />
+        </div>
+      </section>
+    );
+  }
+
+  return (
+    <section className="py-16 bg-muted/10">
+      <div className="container mx-auto max-w-6xl px-4">
+        <div className="mx-auto mb-10 max-w-2xl text-center">
+          <h2 className="text-3xl font-bold tracking-tight">{title}</h2>
+          {description && (
+            <p className="mt-3 text-base text-muted-foreground">
+              {description}
+            </p>
+          )}
+        </div>
+
+        {error && (
+          <div className="mb-6 rounded-lg border border-destructive/40 bg-destructive/10 p-4 text-sm text-destructive">
+            Unable to load products right now. Please try again later.
+          </div>
+        )}
+
+        <div className="grid gap-6 sm:grid-cols-2 lg:grid-cols-3">
+          {(loading ? Array.from({ length: limit || 3 }) : products).map(
+            (product: ProductSummary, index) => {
+              if (loading) {
+                return (
+                  <Card key={`placeholder-${index}`} className="animate-pulse">
+                    <CardHeader className="h-52 bg-muted/60" />
+                    <CardContent className="space-y-4">
+                      <div className="h-4 w-1/2 rounded bg-muted/80" />
+                      <div className="h-3 w-1/3 rounded bg-muted/70" />
+                      <div className="h-3 w-full rounded bg-muted/60" />
+                    </CardContent>
+                    <CardFooter className="h-10 bg-muted/40" />
+                  </Card>
+                );
+              }
+
+              const imageKey = product?.attachment?.url;
+              let imageUrl: string | undefined;
+              if (imageKey) {
+                try {
+                  imageUrl = imageKey;
+                } catch {
+                  imageUrl = imageKey;
+                }
+              }
+
+              const price = toCurrency(product?.unitPrice);
+              // const inStock = (product?.remainder ?? 0) > 0;
+              const inStock = true;
+              const unitPrice =
+                typeof product?.unitPrice === "number" &&
+                Number.isFinite(product.unitPrice)
+                  ? product.unitPrice
+                  : 0;
+              const cartProductId = product?._id ?? "";
+
+              return (
+                <Card
+                  key={product?._id || index}
+                  className="flex h-full flex-col overflow-hidden"
+                >
+                  <CardHeader className="p-0">
+                    <div className="relative h-52 w-full overflow-hidden bg-muted">
+                      {imageUrl ? (
+                        <Image
+                          src={imageUrl}
+                          alt={product?.name ?? "Product"}
+                          fill
+                          className="object-cover transition-transform duration-300 hover:scale-105"
+                        />
+                      ) : (
+                        <div className="flex h-full w-full items-center justify-center text-muted-foreground">
+                          No image
+                        </div>
+                      )}
+                    </div>
+                  </CardHeader>
+                  <CardContent className="flex flex-1 flex-col space-y-3 p-5">
+                    <div>
+                      <CardTitle className="text-lg font-semibold">
+                        {product?.name ?? "Untitled product"}
+                      </CardTitle>
+                      <CardDescription className="mt-2 line-clamp-2 text-sm">
+                        <span
+                          dangerouslySetInnerHTML={{
+                            __html: product?.description ?? "",
+                          }}
+                        ></span>
+                      </CardDescription>
+                    </div>
+                    <div className="mt-auto space-y-2 text-sm">
+                      <div className="flex items-center justify-between">
+                        <span className="font-semibold text-foreground">
+                          {price}
+                        </span>
+                        <Badge variant={inStock ? "default" : "secondary"}>
+                          {inStock ? "In stock" : "Out of stock"}
+                        </Badge>
+                      </div>
+                      {product?.category?.name && (
+                        <p className="text-xs text-muted-foreground">
+                          Category: {product.category.name}
+                        </p>
+                      )}
+                    </div>
+                  </CardContent>
+                  <CardFooter className="flex items-center justify-end gap-2 border-t bg-muted/40 p-4">
+                    <Button
+                      variant="outline"
+                      size="sm"
+                      disabled={!inStock || !cartProductId}
+                      onClick={() =>
+                        cartProductId &&
+                        addToCart(
+                          {
+                            id: cartProductId,
+                            name: product?.name ?? "Untitled product",
+                            unitPrice,
+                            description: product?.description ?? "",
+                            imageUrl: imageUrl ?? null,
+                            categoryName: product?.category?.name ?? null,
+                          },
+                          1
+                        )
+                      }
+                    >
+                      Add to cart
+                    </Button>
+                    <Button asChild variant="default" size="sm">
+                      <Link href={templateUrl("/products")}>View products</Link>
+                    </Button>
+                  </CardFooter>
+                </Card>
+              );
+            }
+          )}
+        </div>
+
+        <div className="mt-10 text-center">
+          <Button asChild variant="outline">
+            <Link href={templateUrl("/products")}>Browse all products</Link>
+          </Button>
+        </div>
+      </div>
+    </section>
+  );
+};
+
+export default ProductsSection;

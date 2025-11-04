@@ -17,6 +17,9 @@ import EmptyState from "../../../../../components/common/EmptyState";
 import GallerySection from "../app/_components/sections/GallerySection.tsx";
 import ContactSection from "../app/_components/sections/ContactSection";
 import HeroSectionEditable from "../app/_components/sections/HeroSectionEditable";
+import ProductsSection from "../app/_components/sections/ProductsSection";
+import ProductCategoriesSection from "../app/_components/sections/ProductCategoriesSection";
+import CarouselSection from "../app/_components/sections/CarouselSection";
 const usePage = (slug: string | null) => {
   const params = useParams<{ id: string }>();
   const { data: pageData, loading } = useQuery(GET_CMS_PAGE, {
@@ -31,8 +34,6 @@ const usePage = (slug: string | null) => {
   });
 
   const sections = pageData?.cmsPage?.pageItems || [];
-
-  console.log("slug --------------- glus", slug);
 
   const renderSection = (section: Section) => {
     switch (section.type) {
@@ -54,6 +55,12 @@ const usePage = (slug: string | null) => {
         return <ContactSection section={section} />;
       case "text":
         return <TextSection section={section} />;
+      case "products":
+        return <ProductsSection section={section} />;
+      case "productCategories":
+        return <ProductCategoriesSection section={section} />;
+      case "carousel":
+        return <CarouselSection section={section} />;
       default:
         return null;
     }

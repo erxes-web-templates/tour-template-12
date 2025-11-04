@@ -11,10 +11,13 @@ import ToursPage from "../tours/page";
 import TourDetailPage from "../tours/[id]/page";
 import AboutPage from "../about/page";
 import LoginPage from "../auth/login/page";
+import ProfilePage from "../profile/page";
 import RegisterPage from "../auth/register/page";
 import ContactPage from "../contact/page";
+import ProductsPage from "../products/page";
 import LegalPage from "../legal/page";
 import PostDetailPage from "../blog/[id]/page";
+import ProductDetailPage from "../products/[id]/page";
 import BlogsPage from "../blog/page";
 import { GET_CMS_PAGES } from "../../graphql/queries";
 import { useQuery } from "@apollo/client";
@@ -24,7 +27,9 @@ import PageLoader from "../../../../../../components/common/PageLoader";
 import Script from "next/script";
 import { getEnv } from "../../../../../../lib/utils";
 import InquiryPage from "../inquiry/page";
-import TourBookingPage from "../booking/page";
+import CheckoutPage from "../checkout/page";
+import { CartProvider } from "../../lib/CartContext";
+import PaymentPage from "../payment/page";
 
 const standardComponentRegistry = {
   home: TourBoilerPlateHome,
@@ -39,8 +44,11 @@ const standardComponentRegistry = {
   blogs: BlogsPage,
   post: PostDetailPage,
   inquiry: InquiryPage,
-  booking: TourBookingPage,
-  checkout: TourBookingPage,
+  checkout: CheckoutPage,
+  products: ProductsPage,
+  product: ProductDetailPage,
+  profile: ProfilePage,
+  payment: PaymentPage,
 };
 
 export default function ClientBoilerplateLayout() {
@@ -185,9 +193,11 @@ export default function ClientBoilerplateLayout() {
           }}
         />
       )}
-      <Header cpDetail={cpDetail} />
-      <main>{renderPageContent()}</main>
-      <Footer cpDetail={cpDetail} />
+      <CartProvider>
+        <Header cpDetail={cpDetail} />
+        <main>{renderPageContent()}</main>
+        <Footer cpDetail={cpDetail} />
+      </CartProvider>
     </>
   );
 }

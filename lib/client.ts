@@ -1,15 +1,19 @@
-import { ApolloClient, HttpLink, InMemoryCache } from "@apollo/client";
-// import { registerApolloClient } from "@apollo/experimental-nextjs-app-support";
+import { ApolloClient, HttpLink, InMemoryCache, type NormalizedCacheObject } from "@apollo/client";
 
-// export const { getClient } = registerApolloClient(() => {
-//   return new ApolloClient({
-//     cache: new InMemoryCache(),
-//     link: new HttpLink({
-//       uri: process.env.ERXES_API_URL,
-//       credentials: "include",
-//       headers: {
-//         "Access-Control-Allow-Origin": process.env.ERXES_URL || "",
-//       },
-//     }),
-//   });
-// });
+const createClient = () =>
+  new ApolloClient({
+    ssrMode: typeof window === "undefined",
+    cache: new InMemoryCache(),
+    link: new HttpLink({
+      uri: process.env.ERXES_API_URL,
+      credentials: "include",
+      headers: {
+        "Access-Control-Allow-Origin": process.env.ERXES_URL || "",
+      },
+      fetchOptions: {
+        cache: "no-store",
+      },
+    }),
+  });
+
+export const getClient = (): ApolloClient<NormalizedCacheObject> => createClient();
