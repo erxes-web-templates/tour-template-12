@@ -1,8 +1,17 @@
 import Link from "next/link";
+import {
+  useCallback,
+  useEffect,
+  useMemo,
+  useRef,
+  useState,
+  type ChangeEvent,
+  type FormEvent,
+} from "react";
+import { useRouter, useSearchParams, useParams } from "next/navigation";
 import { CPDetail, MenuItem } from "../../types/cms";
 import { useQuery } from "@apollo/client";
 import { GET_MENUS } from "../../../../../dashboard/projects/_graphql/queries";
-import { useParams } from "next/navigation";
 import Image from "next/image";
 import { getFileUrl, templateUrl } from "../../../../../../lib/utils";
 import {
@@ -20,6 +29,7 @@ import { Badge } from "@/components/ui/badge";
 import { Sheet, SheetContent, SheetTrigger } from "@/components/ui/sheet";
 import { ScrollArea } from "@/components/ui/scroll-area";
 import { useCart } from "../../lib/CartContext";
+import { useProductsQuery } from "../../graphql/products";
 
 const formatCurrency = (value: number) => {
   if (!Number.isFinite(value)) {
@@ -30,6 +40,22 @@ const formatCurrency = (value: number) => {
 
 export default function Header({ cpDetail }: { cpDetail: CPDetail }) {
   const params = useParams<{ id: string }>();
+  const router = useRouter();
+  const searchParams = useSearchParams();
+  const [searchTerm, setSearchTerm] = useState(
+    () => searchParams.get("searchValue") ?? ""
+  );
+  const [debouncedTerm, setDebouncedTerm] = useState(searchTerm.trim());
+  const [showSearchResults, setShowSearchResults] = useState(false);
+  const blurTimeoutRef = useRef<ReturnType<typeof setTimeout> | null>(null);
+  useEffect(
+    () => () => {
+      if (blurTimeoutRef.current) {
+        clearTimeout(blurTimeoutRef.current);
+      }
+    },
+    []
+  );
 
   const { data } = useQuery(GET_MENUS, {
     variables: {
@@ -89,6 +115,94 @@ export default function Header({ cpDetail }: { cpDetail: CPDetail }) {
     isSyncing,
   } = useCart();
   const hasItems = totalItems > 0;
+  const shouldQueryProducts = debouncedTerm.length >= 2;
+  const { data: searchData, loading: searchLoading } = useProductsQuery({
+    variables: {
+      searchValue: debouncedTerm,
+      perPage: 6,
+      page: 1,
+    },
+    skip: !shouldQueryProducts,
+    fetchPolicy: "cache-first",
+  });
+
+  useEffect(() => {
+    const currentSearchValue = searchParams.get("searchValue") ?? "";
+    setSearchTerm(currentSearchValue);
+    setDebouncedTerm(currentSearchValue.trim());
+  }, [searchParams]);
+
+  useEffect(() => {
+    const timeout = setTimeout(() => {
+      setDebouncedTerm(searchTerm.trim());
+    }, 300);
+    return () => clearTimeout(timeout);
+  }, [searchTerm]);
+
+  const searchResults = useMemo(
+    () => searchData?.poscProducts ?? [],
+    [searchData]
+  );
+
+  const handleNavigate = useCallback(
+    (path: string) => {
+      const destination = templateUrl(path);
+      router.push(destination);
+    },
+    [router]
+  );
+
+  const handleSearchSubmit = useCallback(
+    (event?: FormEvent<HTMLFormElement>) => {
+      event?.preventDefault();
+      const term = searchTerm.trim();
+      if (!term) {
+        handleNavigate("/products");
+        setShowSearchResults(false);
+        return;
+      }
+      const base = templateUrl("/products");
+      const separator = base.includes("?") ? "&" : "?";
+      const url = `${base}${separator}searchValue=${encodeURIComponent(term)}`;
+      router.push(url);
+      setShowSearchResults(false);
+    },
+    [handleNavigate, router, searchTerm]
+  );
+
+  const handleProductSelect = useCallback(
+    (productId: string) => {
+      handleNavigate(`/products/${productId}`);
+      setShowSearchResults(false);
+    },
+    [handleNavigate]
+  );
+
+  const handleFocus = () => {
+    if (blurTimeoutRef.current) {
+      clearTimeout(blurTimeoutRef.current);
+    }
+    if (searchTerm.trim()) {
+      setShowSearchResults(true);
+    }
+  };
+
+  const handleBlur = () => {
+    blurTimeoutRef.current = setTimeout(() => {
+      setShowSearchResults(false);
+    }, 150);
+  };
+
+  const handleInputChange = (event: ChangeEvent<HTMLInputElement>) => {
+    setSearchTerm(event.target.value);
+    if (event.target.value.trim()) {
+      setShowSearchResults(true);
+    } else {
+      setShowSearchResults(false);
+    }
+  };
+
+  console.log(searchResults, "sr");
 
   return (
     <header className="sticky top-0 z-50 w-full border-b border-border bg-background/95 backdrop-blur supports-[backdrop-filter]:bg-background/60">
@@ -112,14 +226,89 @@ export default function Header({ cpDetail }: { cpDetail: CPDetail }) {
         </div>
 
         <div className="hidden flex-1 items-center justify-center px-8 md:flex">
-          <div className="relative w-full max-w-md">
-            <Search className="absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 text-muted-foreground" />
-            <Input
-              type="search"
-              placeholder="Search products..."
-              className="w-full pl-10"
-            />
-          </div>
+          <form onSubmit={handleSearchSubmit} className="w-full max-w-md">
+            <div className="relative">
+              <Search className="absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 text-muted-foreground" />
+              <Input
+                type="search"
+                value={searchTerm}
+                onChange={handleInputChange}
+                onFocus={handleFocus}
+                onBlur={handleBlur}
+                placeholder="Search products..."
+                className="w-full pl-10"
+              />
+              {showSearchResults && (
+                <div className="absolute left-0 right-0 top-full z-20 mt-2 rounded-lg border border-border bg-popover shadow-xl bg-white">
+                  {shouldQueryProducts ? (
+                    searchLoading ? (
+                      <div className="p-4 text-sm text-muted-foreground">
+                        Searching products...
+                      </div>
+                    ) : searchResults.length ? (
+                      <ul className="divide-y divide-border">
+                        {searchResults.map((item: any) => (
+                          <li key={item._id}>
+                            <button
+                              type="button"
+                              onMouseDown={(event) => event.preventDefault()}
+                              onClick={() => handleProductSelect(item._id)}
+                              className="flex w-full items-center justify-between gap-3 p-3 text-left hover:bg-muted/60"
+                            >
+                              <div className="flex justify-start">
+                                <Image
+                                  src={
+                                    item.attachment.url || "/placeholder.png"
+                                  }
+                                  alt={item.name || "Product image"}
+                                  width={40}
+                                  height={40}
+                                  className="rounded mr-3"
+                                />
+                                <div className="flex flex-col">
+                                  <span className="text-sm font-semibold text-foreground">
+                                    {item.name || "Untitled product"}
+                                  </span>
+                                  {item.category?.name && (
+                                    <span className="text-xs text-muted-foreground">
+                                      {item.category.name}
+                                    </span>
+                                  )}
+                                </div>
+                              </div>
+                              {Number.isFinite(item.unitPrice) && (
+                                <span className="text-sm font-semibold text-primary">
+                                  {formatCurrency(item.unitPrice || 0)}
+                                </span>
+                              )}
+                            </button>
+                          </li>
+                        ))}
+                        <li>
+                          <button
+                            type="button"
+                            onMouseDown={(event) => event.preventDefault()}
+                            onClick={() => handleSearchSubmit()}
+                            className="flex w-full items-center justify-between p-3 text-sm font-medium text-primary hover:bg-muted/60"
+                          >
+                            View all results
+                          </button>
+                        </li>
+                      </ul>
+                    ) : (
+                      <div className="p-4 text-sm text-muted-foreground">
+                        No products found.
+                      </div>
+                    )
+                  ) : (
+                    <div className="p-4 text-sm text-muted-foreground">
+                      Type at least 2 characters to search.
+                    </div>
+                  )}
+                </div>
+              )}
+            </div>
+          </form>
         </div>
 
         <div className="flex items-center gap-4">

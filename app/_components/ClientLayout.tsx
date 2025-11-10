@@ -126,15 +126,27 @@ export default function ClientBoilerplateLayout() {
   }, [customPage, isCustomCmsPage, pageName]);
 
   useEffect(() => {
-    if (cpDetail && cpDetail.styles) {
-      console.log("Applying theme from cpDetail");
-
-      const root = document.documentElement;
-      root.style.setProperty("--primary", cpDetail.styles.baseColor);
-      root.style.setProperty("--background", cpDetail.styles.backgroundColor);
-      root.style.setProperty("--font-body", cpDetail.styles.fontBody);
-      root.style.setProperty("--font-heading", cpDetail.styles.fontHeading);
+    const styles = cpDetail?.styles;
+    if (!styles) {
+      return;
     }
+
+    const root = document.documentElement;
+    const setVar = (variable: string, value?: string | null) => {
+      if (value) {
+        root.style.setProperty(variable, value);
+      }
+    };
+
+    setVar("--primary", styles.baseColor);
+    setVar("--background", styles.backgroundColor);
+    setVar("--accent", styles.activeTabColor);
+
+    const bodyFont = styles.baseFont || styles.fontBody;
+    const headingFont = styles.headingFont || styles.fontHeading;
+
+    setVar("--font-body", bodyFont);
+    setVar("--font-heading", headingFont || bodyFont);
   }, [cpDetail]);
 
   const renderPageContent = () => {
@@ -168,7 +180,7 @@ export default function ClientBoilerplateLayout() {
   };
 
   return (
-    <>
+    <div className="bg-background">
       {cpDetail?.messengerBrandCode && (
         <Script
           id="erxes"
@@ -198,6 +210,6 @@ export default function ClientBoilerplateLayout() {
         <main>{renderPageContent()}</main>
         <Footer cpDetail={cpDetail} />
       </CartProvider>
-    </>
+    </div>
   );
 }

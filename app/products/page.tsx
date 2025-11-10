@@ -3,6 +3,7 @@
 import Image from "next/image";
 import Link from "next/link";
 import { useEffect, useMemo, useState } from "react";
+import { useSearchParams } from "next/navigation";
 import { Card, CardContent } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
@@ -62,6 +63,8 @@ const formatCurrency = (value: number) =>
   `₮${Math.round(value).toLocaleString()}`;
 
 export default function ProductsPage() {
+  const searchParams = useSearchParams();
+  const searchValue = searchParams.get("searchValue")?.trim() ?? "";
   const [selectedCategories, setSelectedCategories] = useState<string[]>([]);
   const [sortBy, setSortBy] = useState<SortOption>("featured");
   const [priceRange, setPriceRange] =
@@ -90,6 +93,7 @@ export default function ProductsPage() {
     variables: {
       perPage: 100,
       page: 1,
+      searchValue: searchValue || undefined,
     },
     fetchPolicy: "cache-and-network",
   });
