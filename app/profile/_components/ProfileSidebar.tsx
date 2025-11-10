@@ -9,7 +9,7 @@ type SidebarItem = {
 };
 
 type ProfileSidebarProps = {
-  items: SidebarItem[];
+  items: readonly SidebarItem[];
   activeId: string;
   onSelect: (id: string) => void;
 };

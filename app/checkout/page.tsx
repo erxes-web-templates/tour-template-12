@@ -43,7 +43,7 @@ const DEFAULT_CONTACT_STATE = {
   street: "",
   detail: "",
   notes: "",
-  invoiceType: "individual" as const,
+  invoiceType: "individual" as "individual" | "company",
   registerNumber: "",
   companyName: "",
   haveBaby: false,

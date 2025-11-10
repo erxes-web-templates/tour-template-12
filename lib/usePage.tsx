@@ -42,7 +42,7 @@ const usePage = (slug: string | null) => {
       case "tours":
         return <ToursSection section={section} />;
       case "hero":
-        return <HeroSectionEditable section={section} />;
+        return <HeroSection section={section} />;
       case "form":
         return <FormSection section={section} />;
       case "youtube":
