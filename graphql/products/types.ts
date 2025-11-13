@@ -115,7 +115,7 @@ export interface ProductSimilaritiesPayload {
 }
 
 export interface ProductSimilaritiesData {
-  posProductSimilarities?: Maybe<ProductSimilaritiesPayload>;
+  poscProductSimilarities?: Maybe<ProductSimilaritiesPayload>;
 }
 
 export interface ProductSimilaritiesVariables {
@@ -142,7 +142,7 @@ export interface ProductDetail {
 }
 
 export interface ProductDetailData {
-  posProductDetail?: Maybe<ProductDetail>;
+  poscProductDetail?: Maybe<ProductDetail>;
 }
 
 export interface ProductDetailVariables {

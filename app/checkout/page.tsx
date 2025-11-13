@@ -319,7 +319,7 @@ const CheckoutPage = () => {
 
   const canProceedToInformation = totalItems > 0 && !isSyncing;
   const canSubmitDelivery =
-    !!orderId &&
+    // !!orderId &&
     !savingContact &&
     !isSyncing &&
     invoiceInfoValid &&

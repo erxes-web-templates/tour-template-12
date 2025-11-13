@@ -31,6 +31,7 @@ import {
   type ProductCategory,
 } from "../../graphql/products";
 import { useCart } from "../../lib/CartContext";
+import { templateUrl } from "../../../../../../lib/utils";
 
 type SortOption = "featured" | "price-low" | "price-high" | "name-az";
 
@@ -371,7 +372,11 @@ export default function ProductsPage() {
 
                       <div className="flex gap-3">
                         <Button asChild className="w-full">
-                          <Link href={`/products/${product.id}`}>
+                          <Link
+                            href={templateUrl(
+                              `/product&productId=${product.id}`
+                            )}
+                          >
                             View Details
                           </Link>
                         </Button>
