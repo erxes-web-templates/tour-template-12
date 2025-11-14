@@ -44,6 +44,11 @@ const ProductsSection = ({ section }: { section: Section }) => {
       sortField: "createdAt",
       sortDirection: -1,
     },
+    context: {
+      headers: {
+        "pos-config-token": "FKjVqvGMb8xMCPEf16UA5D51G1G7HXWA",
+      },
+    },
     fetchPolicy: "cache-first",
   });
 
