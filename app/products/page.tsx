@@ -2,7 +2,7 @@
 
 import Image from "next/image";
 import Link from "next/link";
-import { useEffect, useMemo, useState } from "react";
+import { useEffect, useMemo, useRef, useState } from "react";
 import { useSearchParams } from "next/navigation";
 import { Card, CardContent } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
@@ -63,6 +63,8 @@ const DEFAULT_PRICE_RANGE: [number, number] = [0, 0];
 const formatCurrency = (value: number) =>
   `₮${Math.round(value).toLocaleString()}`;
 
+type ButtonState = "idle" | "adding" | "added";
+
 export default function ProductsPage() {
   const searchParams = useSearchParams();
   const searchValue = searchParams.get("searchValue")?.trim() ?? "";
@@ -71,6 +73,27 @@ export default function ProductsPage() {
   const [priceRange, setPriceRange] =
     useState<[number, number]>(DEFAULT_PRICE_RANGE);
   const [priceInitialized, setPriceInitialized] = useState(false);
+  const [buttonStates, setButtonStates] = useState<Record<string, ButtonState>>(
+    {}
+  );
+  const buttonTimers = useRef<Record<string, ReturnType<typeof setTimeout>>>(
+    {}
+  );
+
+  useEffect(() => {
+    return () => {
+      Object.values(buttonTimers.current).forEach((timer) => {
+        clearTimeout(timer);
+      });
+    };
+  }, []);
+
+  const notifyCartOpen = () => {
+    if (typeof window === "undefined") {
+      return;
+    }
+    window.dispatchEvent(new Event("cart:open"));
+  };
 
   const { addToCart } = useCart();
 
@@ -313,6 +336,65 @@ export default function ProductsPage() {
                   ? product.price
                   : 0;
                 const cartProductId = product.id;
+                const buttonState = buttonStates[cartProductId];
+                const isAdding = buttonState === "adding";
+                const isAdded = buttonState === "added";
+
+                const handleAddToCart = async () => {
+                  if (!cartProductId || isAdding) {
+                    return;
+                  }
+
+                  setButtonStates((prev) => ({
+                    ...prev,
+                    [cartProductId]: "adding",
+                  }));
+
+                  try {
+                    await Promise.all([
+                      Promise.resolve(
+                        addToCart(
+                          {
+                            id: cartProductId,
+                            name: product.name ?? "Untitled product",
+                            unitPrice,
+                            description: product.description ?? "",
+                            imageUrl: imageUrl ?? null,
+                            categoryName: product.categoryName ?? null,
+                          },
+                          1
+                        )
+                      ),
+                      new Promise((resolve) => setTimeout(resolve, 400)),
+                    ]);
+
+                    setButtonStates((prev) => ({
+                      ...prev,
+                      [cartProductId]: "added",
+                    }));
+
+                    notifyCartOpen();
+
+                    if (buttonTimers.current[cartProductId]) {
+                      clearTimeout(buttonTimers.current[cartProductId]);
+                    }
+                    buttonTimers.current[cartProductId] = setTimeout(() => {
+                      setButtonStates((prev) => {
+                        const next = { ...prev };
+                        delete next[cartProductId];
+                        return next;
+                      });
+                      delete buttonTimers.current[cartProductId];
+                    }, 1200);
+                  } catch (error) {
+                    console.error("Failed to add product to cart", error);
+                    setButtonStates((prev) => {
+                      const next = { ...prev };
+                      delete next[cartProductId];
+                      return next;
+                    });
+                  }
+                };
 
                 return (
                   <Card
@@ -383,23 +465,14 @@ export default function ProductsPage() {
                         <Button
                           variant="outline"
                           className="w-full"
-                          disabled={!inStock || !cartProductId}
-                          onClick={() =>
-                            cartProductId &&
-                            addToCart(
-                              {
-                                id: cartProductId,
-                                name: product.name ?? "Untitled product",
-                                unitPrice,
-                                description: product.description ?? "",
-                                imageUrl: imageUrl ?? null,
-                                categoryName: product.categoryName ?? null,
-                              },
-                              1
-                            )
-                          }
+                          disabled={!inStock || !cartProductId || isAdding}
+                          onClick={handleAddToCart}
                         >
-                          Add to Cart
+                          {isAdding
+                            ? "Adding..."
+                            : isAdded
+                            ? "Added to cart"
+                            : "Add to Cart"}
                         </Button>
                       </div>
                     </CardContent>

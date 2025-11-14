@@ -1,7 +1,7 @@
 "use client";
 
 import Link from "next/link";
-import { useMemo, useCallback, useEffect, useState } from "react";
+import { useMemo, useCallback, useEffect, useState, useRef } from "react";
 import { useParams, useSearchParams } from "next/navigation";
 import { ArrowLeft, CheckCircle2, Heart, Star } from "lucide-react";
 import { Badge } from "@/components/ui/badge";
@@ -53,6 +53,7 @@ const SummaryItem = ({ label, value }: { label: string; value: string }) => (
 
 const LAST_VIEWED_STORAGE_KEY = "wb:lastViewedProducts";
 const MAX_LOCAL_LAST_VIEWED = 20;
+type ButtonState = "idle" | "adding" | "added";
 
 export default function ProductDetailPage() {
   const params = useParams<{ id?: string }>();
@@ -251,8 +252,19 @@ export default function ProductDetailPage() {
     [addToLastView, getLocalLastViewed, saveLocalLastViewed]
   );
 
-  const handleAddToCart = useCallback(() => {
-    if (!product?._id) {
+  const [buttonState, setButtonState] = useState<ButtonState>("idle");
+  const addTimerRef = useRef<ReturnType<typeof setTimeout> | null>(null);
+
+  useEffect(() => {
+    return () => {
+      if (addTimerRef.current) {
+        clearTimeout(addTimerRef.current);
+      }
+    };
+  }, []);
+
+  const handleAddToCart = useCallback(async () => {
+    if (!product?._id || buttonState === "adding") {
       return;
     }
 
@@ -262,18 +274,39 @@ export default function ProductDetailPage() {
         ? product.unitPrice
         : 0;
 
-    addToCart(
-      {
-        id: product._id,
-        name: product.name ?? "Untitled product",
-        unitPrice,
-        description: product.description ?? "",
-        imageUrl: product.attachment?.url ?? null,
-        categoryName: product.category?.name ?? null,
-      },
-      1
-    );
-  }, [addToCart, product]);
+    setButtonState("adding");
+
+    try {
+      await Promise.all([
+        Promise.resolve(
+          addToCart(
+            {
+              id: product._id,
+              name: product.name ?? "Untitled product",
+              unitPrice,
+              description: product.description ?? "",
+              imageUrl: product.attachment?.url ?? null,
+              categoryName: product.category?.name ?? null,
+            },
+            1
+          )
+        ),
+        new Promise((resolve) => setTimeout(resolve, 400)),
+      ]);
+
+      setButtonState("added");
+      if (addTimerRef.current) {
+        clearTimeout(addTimerRef.current);
+      }
+      addTimerRef.current = setTimeout(() => {
+        setButtonState("idle");
+        addTimerRef.current = null;
+      }, 1200);
+    } catch (error) {
+      console.error("Failed to add item to cart", error);
+      setButtonState("idle");
+    }
+  }, [addToCart, buttonState, product]);
 
   useEffect(() => {
     if (!product?._id) {
@@ -502,15 +535,18 @@ export default function ProductDetailPage() {
                 )}
 
                 <div className="flex flex-col gap-3 sm:flex-row">
-                  <Button
-                    size="lg"
-                    className="flex-1"
-                    // disabled={!inStock || !product?._id}
-                    disabled={!product?._id}
-                    onClick={handleAddToCart}
-                  >
-                    Add to cart
-                  </Button>
+                    <Button
+                      size="lg"
+                      className="flex-1"
+                      disabled={!product?._id || buttonState === "adding"}
+                      onClick={handleAddToCart}
+                    >
+                      {buttonState === "adding"
+                        ? "Adding..."
+                        : buttonState === "added"
+                        ? "Added to cart"
+                        : "Add to cart"}
+                    </Button>
                   <Button
                     variant="outline"
                     size="lg"

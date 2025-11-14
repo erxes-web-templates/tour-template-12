@@ -30,6 +30,7 @@ import InquiryPage from "../inquiry/page";
 import CheckoutPage from "../checkout/page";
 import { CartProvider } from "../../lib/CartContext";
 import PaymentPage from "../payment/page";
+import { Alert, AlertDescription, AlertTitle } from "@/components/ui/alert";
 
 const standardComponentRegistry = {
   home: TourBoilerPlateHome,
@@ -74,6 +75,8 @@ export default function ClientBoilerplateLayout() {
   );
 
   const env = getEnv();
+  const posToken = env.NEXT_PUBLIC_POS_TOKEN || "";
+  const missingPosToken = !posToken;
   console.log(cpDetail, "api");
   const baseUrl = new URL(env.NEXT_PUBLIC_API_URL).origin.replace(
     ".api.",
@@ -181,6 +184,20 @@ export default function ClientBoilerplateLayout() {
 
   return (
     <div className="bg-background">
+      {missingPosToken && (
+        <div className="bg-amber-50 border-b border-amber-200">
+          <div className="mx-auto max-w-6xl px-4 py-4">
+            <Alert variant="destructive" className="bg-transparent border-none p-0 text-amber-900">
+              <AlertTitle>POS token required</AlertTitle>
+              <AlertDescription>
+                This ecommerce template needs an <code>erxes-pos-token</code> to load products. Create a POS in erxes,
+                copy its public token, then add it to the client portal&apos;s environment variables as{" "}
+                <code>NEXT_PUBLIC_POS_TOKEN</code>.
+              </AlertDescription>
+            </Alert>
+          </div>
+        </div>
+      )}
       {cpDetail?.messengerBrandCode && (
         <Script
           id="erxes"

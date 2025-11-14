@@ -1,6 +1,6 @@
 "use client";
 
-import { useMemo } from "react";
+import { useEffect, useMemo, useRef, useState } from "react";
 import Link from "next/link";
 import Image from "next/image";
 import {
@@ -29,11 +29,27 @@ const toCurrency = (value?: number | null) => {
   return `₮${Math.round(value).toLocaleString()}`;
 };
 
+type ButtonState = "idle" | "adding" | "added";
+
 const ProductsSection = ({ section }: { section: Section }) => {
   const limit = Number(section.config?.limit ?? 6);
   const categoryId = section.config?.categoryId || null;
   const tag = section.config?.tag || null;
   const { addToCart } = useCart();
+  const [buttonStates, setButtonStates] = useState<Record<string, ButtonState>>(
+    {}
+  );
+  const buttonTimers = useRef<Record<string, ReturnType<typeof setTimeout>>>(
+    {}
+  );
+
+  useEffect(() => {
+    return () => {
+      Object.values(buttonTimers.current).forEach((timer) => {
+        clearTimeout(timer);
+      });
+    };
+  }, []);
 
   const { data, loading, error } = useProductsQuery({
     variables: {
@@ -43,11 +59,6 @@ const ProductsSection = ({ section }: { section: Section }) => {
       tag: tag || undefined,
       sortField: "createdAt",
       sortDirection: -1,
-    },
-    context: {
-      headers: {
-        "pos-config-token": "FKjVqvGMb8xMCPEf16UA5D51G1G7HXWA",
-      },
     },
     fetchPolicy: "cache-first",
   });
@@ -134,6 +145,66 @@ const ProductsSection = ({ section }: { section: Section }) => {
                   ? product.unitPrice
                   : 0;
               const cartProductId = product?._id ?? "";
+              const state = cartProductId
+                ? buttonStates[cartProductId]
+                : undefined;
+              const isAdding = state === "adding";
+              const isAdded = state === "added";
+
+              const handleAddToCart = async () => {
+                if (!cartProductId) {
+                  return;
+                }
+
+                setButtonStates((prev) => ({
+                  ...prev,
+                  [cartProductId]: "adding",
+                }));
+
+                try {
+                  await Promise.all([
+                    Promise.resolve(
+                      addToCart(
+                        {
+                          id: cartProductId,
+                          name: product?.name ?? "Untitled product",
+                          unitPrice,
+                          description: product?.description ?? "",
+                          imageUrl: imageUrl ?? null,
+                          categoryName: product?.category?.name ?? null,
+                        },
+                        1
+                      )
+                    ),
+                    new Promise((resolve) => setTimeout(resolve, 400)),
+                  ]);
+
+                  setButtonStates((prev) => ({
+                    ...prev,
+                    [cartProductId]: "added",
+                  }));
+
+                  if (buttonTimers.current[cartProductId]) {
+                    clearTimeout(buttonTimers.current[cartProductId]);
+                  }
+
+                  buttonTimers.current[cartProductId] = setTimeout(() => {
+                    setButtonStates((prev) => {
+                      const next = { ...prev };
+                      delete next[cartProductId];
+                      return next;
+                    });
+                    delete buttonTimers.current[cartProductId];
+                  }, 1200);
+                } catch (error) {
+                  console.error("Failed to add item to cart", error);
+                  setButtonStates((prev) => {
+                    const next = { ...prev };
+                    delete next[cartProductId];
+                    return next;
+                  });
+                }
+              };
 
               return (
                 <Card
@@ -189,26 +260,21 @@ const ProductsSection = ({ section }: { section: Section }) => {
                     <Button
                       variant="outline"
                       size="sm"
-                      disabled={!inStock || !cartProductId}
-                      onClick={() =>
-                        cartProductId &&
-                        addToCart(
-                          {
-                            id: cartProductId,
-                            name: product?.name ?? "Untitled product",
-                            unitPrice,
-                            description: product?.description ?? "",
-                            imageUrl: imageUrl ?? null,
-                            categoryName: product?.category?.name ?? null,
-                          },
-                          1
-                        )
-                      }
+                      disabled={!inStock || !cartProductId || isAdding}
+                      onClick={handleAddToCart}
                     >
-                      Add to cart
+                      {isAdding
+                        ? "Adding..."
+                        : isAdded
+                        ? "Added to cart"
+                        : "Add to cart"}
                     </Button>
                     <Button asChild variant="default" size="sm">
-                      <Link href={templateUrl("/products")}>View products</Link>
+                      <Link
+                        href={templateUrl(`/product&productId=${product._id}`)}
+                      >
+                        View product
+                      </Link>
                     </Button>
                   </CardFooter>
                 </Card>

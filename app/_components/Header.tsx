@@ -47,6 +47,7 @@ export default function Header({ cpDetail }: { cpDetail: CPDetail }) {
   );
   const [debouncedTerm, setDebouncedTerm] = useState(searchTerm.trim());
   const [showSearchResults, setShowSearchResults] = useState(false);
+  const [isCartSheetOpen, setIsCartSheetOpen] = useState(false);
   const blurTimeoutRef = useRef<ReturnType<typeof setTimeout> | null>(null);
   useEffect(
     () => () => {
@@ -138,6 +139,17 @@ export default function Header({ cpDetail }: { cpDetail: CPDetail }) {
     }, 300);
     return () => clearTimeout(timeout);
   }, [searchTerm]);
+
+  useEffect(() => {
+    if (typeof window === "undefined") {
+      return;
+    }
+    const handleCartOpen = () => setIsCartSheetOpen(true);
+    window.addEventListener("cart:open", handleCartOpen);
+    return () => {
+      window.removeEventListener("cart:open", handleCartOpen);
+    };
+  }, []);
 
   const searchResults = useMemo(
     () => searchData?.poscProducts ?? [],
@@ -318,7 +330,7 @@ export default function Header({ cpDetail }: { cpDetail: CPDetail }) {
             </Button>
           </Link>
 
-          <Sheet>
+          <Sheet open={isCartSheetOpen} onOpenChange={setIsCartSheetOpen}>
             <SheetTrigger asChild>
               <Button variant="ghost" size="icon" className="relative">
                 <ShoppingCart className="h-5 w-5" />
