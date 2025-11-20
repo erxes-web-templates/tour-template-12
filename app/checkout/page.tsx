@@ -61,6 +61,45 @@ const EXTRA_OPTIONS: { key: ExtraOptionKey; label: string }[] = [
   { key: "onlyAfternoon", label: "Зөвхөн оройн цагаар хүргэх" },
 ];
 
+type StepIndicatorProps = {
+  currentStep: number;
+};
+
+const StepIndicator = ({ currentStep }: StepIndicatorProps) => (
+  <div className="flex items-center justify-between gap-4 rounded-lg border border-border bg-card px-4 py-3">
+    {STEP_TITLES.map((title, index) => {
+      const stepNumber = index + 1;
+      const isActive = stepNumber === currentStep;
+      const isCompleted = stepNumber < currentStep;
+      return (
+        <div
+          key={title}
+          className="flex flex-1 items-center gap-3 text-sm sm:text-base"
+        >
+          <div
+            className={`flex h-9 w-9 items-center justify-center rounded-full border text-sm font-semibold transition-colors ${
+              isActive
+                ? "border-primary bg-primary text-primary-foreground"
+                : isCompleted
+                ? "border-primary/50 bg-primary/10 text-primary"
+                : "border-border text-muted-foreground"
+            }`}
+          >
+            {stepNumber}
+          </div>
+          <span
+            className={`hidden flex-1 text-sm font-medium md:block ${
+              isActive ? "text-foreground" : "text-muted-foreground"
+            }`}
+          >
+            {title}
+          </span>
+        </div>
+      );
+    })}
+  </div>
+);
+
 const CheckoutPage = () => {
   const searchParams = useSearchParams();
   const router = useRouter();
@@ -88,6 +127,12 @@ const CheckoutPage = () => {
 
   const erxesCustomerId =
     userData?.clientPortalCurrentUser?.erxesCustomerId ?? undefined;
+
+  useEffect(() => {
+    if (currentStep === 2 && !erxesCustomerId) {
+      router.push(templateUrl("/auth/login"));
+    }
+  }, [currentStep, erxesCustomerId, router]);
 
   const { data: configData } = useQuery(authQueries.currentConfig, {
     fetchPolicy: "cache-first",
@@ -340,41 +385,6 @@ const CheckoutPage = () => {
 
   const invoiceTypeLabel =
     contactState.invoiceType === "company" ? "Байгууллага" : "Хувь хүн";
-
-  const renderStepIndicator = () => (
-    <div className="flex items-center justify-between gap-4 rounded-lg border border-border bg-card px-4 py-3">
-      {STEP_TITLES.map((title, index) => {
-        const stepNumber = index + 1;
-        const isActive = stepNumber === currentStep;
-        const isCompleted = stepNumber < currentStep;
-        return (
-          <div
-            key={title}
-            className="flex flex-1 items-center gap-3 text-sm sm:text-base"
-          >
-            <div
-              className={`flex h-9 w-9 items-center justify-center rounded-full border text-sm font-semibold transition-colors ${
-                isActive
-                  ? "border-primary bg-primary text-primary-foreground"
-                  : isCompleted
-                  ? "border-primary/50 bg-primary/10 text-primary"
-                  : "border-border text-muted-foreground"
-              }`}
-            >
-              {stepNumber}
-            </div>
-            <span
-              className={`hidden flex-1 text-sm font-medium md:block ${
-                isActive ? "text-foreground" : "text-muted-foreground"
-              }`}
-            >
-              {title}
-            </span>
-          </div>
-        );
-      })}
-    </div>
-  );
 
   const renderCartStep = () => (
     <Card>
@@ -979,7 +989,7 @@ const CheckoutPage = () => {
           {activeOrder?._id && (
             <p className="text-xs text-muted-foreground">
               Захиалгын код:{" "}
-              <span className="font-medium">{activeOrder._id}</span>
+              <span className="font-medium">{activeOrder.number}</span>
             </p>
           )}
         </CardFooter>
@@ -998,7 +1008,7 @@ const CheckoutPage = () => {
         </p>
       </header>
 
-      {renderStepIndicator()}
+      <StepIndicator currentStep={currentStep} />
 
       {currentStep === 1 && renderCartStep()}
       {currentStep === 2 && renderInformationStep()}

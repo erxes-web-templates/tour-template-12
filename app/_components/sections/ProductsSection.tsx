@@ -212,7 +212,7 @@ const ProductsSection = ({ section }: { section: Section }) => {
                   className="flex h-full flex-col overflow-hidden"
                 >
                   <CardHeader className="p-0">
-                    <div className="relative h-52 w-full overflow-hidden bg-muted">
+                    <div className="relative aspect-square w-full overflow-hidden bg-muted">
                       {imageUrl ? (
                         <Image
                           src={imageUrl}
@@ -221,7 +221,7 @@ const ProductsSection = ({ section }: { section: Section }) => {
                           className="object-cover transition-transform duration-300 hover:scale-105"
                         />
                       ) : (
-                        <div className="flex h-full w-full items-center justify-center text-muted-foreground">
+                        <div className="flex aspect-square w-full  items-center justify-center text-muted-foreground">
                           No image
                         </div>
                       )}

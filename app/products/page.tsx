@@ -401,7 +401,7 @@ export default function ProductsPage() {
                     key={product.id}
                     className="overflow-hidden border border-border transition-shadow hover:shadow-lg"
                   >
-                    <div className="relative h-64 overflow-hidden bg-muted">
+                    <div className="relative aspect-square w-full  overflow-hidden bg-muted">
                       {product.image ? (
                         <Image
                           src={product.image}
@@ -411,7 +411,7 @@ export default function ProductsPage() {
                           sizes="(max-width: 768px) 100vw, (max-width: 1200px) 50vw, 33vw"
                         />
                       ) : (
-                        <div className="flex h-full w-full items-center justify-center text-sm text-muted-foreground">
+                        <div className="flex aspect-square w-full  items-center justify-center text-sm text-muted-foreground">
                           Image coming soon
                         </div>
                       )}

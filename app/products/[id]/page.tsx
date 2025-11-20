@@ -91,8 +91,7 @@ export default function ProductDetailPage() {
     }
     const images = [
       product.attachment?.url,
-      ...(product.attachmentMore?.map((file) => getFileUrl(file?.url || "")) ??
-        []),
+      ...(product.attachmentMore?.map((file) => file?.url || "") ?? []),
     ];
     return images
       .filter((url): url is string => Boolean(url))
@@ -535,18 +534,18 @@ export default function ProductDetailPage() {
                 )}
 
                 <div className="flex flex-col gap-3 sm:flex-row">
-                    <Button
-                      size="lg"
-                      className="flex-1"
-                      disabled={!product?._id || buttonState === "adding"}
-                      onClick={handleAddToCart}
-                    >
-                      {buttonState === "adding"
-                        ? "Adding..."
-                        : buttonState === "added"
-                        ? "Added to cart"
-                        : "Add to cart"}
-                    </Button>
+                  <Button
+                    size="lg"
+                    className="flex-1"
+                    disabled={!product?._id || buttonState === "adding"}
+                    onClick={handleAddToCart}
+                  >
+                    {buttonState === "adding"
+                      ? "Adding..."
+                      : buttonState === "added"
+                      ? "Added to cart"
+                      : "Add to cart"}
+                  </Button>
                   <Button
                     variant="outline"
                     size="lg"
