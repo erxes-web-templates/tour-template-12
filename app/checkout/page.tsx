@@ -137,7 +137,7 @@ const CheckoutPage = () => {
 
   useEffect(() => {
     if (currentStep === 2 && !erxesCustomerId) {
-      router.push(templateUrl("/auth/login"));
+      router.push(templateUrl("/login"));
     }
   }, [currentStep, erxesCustomerId, router]);
 
