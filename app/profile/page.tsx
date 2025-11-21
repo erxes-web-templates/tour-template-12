@@ -2,7 +2,12 @@
 
 import { useEffect, useMemo, useState } from "react";
 import Link from "next/link";
-import { useRouter, useParams, useSearchParams } from "next/navigation";
+import {
+  useRouter,
+  useParams,
+  useSearchParams,
+  redirect,
+} from "next/navigation";
 import { useMutation, useQuery } from "@apollo/client";
 import authQueries from "@/app/dashboard/templates/ecommerce-boilerplate/graphql/auth/queries";
 import authMutations from "@/app/dashboard/templates/ecommerce-boilerplate/graphql/auth/mutations";
@@ -26,6 +31,7 @@ import ProfileOrdersTab from "./_components/ProfileOrdersTab";
 import ProfileWishlistTab from "./_components/ProfileWishlistTab";
 import ProfileViewedTab from "./_components/ProfileViewedTab";
 import ProfileSecurityTab from "./_components/ProfileSecurityTab";
+import { templateUrl } from "../../../../../../lib/utils";
 
 type User = {
   _id: string;
@@ -403,23 +409,7 @@ export default function ProfilePage() {
   }
 
   if (error) {
-    return (
-      <div className="flex min-h-screen items-center justify-center bg-muted/10 px-6 py-12">
-        <Card className="w-full max-w-lg border border-destructive/50 bg-destructive/10 text-destructive">
-          <CardHeader>
-            <CardTitle>Мэдээлэл ачааллаж чадсангүй</CardTitle>
-            <CardDescription className="text-destructive/80">
-              {error.message}
-            </CardDescription>
-          </CardHeader>
-          <CardFooter>
-            <Button variant="outline" onClick={() => refetch()}>
-              Дахин ачаалах
-            </Button>
-          </CardFooter>
-        </Card>
-      </div>
-    );
+    redirect(templateUrl("/login"));
   }
 
   if (!user) {
@@ -434,10 +424,10 @@ export default function ProfilePage() {
           </CardHeader>
           <CardFooter className="justify-center gap-3">
             <Button asChild variant="default">
-              <Link href="/auth/login">Нэвтрэх</Link>
+              <Link href={templateUrl("/login")}>Нэвтрэх</Link>
             </Button>
             <Button asChild variant="outline">
-              <Link href="/auth/register">Бүртгүүлэх</Link>
+              <Link href={templateUrl("/register")}>Бүртгүүлэх</Link>
             </Button>
           </CardFooter>
         </Card>

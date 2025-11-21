@@ -17,6 +17,7 @@ import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Button } from "@/components/ui/button";
 import { useToast } from "@/hooks/use-toast";
+import { templateUrl } from "../../../../../../../lib/utils";
 
 type LoginResponse =
   | {
@@ -91,7 +92,7 @@ export default function LoginPage() {
         title: "Signed in",
         description: "You are now logged in.",
       });
-      router.push("/");
+      router.push(templateUrl("/"));
     },
   });
 
@@ -168,7 +169,7 @@ export default function LoginPage() {
         <CardFooter className="justify-center text-sm text-muted-foreground">
           <span>Don&apos;t have an account?</span>
           <Link
-            href="/auth/register"
+            href={templateUrl("/register")}
             className="ml-1 font-medium text-primary hover:underline"
           >
             Create one

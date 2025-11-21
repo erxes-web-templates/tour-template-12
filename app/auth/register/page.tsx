@@ -17,6 +17,7 @@ import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Button } from "@/components/ui/button";
 import { useToast } from "@/hooks/use-toast";
+import { templateUrl } from "../../../../../../../lib/utils";
 
 const resolveClientPortalId = (
   paramsValue?: string | string[],
@@ -66,7 +67,7 @@ export default function RegisterPage() {
         title: "Account created",
         description: "You can now log in with your new credentials.",
       });
-      router.push("/auth/login");
+      router.push(templateUrl("/login"));
     },
   });
 
@@ -192,7 +193,7 @@ export default function RegisterPage() {
         <CardFooter className="justify-center text-sm text-muted-foreground">
           <span>Already have an account?</span>
           <Link
-            href="/auth/login"
+            href={templateUrl("/login")}
             className="ml-1 font-medium text-primary hover:underline"
           >
             Sign in
