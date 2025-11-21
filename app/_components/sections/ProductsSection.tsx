@@ -257,6 +257,13 @@ const ProductsSection = ({ section }: { section: Section }) => {
                     </div>
                   </CardContent>
                   <CardFooter className="flex items-center justify-end gap-2 border-t bg-muted/40 p-4">
+                    <Button asChild variant="default" size="sm">
+                      <Link
+                        href={templateUrl(`/product&productId=${product._id}`)}
+                      >
+                        View product
+                      </Link>
+                    </Button>
                     <Button
                       variant="outline"
                       size="sm"
@@ -268,13 +275,6 @@ const ProductsSection = ({ section }: { section: Section }) => {
                         : isAdded
                         ? "Added to cart"
                         : "Add to cart"}
-                    </Button>
-                    <Button asChild variant="default" size="sm">
-                      <Link
-                        href={templateUrl(`/product&productId=${product._id}`)}
-                      >
-                        View product
-                      </Link>
                     </Button>
                   </CardFooter>
                 </Card>

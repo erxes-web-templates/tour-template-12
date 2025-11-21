@@ -3,7 +3,7 @@
 import Image from "next/image";
 import Link from "next/link";
 import { useCallback, useEffect, useMemo, useState } from "react";
-import { useRouter, useSearchParams } from "next/navigation";
+import { useParams, useRouter, useSearchParams } from "next/navigation";
 import { useMutation, useQuery } from "@apollo/client";
 import {
   Card,
@@ -27,6 +27,7 @@ import orderMutations from "../../graphql/order/mutations";
 import authQueries from "../../graphql/auth/queries";
 import { Minus, Plus, Trash2 } from "lucide-react";
 import { templateUrl } from "../../../../../../lib/utils";
+import useClientPortal from "../../../../../../hooks/useClientPortal";
 
 const STEP_TITLES = ["Review Cart", "Delivery Details", "Confirm & Pay"];
 
@@ -102,6 +103,7 @@ const StepIndicator = ({ currentStep }: StepIndicatorProps) => (
 
 const CheckoutPage = () => {
   const searchParams = useSearchParams();
+  const params = useParams();
   const router = useRouter();
   const stepParam = searchParams.get("step");
   const currentStep = Math.min(
@@ -125,6 +127,11 @@ const CheckoutPage = () => {
     fetchPolicy: "cache-first",
   });
 
+  const clientPortalId = Array.isArray(params.id)
+    ? params.id[0]
+    : params.id ?? "";
+
+  const { cpDetail } = useClientPortal({ id: clientPortalId });
   const erxesCustomerId =
     userData?.clientPortalCurrentUser?.erxesCustomerId ?? undefined;
 
@@ -361,6 +368,8 @@ const CheckoutPage = () => {
       updateStep,
     ]
   );
+
+  console.log(cpDetail, "cppppp");
 
   const canProceedToInformation = totalItems > 0 && !isSyncing;
   const canSubmitDelivery =
@@ -786,25 +795,12 @@ const CheckoutPage = () => {
 
       <div className="space-y-4">
         <Card className="overflow-hidden">
-          <Image
-            src="/images/hero.jpg"
-            alt="Delivery illustration"
-            width={720}
-            height={480}
-            className="h-48 w-full object-cover"
-          />
-          <CardHeader>
-            <CardTitle>Хүргэлтийн зөвлөмж</CardTitle>
-            <CardDescription>
-              Хаяг болон холбоо барих мэдээллээ зөв оруулснаар бид хурдан
-              хүргэнэ.
-            </CardDescription>
-          </CardHeader>
-          <CardContent className="space-y-2 text-sm text-muted-foreground">
-            <p>• Хаягаа дэлгэрэнгүй, тодорхой бичих.</p>
-            <p>• Утасны дугаар болон и-мэйлийг зөв шалгах.</p>
-            <p>• Нэмэлт хүсэлтээ тэмдэглэл хэсэгт үлдээх.</p>
-          </CardContent>
+          {cpDetail?.headerHtml ? (
+            <div
+              className="p-4 text-sm leading-relaxed [&_ul]:list-disc [&_ul]:list-inside [&_ul]:pl-5 [&_li]:mb-1 [&_li>p]:m-0 [&_li>p]:inline [&_p]:mb-2 [&_p:last-child]:mb-0"
+              dangerouslySetInnerHTML={{ __html: cpDetail.headerHtml }}
+            ></div>
+          ) : null}
         </Card>
 
         <Card>
