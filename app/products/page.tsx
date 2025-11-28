@@ -136,7 +136,10 @@ export default function ProductsPage() {
       categoryId: product.category?._id ?? null,
       categoryName: product.category?.name ?? "Uncategorized",
       image: product.attachment?.url ?? null,
-      inStock: (product.remainder ?? 0) > 0,
+      inStock:
+        typeof product.remainder === "number" && Number.isFinite(product.remainder)
+          ? product.remainder > 0
+          : false,
       description: product.description,
     }));
   }, [productsData]);

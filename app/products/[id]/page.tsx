@@ -8,6 +8,7 @@ import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent } from "@/components/ui/card";
 import { useMutation, useQuery } from "@apollo/client";
+import { useToast } from "@/hooks/use-toast";
 import {
   Accordion,
   AccordionContent,
@@ -22,7 +23,10 @@ import {
 import { useCart } from "../../../lib/CartContext";
 import authQueries from "@/app/dashboard/templates/ecommerce-boilerplate/graphql/auth/queries";
 import productMutations from "@/app/dashboard/templates/ecommerce-boilerplate/graphql/products/mutations";
-import { getFileUrl, templateUrl } from "../../../../../../../lib/utils";
+import ecommerceQueries from "@/app/dashboard/templates/ecommerce-boilerplate/graphql/ecommerce/queries";
+import ecommerceMutations from "@/app/dashboard/templates/ecommerce-boilerplate/graphql/ecommerce/mutations";
+import { templateUrl } from "../../../../../../../lib/utils";
+import { ProductReviews, type ProductReview } from "./ProductReviews";
 
 const formatCurrency = (value?: number | null) => {
   if (value == null || Number.isNaN(value)) {
@@ -77,7 +81,7 @@ export default function ProductDetailPage() {
       skip: !productId,
     });
 
-  const { data: reviewData, loading: reviewLoading } =
+  const { data: reviewData, loading: reviewLoading, refetch: refetchAverage } =
     useProductAverageReviewQuery({
       variables: { productId: productId ?? "" },
       fetchPolicy: "cache-first",
@@ -127,11 +131,28 @@ export default function ProductDetailPage() {
       ? reviewSummary.average.toFixed(1)
       : null;
   const reviewsCount = reviewSummary?.length ?? 0;
-  const inStock = (product?.remainder ?? 0) > 0;
+  const inStock =
+    typeof product?.remainder === "number" && Number.isFinite(product.remainder)
+      ? product.remainder > 0
+      : false;
   const { addToCart } = useCart();
   const { data: userData } = useQuery(authQueries.currentUser);
   const customerId = userData?.clientPortalCurrentUser?.erxesCustomerId ?? null;
+  const { toast } = useToast();
   const [addToLastView] = useMutation(productMutations.addToLastView);
+  const {
+    data: productReviewsData,
+    loading: reviewsLoading,
+    refetch: refetchReviews,
+  } = useQuery(ecommerceQueries.productreviews, {
+    variables: { productIds: productId ? [productId] : [], customerId },
+    skip: !productId,
+    fetchPolicy: "cache-and-network",
+  });
+  const [addProductReview] = useMutation(ecommerceMutations.productReviewAdd);
+  const [updateProductReview] = useMutation(
+    ecommerceMutations.productReviewUpdate
+  );
   const customFields = ((product as any)?.customFieldsData ?? {}) as Record<
     string,
     unknown
@@ -176,6 +197,62 @@ export default function ProductDetailPage() {
         typeof customFields.returns === "string" ? customFields.returns : null,
     },
   ].filter((section) => section.content);
+
+  const productReviews = useMemo<ProductReview[]>(() => {
+    const items = productReviewsData?.productreviews ?? [];
+    if (!Array.isArray(items)) return [];
+    return items.filter((entry): entry is ProductReview =>
+      Boolean(entry && (!productId || entry.productId === productId))
+    );
+  }, [productId, productReviewsData?.productreviews]);
+
+  const userReview = useMemo(() => {
+    if (!customerId) return null;
+    return (
+      productReviews.find((review) => review.customerId === customerId) ?? null
+    );
+  }, [customerId, productReviews]);
+
+  const [rating, setRating] = useState<number | null>(null);
+  const [reviewText, setReviewText] = useState("");
+  const [submittingReview, setSubmittingReview] = useState(false);
+
+  useEffect(() => {
+    if (!userReview) {
+      setRating(null);
+      setReviewText("");
+      return;
+    }
+    const value =
+      typeof userReview.review === "number"
+        ? userReview.review
+        : Number(userReview.review);
+    const normalized = Number.isFinite(value) && value > 0 ? Number(value) : null;
+    setRating(normalized);
+    setReviewText(userReview.description ?? "");
+  }, [userReview]);
+
+  const numericRatings = useMemo(() => {
+    if (!productReviews.length) return [] as number[];
+    return productReviews
+      .map((entry) => {
+        const value =
+          typeof entry.review === "number"
+            ? entry.review
+            : Number(entry.review);
+        return Number.isFinite(value) && value > 0 ? Number(value) : null;
+      })
+      .filter((value): value is number => value !== null);
+  }, [productReviews]);
+
+  const reviewsAverage = useMemo(() => {
+    if (!numericRatings.length) return null;
+    const total = numericRatings.reduce((sum, current) => sum + current, 0);
+    return (total / numericRatings.length).toFixed(1);
+  }, [numericRatings]);
+
+  const reviewTotal = productReviews.length || reviewsCount;
+  const ratingDisplay = reviewsAverage ?? averageRating;
 
   const getLocalLastViewed = useCallback((): string[] => {
     if (typeof window === "undefined") {
@@ -339,6 +416,65 @@ export default function ProductDetailPage() {
     rememberLocally,
   ]);
 
+  const handleSubmitReview = useCallback(async () => {
+    if (!productId) return;
+    if (!customerId) {
+      toast({
+        title: "Please sign in",
+        description: "Log in to leave a review.",
+      });
+      return;
+    }
+    if (!rating) {
+      toast({
+        title: "Select a rating",
+        description: "Please choose a star rating before submitting.",
+      });
+      return;
+    }
+
+    setSubmittingReview(true);
+    const payload = {
+      productId,
+      customerId,
+      review: rating,
+      description: reviewText.trim() || undefined,
+    };
+
+    try {
+      if (userReview?._id) {
+        await updateProductReview({
+          variables: { _id: userReview._id, ...payload },
+        });
+        toast({ title: "Review updated" });
+      } else {
+        await addProductReview({ variables: payload });
+        toast({ title: "Review submitted" });
+      }
+      await Promise.all([refetchReviews(), refetchAverage()]);
+    } catch (error) {
+      console.warn("Failed to submit review", error);
+      toast({
+        title: "Unable to submit review",
+        description: "Please try again.",
+        variant: "destructive",
+      });
+    } finally {
+      setSubmittingReview(false);
+    }
+  }, [
+    addProductReview,
+    customerId,
+    productId,
+    rating,
+    refetchAverage,
+    refetchReviews,
+    reviewText,
+    toast,
+    updateProductReview,
+    userReview?._id,
+  ]);
+
   const isLoading = productLoading || similarityLoading || reviewLoading;
   const hasError = Boolean(productError);
 
@@ -493,8 +629,8 @@ export default function ProductDetailPage() {
                         <Star
                           key={index}
                           className={`h-4 w-4 ${
-                            averageRating &&
-                            index < Math.round(Number(averageRating))
+                            ratingDisplay &&
+                            index < Math.round(Number(ratingDisplay))
                               ? "fill-yellow-500 text-yellow-500"
                               : "text-muted-foreground"
                           }`}
@@ -502,9 +638,9 @@ export default function ProductDetailPage() {
                       ))}
                     </div>
                     <span className="font-medium text-foreground">
-                      {averageRating ?? "Not rated"}
+                      {ratingDisplay ?? "Not rated"}
                     </span>
-                    {reviewsCount > 0 && <span>({reviewsCount} reviews)</span>}
+                    {reviewTotal > 0 && <span>({reviewTotal} reviews)</span>}
                   </div>
                   <Badge variant={inStock ? "default" : "secondary"}>
                     {inStock ? "In stock" : "Out of stock"}
@@ -607,6 +743,24 @@ export default function ProductDetailPage() {
                 )}
               </div>
             </div>
+          )}
+
+          {product && (
+            <ProductReviews
+              customerId={customerId}
+              productId={productId}
+              ratingDisplay={ratingDisplay}
+              reviewTotal={reviewTotal}
+              reviewsLoading={reviewsLoading}
+              productReviews={productReviews}
+              rating={rating}
+              reviewText={reviewText}
+              submittingReview={submittingReview}
+              hasUserReview={Boolean(userReview?._id)}
+              onRatingChange={setRating}
+              onReviewTextChange={setReviewText}
+              onSubmitReview={handleSubmitReview}
+            />
           )}
 
           {product && similarProducts.length > 0 && (
