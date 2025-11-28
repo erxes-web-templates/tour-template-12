@@ -109,7 +109,7 @@ const ProductsSection = ({ section }: { section: Section }) => {
           </div>
         )}
 
-        <div className="grid gap-6 sm:grid-cols-2 lg:grid-cols-3">
+        <div className="grid gap-6 grid-cols-2 sm:grid-cols-3 lg:grid-cols-4">
           {(loading ? Array.from({ length: limit || 3 }) : products).map(
             (product: ProductSummary, index) => {
               if (loading) {
@@ -256,7 +256,7 @@ const ProductsSection = ({ section }: { section: Section }) => {
                       )}
                     </div>
                   </CardContent>
-                  <CardFooter className="flex items-center justify-end gap-2 border-t bg-muted/40 p-4">
+                  <CardFooter className="block md:flex items-center justify-end gap-2 border-t bg-muted/40 p-4">
                     <Button asChild variant="default" size="sm">
                       <Link
                         href={templateUrl(`/product&productId=${product._id}`)}

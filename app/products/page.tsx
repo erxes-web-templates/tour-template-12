@@ -137,7 +137,8 @@ export default function ProductsPage() {
       categoryName: product.category?.name ?? "Uncategorized",
       image: product.attachment?.url ?? null,
       inStock:
-        typeof product.remainder === "number" && Number.isFinite(product.remainder)
+        typeof product.remainder === "number" &&
+        Number.isFinite(product.remainder)
           ? product.remainder > 0
           : false,
       description: product.description,
@@ -321,7 +322,7 @@ export default function ProductsPage() {
             Unable to load products right now. Please try again in a moment.
           </div>
         ) : (
-          <div className="grid grid-cols-1 gap-6 sm:grid-cols-2 xl:grid-cols-3">
+          <div className="grid grid-cols-1 gap-6 lg:grid-cols-3">
             {isLoading &&
               Array.from({ length: 6 }).map((_, index) => (
                 <div
