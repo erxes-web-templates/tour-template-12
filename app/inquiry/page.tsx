@@ -2,7 +2,7 @@
 
 import { useState } from "react";
 import { useMutation, useQuery } from "@apollo/client";
-import DynamicForm from "../../components/common/DynamicForm";
+import DynamicForm from "@templates/ecommerce-boilerplate/components/common/DynamicForm";
 import { FORM_SUBMISSION } from "../../graphql/mutations";
 import { useSearchParams } from "next/navigation";
 import { INQUIRY_FORM, TOUR_GROUP_DETAIL_QUERY } from "../../graphql/queries";

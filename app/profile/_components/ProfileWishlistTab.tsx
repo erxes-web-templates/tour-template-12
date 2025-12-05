@@ -7,9 +7,9 @@ import {
   CardFooter,
   CardHeader,
   CardTitle,
-} from "@/components/ui/card";
-import { Button } from "@/components/ui/button";
-import { getFileUrl, templateUrl } from "@/lib/utils";
+} from "@templates/ecommerce-boilerplate/components/ui/card";
+import { Button } from "@templates/ecommerce-boilerplate/components/ui/button";
+import { getFileUrl, templateUrl } from "@templates/ecommerce-boilerplate/lib/utils";
 import Link from "next/link";
 
 type WishlistItem = {

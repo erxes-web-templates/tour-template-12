@@ -1,6 +1,6 @@
-// import { GET_CMS_MENU_LIST } from "@/graphql/queries";
+// import { GET_CMS_MENU_LIST } from "@templates/ecommerce-boilerplate/graphql/queries";
 // import { getClient } from "./client";
-// import { CmsMenuList, CmsMenuListVariables } from "@/types/cms";
+// import { CmsMenuList, CmsMenuListVariables } from "@templates/ecommerce-boilerplate/types/cms";
 
 // export async function fetchMenuList(cpId: string, kind: string) {
 //   const client = getClient();

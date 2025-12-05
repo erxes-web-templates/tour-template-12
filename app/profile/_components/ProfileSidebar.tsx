@@ -1,6 +1,6 @@
 "use client";
 
-import { cn } from "@/lib/utils";
+import { cn } from "@templates/ecommerce-boilerplate/lib/utils";
 
 type SidebarItem = {
   id: string;

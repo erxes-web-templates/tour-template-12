@@ -3,11 +3,11 @@
 import { useMemo } from "react";
 import Image from "next/image";
 import Link from "next/link";
-import { Carousel, CarouselContent, CarouselItem, CarouselNext, CarouselPrevious } from "@/components/ui/carousel";
-import { Card, CardDescription, CardFooter, CardHeader, CardTitle } from "@/components/ui/card";
-import { Button } from "@/components/ui/button";
+import { Carousel, CarouselContent, CarouselItem, CarouselNext, CarouselPrevious } from "@templates/ecommerce-boilerplate/components/ui/carousel";
+import { Card, CardDescription, CardFooter, CardHeader, CardTitle } from "@templates/ecommerce-boilerplate/components/ui/card";
+import { Button } from "@templates/ecommerce-boilerplate/components/ui/button";
 import { Section } from "../../../types/sections";
-import { getFileUrl, templateUrl } from "../../../../../../../lib/utils";
+import { getFileUrl, templateUrl } from "@templates/ecommerce-boilerplate/lib/utils";
 
 type CarouselLinkType = "product" | "productCategory" | "external";
 

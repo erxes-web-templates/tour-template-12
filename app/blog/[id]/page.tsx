@@ -6,7 +6,7 @@ import { useSearchParams } from "next/navigation";
 import React from "react";
 import { useQuery } from "@apollo/client";
 import Image from "next/image";
-import { getFileUrl } from "../../../../../../../lib/utils";
+import { getFileUrl } from "@templates/ecommerce-boilerplate/lib/utils";
 
 const PostDetailPage = () => {
   const searchParams = useSearchParams();

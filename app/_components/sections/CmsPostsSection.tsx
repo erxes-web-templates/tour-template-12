@@ -1,11 +1,11 @@
-import { Button } from "@/components/ui/button";
-import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle } from "@/components/ui/card";
+import { Button } from "@templates/ecommerce-boilerplate/components/ui/button";
+import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle } from "@templates/ecommerce-boilerplate/components/ui/card";
 import React from "react";
 import Image from "next/image";
 import Link from "next/link";
 import { useQuery } from "@apollo/client";
 import { GET_CMS_POSTS } from "../../../graphql/queries";
-import { getFileUrl, templateUrl } from "../../../../../../../lib/utils";
+import { getFileUrl, templateUrl } from "@templates/ecommerce-boilerplate/lib/utils";
 import { Section } from "../../../types/sections";
 import { useParams } from "next/navigation";
 import { CmsPost } from "../../../types/cms";

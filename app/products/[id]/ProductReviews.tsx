@@ -1,10 +1,10 @@
 "use client";
 
 import { Star } from "lucide-react";
-import { Badge } from "@/components/ui/badge";
-import { Button } from "@/components/ui/button";
-import { Card, CardContent } from "@/components/ui/card";
-import { Textarea } from "@/components/ui/textarea";
+import { Badge } from "@templates/ecommerce-boilerplate/components/ui/badge";
+import { Button } from "@templates/ecommerce-boilerplate/components/ui/button";
+import { Card, CardContent } from "@templates/ecommerce-boilerplate/components/ui/card";
+import { Textarea } from "@templates/ecommerce-boilerplate/components/ui/textarea";
 
 export type ProductReview = {
   _id: string;

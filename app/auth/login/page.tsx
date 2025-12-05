@@ -12,12 +12,12 @@ import {
   CardFooter,
   CardHeader,
   CardTitle,
-} from "@/components/ui/card";
-import { Input } from "@/components/ui/input";
-import { Label } from "@/components/ui/label";
-import { Button } from "@/components/ui/button";
-import { useToast } from "@/hooks/use-toast";
-import { templateUrl } from "../../../../../../../lib/utils";
+} from "@templates/ecommerce-boilerplate/components/ui/card";
+import { Input } from "@templates/ecommerce-boilerplate/components/ui/input";
+import { Label } from "@templates/ecommerce-boilerplate/components/ui/label";
+import { Button } from "@templates/ecommerce-boilerplate/components/ui/button";
+import { useToast } from "@templates/ecommerce-boilerplate/hooks/use-toast";
+import { templateUrl } from "@templates/ecommerce-boilerplate/lib/utils";
 
 type LoginResponse =
   | {

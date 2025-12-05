@@ -4,19 +4,19 @@ import Image from "next/image";
 import Link from "next/link";
 import { useEffect, useMemo, useRef, useState } from "react";
 import { useSearchParams } from "next/navigation";
-import { Card, CardContent } from "@/components/ui/card";
-import { Button } from "@/components/ui/button";
-import { Badge } from "@/components/ui/badge";
-import { Checkbox } from "@/components/ui/checkbox";
-import { Label } from "@/components/ui/label";
-import { Slider } from "@/components/ui/slider";
+import { Card, CardContent } from "@templates/ecommerce-boilerplate/components/ui/card";
+import { Button } from "@templates/ecommerce-boilerplate/components/ui/button";
+import { Badge } from "@templates/ecommerce-boilerplate/components/ui/badge";
+import { Checkbox } from "@templates/ecommerce-boilerplate/components/ui/checkbox";
+import { Label } from "@templates/ecommerce-boilerplate/components/ui/label";
+import { Slider } from "@templates/ecommerce-boilerplate/components/ui/slider";
 import {
   Select,
   SelectContent,
   SelectItem,
   SelectTrigger,
   SelectValue,
-} from "@/components/ui/select";
+} from "@templates/ecommerce-boilerplate/components/ui/select";
 import { Star, SlidersHorizontal } from "lucide-react";
 import {
   Sheet,
@@ -24,14 +24,14 @@ import {
   SheetHeader,
   SheetTitle,
   SheetTrigger,
-} from "@/components/ui/sheet";
+} from "@templates/ecommerce-boilerplate/components/ui/sheet";
 import {
   useProductCategoriesQuery,
   useProductsQuery,
   type ProductCategory,
 } from "../../graphql/products";
 import { useCart } from "../../lib/CartContext";
-import { templateUrl } from "../../../../../../lib/utils";
+import { templateUrl } from "@templates/ecommerce-boilerplate/lib/utils";
 
 type SortOption = "featured" | "price-low" | "price-high" | "name-az";
 

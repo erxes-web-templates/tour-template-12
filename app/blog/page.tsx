@@ -6,11 +6,11 @@ import { CmsPost } from "../../types/cms";
 import { useQuery } from "@apollo/client";
 import { useParams, useSearchParams } from "next/navigation";
 import React from "react";
-import { Card, CardContent, CardHeader, CardTitle, CardFooter, CardDescription } from "@/components/ui/card";
+import { Card, CardContent, CardHeader, CardTitle, CardFooter, CardDescription } from "@templates/ecommerce-boilerplate/components/ui/card";
 import Image from "next/image";
-import { getFileUrl, templateUrl } from "../../../../../../lib/utils";
+import { getFileUrl, templateUrl } from "@templates/ecommerce-boilerplate/lib/utils";
 import Link from "next/link";
-import { Button } from "@/components/ui/button";
+import { Button } from "@templates/ecommerce-boilerplate/components/ui/button";
 
 const BlogsPage = () => {
   const searchParams = useSearchParams();

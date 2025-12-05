@@ -1,12 +1,12 @@
 import React, { useState } from "react";
 import { Section } from "../../../types/sections";
-import { Card, CardContent } from "@/components/ui/card";
+import { Card, CardContent } from "@templates/ecommerce-boilerplate/components/ui/card";
 import { MapPin, Phone, Mail, Facebook, Twitter, Instagram, Linkedin, CheckCircle } from "lucide-react";
-import DynamicForm from "../../../components/common/DynamicForm";
+import DynamicForm from "@templates/ecommerce-boilerplate/components/common/DynamicForm";
 import { useMutation, useQuery } from "@apollo/client";
 import { GET_FORM_DETAIL } from "../../../graphql/queries";
 import { FORM_SUBMISSION } from "../../../graphql/mutations";
-import useClientPortal from "../../../../../../../hooks/useClientPortal";
+import useClientPortal from "@/hooks/useClientPortal";
 import { useParams } from "next/navigation";
 const ContactSection = ({ section }: { section: Section }) => {
   const params = useParams<{ id: string }>();

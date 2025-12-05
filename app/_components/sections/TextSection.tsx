@@ -1,7 +1,7 @@
-import { Button } from "@/components/ui/button";
+import { Button } from "@templates/ecommerce-boilerplate/components/ui/button";
 import React from "react";
 import { Section } from "../../../types/sections";
-import { templateUrl } from "../../../../../../../lib/utils";
+import { templateUrl } from "@templates/ecommerce-boilerplate/lib/utils";
 import Link from "next/link";
 
 const TextSection = ({ section }: { section: Section }) => {

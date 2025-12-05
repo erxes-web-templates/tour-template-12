@@ -9,10 +9,10 @@ import {
   redirect,
 } from "next/navigation";
 import { useMutation, useQuery } from "@apollo/client";
-import authQueries from "@/app/dashboard/templates/ecommerce-boilerplate/graphql/auth/queries";
-import authMutations from "@/app/dashboard/templates/ecommerce-boilerplate/graphql/auth/mutations";
-import orderQueries from "@/app/dashboard/templates/ecommerce-boilerplate/graphql/order/queries";
-import ecommerceQueries from "@/app/dashboard/templates/ecommerce-boilerplate/graphql/ecommerce/queries";
+import authQueries from "@templates/ecommerce-boilerplate/graphql/auth/queries";
+import authMutations from "@templates/ecommerce-boilerplate/graphql/auth/mutations";
+import orderQueries from "@templates/ecommerce-boilerplate/graphql/order/queries";
+import ecommerceQueries from "@templates/ecommerce-boilerplate/graphql/ecommerce/queries";
 import {
   Card,
   CardContent,
@@ -20,18 +20,18 @@ import {
   CardFooter,
   CardHeader,
   CardTitle,
-} from "@/components/ui/card";
-import { Button } from "@/components/ui/button";
-import { Label } from "@/components/ui/label";
-import { Input } from "@/components/ui/input";
-import { Badge } from "@/components/ui/badge";
-import { useToast } from "@/hooks/use-toast";
+} from "@templates/ecommerce-boilerplate/components/ui/card";
+import { Button } from "@templates/ecommerce-boilerplate/components/ui/button";
+import { Label } from "@templates/ecommerce-boilerplate/components/ui/label";
+import { Input } from "@templates/ecommerce-boilerplate/components/ui/input";
+import { Badge } from "@templates/ecommerce-boilerplate/components/ui/badge";
+import { useToast } from "@templates/ecommerce-boilerplate/hooks/use-toast";
 import ProfileSidebar from "./_components/ProfileSidebar";
 import ProfileOrdersTab from "./_components/ProfileOrdersTab";
 import ProfileWishlistTab from "./_components/ProfileWishlistTab";
 import ProfileViewedTab from "./_components/ProfileViewedTab";
 import ProfileSecurityTab from "./_components/ProfileSecurityTab";
-import { templateUrl } from "../../../../../../lib/utils";
+import { templateUrl } from "@templates/ecommerce-boilerplate/lib/utils";
 
 type User = {
   _id: string;

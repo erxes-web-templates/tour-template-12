@@ -1,4 +1,4 @@
-// import { CP_GET_CONFIG } from "@/graphql/queries";
+// import { CP_GET_CONFIG } from "@templates/ecommerce-boilerplate/graphql/queries";
 // import { getClient } from "./client";
 
 // export async function fetchCpConfig() {

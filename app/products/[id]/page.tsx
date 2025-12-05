@@ -4,28 +4,28 @@ import Link from "next/link";
 import { useMemo, useCallback, useEffect, useState, useRef } from "react";
 import { useParams, useSearchParams } from "next/navigation";
 import { ArrowLeft, CheckCircle2, Heart, Star } from "lucide-react";
-import { Badge } from "@/components/ui/badge";
-import { Button } from "@/components/ui/button";
-import { Card, CardContent } from "@/components/ui/card";
+import { Badge } from "@templates/ecommerce-boilerplate/components/ui/badge";
+import { Button } from "@templates/ecommerce-boilerplate/components/ui/button";
+import { Card, CardContent } from "@templates/ecommerce-boilerplate/components/ui/card";
 import { useMutation, useQuery } from "@apollo/client";
-import { useToast } from "@/hooks/use-toast";
+import { useToast } from "@templates/ecommerce-boilerplate/hooks/use-toast";
 import {
   Accordion,
   AccordionContent,
   AccordionItem,
   AccordionTrigger,
-} from "@/components/ui/accordion";
+} from "@templates/ecommerce-boilerplate/components/ui/accordion";
 import {
   useProductAverageReviewQuery,
   useProductDetailQuery,
   useProductSimilaritiesQuery,
 } from "../../../graphql/products";
 import { useCart } from "../../../lib/CartContext";
-import authQueries from "@/app/dashboard/templates/ecommerce-boilerplate/graphql/auth/queries";
-import productMutations from "@/app/dashboard/templates/ecommerce-boilerplate/graphql/products/mutations";
-import ecommerceQueries from "@/app/dashboard/templates/ecommerce-boilerplate/graphql/ecommerce/queries";
-import ecommerceMutations from "@/app/dashboard/templates/ecommerce-boilerplate/graphql/ecommerce/mutations";
-import { templateUrl } from "../../../../../../../lib/utils";
+import authQueries from "@templates/ecommerce-boilerplate/graphql/auth/queries";
+import productMutations from "@templates/ecommerce-boilerplate/graphql/products/mutations";
+import ecommerceQueries from "@templates/ecommerce-boilerplate/graphql/ecommerce/queries";
+import ecommerceMutations from "@templates/ecommerce-boilerplate/graphql/ecommerce/mutations";
+import { templateUrl } from "@templates/ecommerce-boilerplate/lib/utils";
 import { ProductReviews, type ProductReview } from "./ProductReviews";
 
 const formatCurrency = (value?: number | null) => {

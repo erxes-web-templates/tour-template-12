@@ -6,8 +6,8 @@ import Link from "next/link";
 import { Section } from "../../../types/sections";
 import authQueries from "../../../graphql/auth/queries";
 import orderQueries from "../../../graphql/order/queries";
-import { getFileUrl, templateUrl } from "../../../../../../../lib/utils";
-import EmptyState from "../../../../../../../components/common/EmptyState";
+import { getFileUrl, templateUrl } from "@templates/ecommerce-boilerplate/lib/utils";
+import EmptyState from "@/components/common/EmptyState";
 import {
   Card,
   CardContent,
@@ -15,8 +15,8 @@ import {
   CardFooter,
   CardHeader,
   CardTitle,
-} from "@/components/ui/card";
-import { Button } from "@/components/ui/button";
+} from "@templates/ecommerce-boilerplate/components/ui/card";
+import { Button } from "@templates/ecommerce-boilerplate/components/ui/button";
 
 type ViewedProduct = {
   _id: string;

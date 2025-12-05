@@ -7,10 +7,10 @@ import {
   CardFooter,
   CardHeader,
   CardTitle,
-} from "@/components/ui/card";
-import { Button } from "@/components/ui/button";
-import { Badge } from "@/components/ui/badge";
-import { getFileUrl } from "@/lib/utils";
+} from "@templates/ecommerce-boilerplate/components/ui/card";
+import { Button } from "@templates/ecommerce-boilerplate/components/ui/button";
+import { Badge } from "@templates/ecommerce-boilerplate/components/ui/badge";
+import { getFileUrl } from "@templates/ecommerce-boilerplate/lib/utils";
 
 type Order = {
   _id: string;

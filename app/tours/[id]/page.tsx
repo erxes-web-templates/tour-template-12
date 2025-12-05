@@ -8,11 +8,11 @@ import {
   AccordionContent,
   AccordionItem,
   AccordionTrigger,
-} from "@/components/ui/accordion";
+} from "@templates/ecommerce-boilerplate/components/ui/accordion";
 import usePage from "../../../lib/usePage";
 import Image from "next/image";
-import { getFileUrl, templateUrl } from "../../../../../../../lib/utils";
-import { Button } from "@/components/ui/button";
+import { getFileUrl, templateUrl } from "@templates/ecommerce-boilerplate/lib/utils";
+import { Button } from "@templates/ecommerce-boilerplate/components/ui/button";
 import Link from "next/link";
 export default function TourDetailPage() {
   const searchParams = useSearchParams();

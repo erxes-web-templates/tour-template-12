@@ -8,7 +8,7 @@ import {
   type ProductSummary,
 } from "../../../graphql/products";
 import { Section } from "../../../types/sections";
-import { templateUrl } from "../../../../../../../lib/utils";
+import { templateUrl } from "@templates/ecommerce-boilerplate/lib/utils";
 import {
   Card,
   CardContent,
@@ -16,10 +16,10 @@ import {
   CardFooter,
   CardHeader,
   CardTitle,
-} from "@/components/ui/card";
-import { Button } from "@/components/ui/button";
-import { Badge } from "@/components/ui/badge";
-import EmptyState from "../../../../../../../components/common/EmptyState";
+} from "@templates/ecommerce-boilerplate/components/ui/card";
+import { Button } from "@templates/ecommerce-boilerplate/components/ui/button";
+import { Badge } from "@templates/ecommerce-boilerplate/components/ui/badge";
+import EmptyState from "@/components/common/EmptyState";
 import { useCart } from "../../../lib/CartContext";
 
 const toCurrency = (value?: number | null) => {

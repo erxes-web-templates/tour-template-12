@@ -11,9 +11,9 @@ import {
 import { useRouter, useSearchParams, useParams } from "next/navigation";
 import { CPDetail, MenuItem } from "../../types/cms";
 import { useQuery } from "@apollo/client";
-import { GET_MENUS } from "../../../../../dashboard/projects/_graphql/queries";
+import { GET_MENUS } from "@/app/dashboard/projects/_graphql/queries";
 import Image from "next/image";
-import { getFileUrl, templateUrl } from "../../../../../../lib/utils";
+import { getFileUrl, templateUrl } from "@templates/ecommerce-boilerplate/lib/utils";
 import {
   ShoppingCart,
   Search,
@@ -23,11 +23,11 @@ import {
   Plus,
   Trash2,
 } from "lucide-react";
-import { Button } from "@/components/ui/button";
-import { Input } from "@/components/ui/input";
-import { Badge } from "@/components/ui/badge";
-import { Sheet, SheetContent, SheetTrigger } from "@/components/ui/sheet";
-import { ScrollArea } from "@/components/ui/scroll-area";
+import { Button } from "@templates/ecommerce-boilerplate/components/ui/button";
+import { Input } from "@templates/ecommerce-boilerplate/components/ui/input";
+import { Badge } from "@templates/ecommerce-boilerplate/components/ui/badge";
+import { Sheet, SheetContent, SheetTrigger } from "@templates/ecommerce-boilerplate/components/ui/sheet";
+import { ScrollArea } from "@templates/ecommerce-boilerplate/components/ui/scroll-area";
 import { useCart } from "../../lib/CartContext";
 import { useProductsQuery } from "../../graphql/products";
 
