@@ -2,7 +2,7 @@ import { GET_FORM_DETAIL } from "../../../graphql/queries";
 import { Section } from "../../../types/sections";
 import React from "react";
 import { useMutation, useQuery } from "@apollo/client";
-import DynamicForm from "@templates/ecommerce-boilerplate/components/common/DynamicForm";
+import DynamicForm from "@templates/template-boilerplate/components/common/DynamicForm";
 import { FORM_SUBMISSION } from "../../../graphql/mutations";
 
 const FormSection = ({ section }: { section: Section }) => {

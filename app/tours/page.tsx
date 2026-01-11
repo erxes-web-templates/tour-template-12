@@ -1,42 +1,42 @@
-"use client";
-
-import { TOURS_QUERY } from "../../graphql/queries";
-import { useQuery } from "@apollo/client";
 import Link from "next/link";
 import Image from "next/image";
-import React from "react";
-import { Card, CardContent, CardHeader, CardTitle, CardFooter, CardDescription } from "@templates/ecommerce-boilerplate/components/ui/card";
-import { Button } from "@templates/ecommerce-boilerplate/components/ui/button";
-import { getFileUrl, templateUrl } from "@templates/ecommerce-boilerplate/lib/utils";
-import { useSearchParams } from "next/navigation";
-import usePage from "../../lib/usePage";
-import { BmTour } from "../../types/tours";
-const ToursPage = () => {
-  const searchParams = useSearchParams();
+import { isBuildMode } from "@templates/template-boilerplate/lib/buildMode";
+import ToursPageClient from "../_client/ToursPage";
+import { fetchBmTours } from "@templates/template-boilerplate/lib/fetchTours";
+import {
+  Card,
+  CardContent,
+  CardDescription,
+  CardFooter,
+  CardHeader,
+  CardTitle,
+} from "@templates/template-boilerplate/components/ui/card";
+import { Button } from "@templates/template-boilerplate/components/ui/button";
+import { getFileUrl } from "@templates/template-boilerplate/lib/utils";
+import type { BmTour } from "@templates/template-boilerplate/types/tours";
 
-  const pageName = searchParams.get("pageName"); //pageName = about, tours, contact etc
-
-  const PageContent = usePage(pageName);
-
-  const { data, loading } = useQuery(TOURS_QUERY, {
-    variables: { perPage: 100, page: 1, status: "website" },
-  });
-
-  const tours = data?.bmTours?.list || [];
-
-  if (loading) {
-    return "Loading ...";
+export default async function ToursPage() {
+  if (isBuildMode()) {
+    return <ToursPageClient />;
   }
+
+  const data = await fetchBmTours(1, 100, { status: "website" });
+  const tours = data?.list || [];
 
   return (
     <>
-      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
+      <div className="grid grid-cols-1 gap-8 md:grid-cols-2 lg:grid-cols-3">
         {tours.map((tour: BmTour) => (
           <Card key={tour._id} className="mb-2">
             <CardHeader>
               {tour.imageThumbnail && (
                 <div className="relative w-full h-[200px]">
-                  <Image src={getFileUrl(tour.imageThumbnail)} alt={tour.name} fill className="rounded-md h-[200px]" />
+                  <Image
+                    src={getFileUrl(tour.imageThumbnail)}
+                    alt={tour.name}
+                    fill
+                    className="rounded-md h-[200px]"
+                  />
                 </div>
               )}
             </CardHeader>
@@ -48,17 +48,13 @@ const ToursPage = () => {
             </CardContent>
             <CardFooter className="flex justify-between items-center">
               <span className="text-lg font-bold">{tour.cost}</span>
-              <Link href={templateUrl(`/tour&tourId=${tour._id}`)}>
-                {" "}
+              <Link href={`/tours/${tour._id}`}>
                 <Button>Read more</Button>
               </Link>
             </CardFooter>
           </Card>
         ))}
       </div>
-      <PageContent />
     </>
   );
-};
-
-export default ToursPage;
+}

@@ -1,22 +1,60 @@
-"use client";
+import type { Metadata } from "next";
+import "./globals.css";
+import data from "@templates/template-boilerplate/data/configs.json";
+import ClientShell from "./_components/ClientShell";
+import { fetchCpConfig } from "@templates/template-boilerplate/lib/fetchCpConfig";
+import { isBuildMode } from "@templates/template-boilerplate/lib/buildMode";
+import type { CPDetail } from "@templates/template-boilerplate/types/cms";
 
-// import "./globals.css";
+export const metadata: Metadata = {
+  title: data.meta.title,
+  description: data.meta.description,
+};
 
-export default async function TourBoilerplateLayout({
+const fallbackCpDetail = (): CPDetail => {
+  const socials = data.additional?.social || [];
+  const findSocial = (name: string) =>
+    socials.find((item: { name: string }) => item.name === name)?.url;
+
+  return {
+    _id: data.cpId || "local",
+    name: data.meta.title,
+    description: data.meta.description,
+    copyright: data.additional?.copyright?.text || "",
+    logo: data.meta.logo || "",
+    styles: {
+      baseColor: data.appearance.baseColor,
+      backgroundColor: data.appearance.backgroundColor,
+      headingFont: data.appearance.headingFont,
+      baseFont: data.appearance.baseFont,
+    },
+    externalLinks: {
+      phones: (findSocial("phones") as string[]) || [],
+      emails: (findSocial("emails") as string[]) || [],
+      address: (findSocial("address") as string) || "",
+      twitter: (findSocial("twitter") as string) || "",
+      facebook: (findSocial("facebook") as string) || "",
+      linkedin: (findSocial("linkedin") as string) || "",
+      whatsapp: (findSocial("whatsapp") as string) || "",
+      instagram: (findSocial("instagram") as string) || "",
+      youtube: (findSocial("youtube") as string) || "",
+    },
+  };
+};
+
+export default async function RootLayout({
   children,
 }: {
   children: React.ReactNode;
 }) {
-  // const menuList = await fetchMenuList("gmi68tMTXYCD7oLgHQ-tv", "main");
-  // console.log(menuList, "menuList");
+  const cpDetail = isBuildMode()
+    ? fallbackCpDetail()
+    : (await fetchCpConfig(data.cpId)) || fallbackCpDetail();
+
   return (
     <html lang="en">
       <body>
-        {/* <ApolloWrapper> */}
-        {/* <Header menuList={menuList} /> */}
-        <main>{children}</main>
-        {/* <Footer /> */}
-        {/* </ApolloWrapper> */}
+        <ClientShell cpDetail={cpDetail}>{children}</ClientShell>
       </body>
     </html>
   );

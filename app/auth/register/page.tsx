@@ -12,12 +12,12 @@ import {
   CardFooter,
   CardHeader,
   CardTitle,
-} from "@templates/ecommerce-boilerplate/components/ui/card";
-import { Input } from "@templates/ecommerce-boilerplate/components/ui/input";
-import { Label } from "@templates/ecommerce-boilerplate/components/ui/label";
-import { Button } from "@templates/ecommerce-boilerplate/components/ui/button";
-import { useToast } from "@templates/ecommerce-boilerplate/hooks/use-toast";
-import { templateUrl } from "@templates/ecommerce-boilerplate/lib/utils";
+} from "@templates/template-boilerplate/components/ui/card";
+import { Input } from "@templates/template-boilerplate/components/ui/input";
+import { Label } from "@templates/template-boilerplate/components/ui/label";
+import { Button } from "@templates/template-boilerplate/components/ui/button";
+import { useToast } from "@templates/template-boilerplate/hooks/use-toast";
+import { templateUrl } from "@templates/template-boilerplate/lib/utils";
 
 const resolveClientPortalId = (
   paramsValue?: string | string[],

@@ -12,14 +12,14 @@ import {
   CardFooter,
   CardHeader,
   CardTitle,
-} from "@templates/ecommerce-boilerplate/components/ui/card";
-import { Button } from "@templates/ecommerce-boilerplate/components/ui/button";
-import { Badge } from "@templates/ecommerce-boilerplate/components/ui/badge";
+} from "@templates/template-boilerplate/components/ui/card";
+import { Button } from "@templates/template-boilerplate/components/ui/button";
+import { Badge } from "@templates/template-boilerplate/components/ui/badge";
 import {
   RadioGroup,
   RadioGroupItem,
-} from "@templates/ecommerce-boilerplate/components/ui/radio-group";
-import { useToast } from "@templates/ecommerce-boilerplate/hooks/use-toast";
+} from "@templates/template-boilerplate/components/ui/radio-group";
+import { useToast } from "@templates/template-boilerplate/hooks/use-toast";
 import { useCart } from "../../lib/CartContext";
 import paymentQueries from "../../graphql/payment/queries";
 import paymentMutations from "../../graphql/payment/mutations";

@@ -1,35 +1,55 @@
-"use client";
+import pageData from "@templates/template-boilerplate/data/pages/contact.json";
+import { renderSections } from "@templates/template-boilerplate/lib/renderSections";
+import { Section } from "@templates/template-boilerplate/types/sections";
+import { isBuildMode } from "@templates/template-boilerplate/lib/buildMode";
+import ContactPageClient from "../_client/ContactPage";
+import HeroSection from "../_components/sections/HeroSection";
+import AboutSection from "../_components/sections/AboutSection";
+import FormSection from "../_components/sections/FormSection";
+import YoutubeSection from "../_components/sections/YoutubeSection";
+import CmsPostsSection from "../_components/sections/CmsPostsSection";
+import GallerySection from "../_components/sections/GallerySection";
+import ContactSection from "../_components/sections/ContactSection";
+import TextSection from "../_components/sections/TextSection";
+import ProductsSection from "../_components/sections/ProductsSection";
+import ProductCategoriesSection from "../_components/sections/ProductCategoriesSection";
+import CarouselSection from "../_components/sections/CarouselSection";
+import LastViewedProductsSection from "../_components/sections/LastViewedProductsSection";
+import BannerSection from "../_components/sections/BannerSection";
+import ToursSection from "../_components/sections/ToursSection";
 
-import type React from "react";
-import { useSearchParams } from "next/navigation";
-import usePage from "../../lib/usePage";
+export const metadata = {
+  title: pageData.title,
+  description: pageData.description,
+};
 
 export default function ContactPage() {
-  const searchParams = useSearchParams();
+  if (isBuildMode()) {
+    return <ContactPageClient />;
+  }
 
-  const pageName = searchParams.get("pageName"); //pageName = about, tours, contact etc
+  const sectionComponents = {
+    hero: HeroSection,
+    imageText: AboutSection,
+    form: FormSection,
+    tours: ToursSection,
+    youtube: YoutubeSection,
+    cmsPosts: CmsPostsSection,
+    gallery: GallerySection,
+    contact: ContactSection,
+    text: TextSection,
+    products: ProductsSection,
+    productCategories: ProductCategoriesSection,
+    carousel: CarouselSection,
+    lastViewedProducts: LastViewedProductsSection,
+    banner: BannerSection,
+    content: TextSection,
+  };
 
-  const PageContent = usePage(pageName);
+  const renderedSections = renderSections({
+    sections: pageData.pageItems as unknown as Section[],
+    components: sectionComponents,
+  });
 
-  return (
-    <div className="container mx-auto px-4 py-12">
-      {/* <div className="mb-12">
-        <Card className="overflow-hidden">
-          <div className="h-[300px] w-full">
-            <iframe
-              src="https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d3153.1234567890123!2d-122.4194!3d37.7749!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x0%3A0x0!2zMzfCsDQ2JzI5LjYiTiAxMjLCsDI1JzA5LjgiVw!5e0!3m2!1sen!2sus!4v1625000000000!5m2!1sen!2sus"
-              width="100%"
-              height="100%"
-              style={{ border: 0 }}
-              allowFullScreen
-              loading="lazy"
-              referrerPolicy="no-referrer-when-downgrade"
-              title="Our location"
-            ></iframe>
-          </div>
-        </Card>
-      </div> */}
-      <PageContent />
-    </div>
-  );
+  return <div className="home">{renderedSections}</div>;
 }

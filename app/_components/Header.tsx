@@ -13,7 +13,7 @@ import { CPDetail, MenuItem } from "../../types/cms";
 import { useQuery } from "@apollo/client";
 import { GET_MENUS } from "@/app/dashboard/projects/_graphql/queries";
 import Image from "next/image";
-import { getFileUrl, templateUrl } from "@templates/ecommerce-boilerplate/lib/utils";
+import { getFileUrl, templateUrl } from "@templates/template-boilerplate/lib/utils";
 import {
   ShoppingCart,
   Search,
@@ -23,11 +23,11 @@ import {
   Plus,
   Trash2,
 } from "lucide-react";
-import { Button } from "@templates/ecommerce-boilerplate/components/ui/button";
-import { Input } from "@templates/ecommerce-boilerplate/components/ui/input";
-import { Badge } from "@templates/ecommerce-boilerplate/components/ui/badge";
-import { Sheet, SheetContent, SheetTrigger } from "@templates/ecommerce-boilerplate/components/ui/sheet";
-import { ScrollArea } from "@templates/ecommerce-boilerplate/components/ui/scroll-area";
+import { Button } from "@templates/template-boilerplate/components/ui/button";
+import { Input } from "@templates/template-boilerplate/components/ui/input";
+import { Badge } from "@templates/template-boilerplate/components/ui/badge";
+import { Sheet, SheetContent, SheetTrigger } from "@templates/template-boilerplate/components/ui/sheet";
+import { ScrollArea } from "@templates/template-boilerplate/components/ui/scroll-area";
 import { useCart } from "../../lib/CartContext";
 import { useProductsQuery } from "../../graphql/products";
 

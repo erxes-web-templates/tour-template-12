@@ -1,19 +1,55 @@
-"use client";
+import pageData from "@templates/template-boilerplate/data/pages/index.json";
+import { renderSections } from "@templates/template-boilerplate/lib/renderSections";
+import { Section } from "@templates/template-boilerplate/types/sections";
+import { isBuildMode } from "@templates/template-boilerplate/lib/buildMode";
+import HomePageClient from "./_client/HomePage";
+import HeroSection from "./_components/sections/HeroSection";
+import AboutSection from "./_components/sections/AboutSection";
+import FormSection from "./_components/sections/FormSection";
+import YoutubeSection from "./_components/sections/YoutubeSection";
+import CmsPostsSection from "./_components/sections/CmsPostsSection";
+import GallerySection from "./_components/sections/GallerySection";
+import ContactSection from "./_components/sections/ContactSection";
+import TextSection from "./_components/sections/TextSection";
+import ToursSection from "./_components/sections/ToursSection";
+import ProductsSection from "./_components/sections/ProductsSection";
+import ProductCategoriesSection from "./_components/sections/ProductCategoriesSection";
+import CarouselSection from "./_components/sections/CarouselSection";
+import LastViewedProductsSection from "./_components/sections/LastViewedProductsSection";
+import BannerSection from "./_components/sections/BannerSection";
 
-import { useSearchParams } from "next/navigation";
+export const metadata = {
+  title: pageData.title,
+  description: pageData.description,
+};
 
-import usePage from "../lib/usePage";
+export default function HomePage() {
+  if (isBuildMode()) {
+    return <HomePageClient />;
+  }
 
-export default function TourBoilerPlateHome() {
-  const searchParams = useSearchParams();
+  const sectionComponents = {
+    hero: HeroSection,
+    imageText: AboutSection,
+    form: FormSection,
+    tours: ToursSection,
+    youtube: YoutubeSection,
+    cmsPosts: CmsPostsSection,
+    gallery: GallerySection,
+    contact: ContactSection,
+    text: TextSection,
+    products: ProductsSection,
+    productCategories: ProductCategoriesSection,
+    carousel: CarouselSection,
+    lastViewedProducts: LastViewedProductsSection,
+    banner: BannerSection,
+    content: TextSection,
+  };
 
-  const pageName = searchParams.get("pageName"); //pageName = about, tours, contact etc
-  const PageContent = usePage(pageName);
+  const renderedSections = renderSections({
+    sections: pageData.pageItems as unknown as Section[],
+    components: sectionComponents,
+  });
 
-  console.log("about", pageName);
-  return (
-    <div>
-      <PageContent />
-    </div>
-  );
+  return <div className="home">{renderedSections}</div>;
 }

@@ -1,5 +1,5 @@
 import React from "react";
-import { Alert, AlertDescription, AlertTitle } from "@templates/ecommerce-boilerplate/components/ui/alert";
+import { Alert, AlertDescription, AlertTitle } from "@templates/template-boilerplate/components/ui/alert";
 import { AlertCircle } from "lucide-react";
 const TemplateAlert = ({ message }: { message: string }) => {
   return (

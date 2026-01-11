@@ -41,8 +41,11 @@ export const getEnv = (): any => {
 };
 
 export const getFileUrl = (url: string) => {
-  const env = getEnv();
   if (!url) return "";
+  if (typeof window === "undefined") {
+    return `${process.env.NEXT_PUBLIC_API_DOMAIN}/read-file?key=${url}`;
+  }
+  const env = getEnv();
   return `${env.NEXT_PUBLIC_API_DOMAIN}/read-file?key=${url}`;
 };
 

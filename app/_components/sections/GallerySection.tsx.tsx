@@ -3,12 +3,12 @@
 import React from "react";
 import CustomImage from "@/components/common/CustomImage";
 import { Section } from "../../../types/sections";
-import { getFileUrl } from "@templates/ecommerce-boilerplate/lib/utils";
+import { getFileUrl } from "@templates/template-boilerplate/lib/utils";
 
 import { useState } from "react";
-import { Dialog, DialogContent, DialogDescription, DialogHeader, DialogTitle } from "@templates/ecommerce-boilerplate/components/ui/dialog";
-import { Carousel, CarouselContent, CarouselItem, CarouselNext, CarouselPrevious } from "@templates/ecommerce-boilerplate/components/ui/carousel";
-import { Card, CardContent } from "@templates/ecommerce-boilerplate/components/ui/card";
+import { Dialog, DialogContent, DialogDescription, DialogHeader, DialogTitle } from "@templates/template-boilerplate/components/ui/dialog";
+import { Carousel, CarouselContent, CarouselItem, CarouselNext, CarouselPrevious } from "@templates/template-boilerplate/components/ui/carousel";
+import { Card, CardContent } from "@templates/template-boilerplate/components/ui/card";
 
 const GallerySection = ({ section }: { section: Section }) => {
   const [selectedImage, setSelectedImage] = useState<string | null>(null);

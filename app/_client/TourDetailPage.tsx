@@ -1,34 +1,52 @@
-import Image from "next/image";
-import Link from "next/link";
-import { isBuildMode } from "@templates/template-boilerplate/lib/buildMode";
-import TourDetailPageClient from "../../_client/TourDetailPage";
+"use client";
+
+import { useQuery } from "@apollo/client";
+import { useSearchParams } from "next/navigation";
 import {
-  fetchBmTourDetail,
-  fetchBmToursGroup,
-} from "@templates/template-boilerplate/lib/fetchTours";
-import { getFileUrl } from "@templates/template-boilerplate/lib/utils";
+  TOUR_DETAIL_QUERY,
+  TOURS_GROUP_QUERY,
+} from "@templates/template-boilerplate/graphql/queries";
 import {
   Accordion,
   AccordionContent,
   AccordionItem,
   AccordionTrigger,
 } from "@templates/template-boilerplate/components/ui/accordion";
-
-type PageProps = {
-  params: { id: string };
+import usePage from "@templates/template-boilerplate/lib/usePage";
+import Image from "next/image";
+import {
+  getFileUrl,
+  templateUrl,
+} from "@templates/template-boilerplate/lib/utils";
+import { Button } from "@templates/template-boilerplate/components/ui/button";
+import Link from "next/link";
+type TourDetailPageProps = {
+  initialTourId?: string;
 };
 
-export default async function TourDetailPage({ params }: PageProps) {
-  if (isBuildMode()) {
-    return <TourDetailPageClient initialTourId={params.id} />;
-  }
+export default function TourDetailPage({ initialTourId }: TourDetailPageProps) {
+  const searchParams = useSearchParams();
 
-  const tour = await fetchBmTourDetail(params.id);
-  const groupTours = await fetchBmToursGroup(1, 100);
+  const pageName = searchParams.get("pageName"); //pageName = about, tours, contact etc
 
-  if (!tour) {
-    return <div className="container mx-auto p-4">Tour not found.</div>;
-  }
+  const PageContent = usePage(pageName);
+
+  const tourId = searchParams.get("tourId") ?? initialTourId;
+
+  const { data } = useQuery(TOUR_DETAIL_QUERY, {
+    variables: {
+      id: tourId,
+    },
+  });
+
+  const { data: groupToursData } = useQuery(TOURS_GROUP_QUERY, {
+    variables: {
+      status: "website",
+    },
+  });
+
+  const tour = data?.bmTourDetail || {};
+  const groupTours = groupToursData?.bmToursGroup?.list || [];
 
   return (
     <div className="container mx-auto p-4">
@@ -38,19 +56,19 @@ export default async function TourDetailPage({ params }: PageProps) {
             src={getFileUrl(tour.imageThumbnail)}
             alt={tour.name}
             fill
-            className="rounded-md"
+            className="rounded-md "
           />
         </div>
       )}
       <div className="flex gap-3 my-3">
         {tour.images &&
-          tour.images.map((image: string, index: number) => (
+          tour.images.map((image: any, index: number) => (
             <div key={index} className="relative w-[300px] h-[200px]">
               <Image
                 src={getFileUrl(image)}
                 alt={tour.name}
                 fill
-                className="rounded-md"
+                className="rounded-md "
               />
             </div>
           ))}
@@ -58,15 +76,8 @@ export default async function TourDetailPage({ params }: PageProps) {
       <div className="flex justify-between">
         <h1 className="text-2xl font-bold mb-4">{tour.name}</h1>
         <div className="flex gap-3 justify-end">
-          <Link className="pt-3" href={`/inquiry?tourId=${tour.groupCode}`}>
-            Inquire now
-          </Link>
-          <Link
-            className="bg-slate-800 text-white px-4 pt-3 rounded-md block"
-            href={`/booking?tourId=${tour.groupCode}`}
-          >
-            Book tour
-          </Link>
+          <Link href={templateUrl("/inquiry")}>Inquire now</Link>
+          <Link href={templateUrl("/booking")}>Book tour</Link>
         </div>
       </div>
       <div className="grid md:grid-cols-2 gap-4">
@@ -82,8 +93,8 @@ export default async function TourDetailPage({ params }: PageProps) {
             {new Date(tour.startDate).toLocaleDateString()}
           </p>
           <p>
-            <strong>Cost:</strong> ${tour.cost.toLocaleString()}
-          </p>
+            <strong>Cost:</strong> ${tour?.cost?.toLocaleString()}
+          </p>{" "}
           {tour.itinerary && (
             <div className="itineraries">
               <Accordion type="single" collapsible className="w-full">
@@ -99,9 +110,13 @@ export default async function TourDetailPage({ params }: PageProps) {
           <div>
             <h2 className="text-xl font-semibold mb-2">Available Dates</h2>
             <ul className="list-disc pl-5">
-              {groupTours?.map((groupTour: any) => (
+              {groupTours.map((groupTour: any) => (
                 <li key={groupTour.items[0]._id}>
-                  <Link href={`/tours/${groupTour.items[0]._id}`}>
+                  <Link
+                    href={`${templateUrl("/tours")}?tourId=${
+                      groupTour.items[0]._id
+                    }`}
+                  >
                     {new Date(
                       groupTour.items[0].startDate
                     ).toLocaleDateString()}{" "}
@@ -117,6 +132,9 @@ export default async function TourDetailPage({ params }: PageProps) {
           <h2 className="text-xl font-semibold mb-2">Description</h2>
           <p>{tour.content}</p>
         </div>
+      </div>
+      <div>
+        <PageContent />
       </div>
     </div>
   );

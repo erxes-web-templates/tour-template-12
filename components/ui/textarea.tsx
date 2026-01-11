@@ -1,6 +1,6 @@
 import * as React from "react"
 
-import { cn } from "@templates/ecommerce-boilerplate/lib/utils"
+import { cn } from "@templates/template-boilerplate/lib/utils"
 
 const Textarea = React.forwardRef<
   HTMLTextAreaElement,

@@ -1,8 +1,8 @@
-import { Button } from "@templates/ecommerce-boilerplate/components/ui/button";
+import { Button } from "@templates/template-boilerplate/components/ui/button";
 import React from "react";
 import Image from "next/image";
 import { Section } from "../../../types/sections";
-import { getFileUrl, templateUrl } from "@templates/ecommerce-boilerplate/lib/utils";
+import { getFileUrl, templateUrl } from "@templates/template-boilerplate/lib/utils";
 import Link from "next/link";
 
 const AboutSection = ({ section }: { section: Section }) => {

@@ -8,7 +8,7 @@ import {
   type ProductSummary,
 } from "../../../graphql/products";
 import { Section } from "../../../types/sections";
-import { templateUrl } from "@templates/ecommerce-boilerplate/lib/utils";
+import { templateUrl } from "@templates/template-boilerplate/lib/utils";
 import {
   Card,
   CardContent,
@@ -16,9 +16,9 @@ import {
   CardFooter,
   CardHeader,
   CardTitle,
-} from "@templates/ecommerce-boilerplate/components/ui/card";
-import { Button } from "@templates/ecommerce-boilerplate/components/ui/button";
-import { Badge } from "@templates/ecommerce-boilerplate/components/ui/badge";
+} from "@templates/template-boilerplate/components/ui/card";
+import { Button } from "@templates/template-boilerplate/components/ui/button";
+import { Badge } from "@templates/template-boilerplate/components/ui/badge";
 import EmptyState from "@/components/common/EmptyState";
 import { useCart } from "../../../lib/CartContext";
 

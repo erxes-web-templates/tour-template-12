@@ -2,7 +2,7 @@ import { CPDetail, MenuItem } from "../../types/cms";
 import { useQuery } from "@apollo/client";
 import Link from "next/link";
 import { GET_MENUS } from "@/app/dashboard/projects/_graphql/queries";
-import { templateUrl } from "@templates/ecommerce-boilerplate/lib/utils";
+import { templateUrl } from "@templates/template-boilerplate/lib/utils";
 import {
   Twitter,
   Linkedin,

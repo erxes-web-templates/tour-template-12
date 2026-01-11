@@ -16,6 +16,13 @@ bun dev
 
 Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
 
+## Build Modes
+
+Set `BUILD_MODE` (server) and `NEXT_PUBLIC_BUILD_MODE` (client) to control rendering:
+
+- `build`: CSR/live builder mode
+- `production`: SSR-first mode
+
 You can start editing the page by modifying `app/page.tsx`. The page auto-updates as you edit the file.
 
 This project uses [`next/font`](https://nextjs.org/docs/app/building-your-application/optimizing/fonts) to automatically optimize and load [Geist](https://vercel.com/font), a new font family for Vercel.

@@ -1,4 +1,4 @@
-import { Button } from "@templates/ecommerce-boilerplate/components/ui/button";
+import { Button } from "@templates/template-boilerplate/components/ui/button";
 import {
   Card,
   CardContent,
@@ -6,7 +6,7 @@ import {
   CardFooter,
   CardHeader,
   CardTitle,
-} from "@templates/ecommerce-boilerplate/components/ui/card";
+} from "@templates/template-boilerplate/components/ui/card";
 import React from "react";
 import Link from "next/link";
 import { useQuery } from "@apollo/client";
@@ -15,7 +15,7 @@ import {
   getFileUrl,
   templateUrl,
   // templateUrlWithSlug,
-} from "@templates/ecommerce-boilerplate/lib/utils";
+} from "@templates/template-boilerplate/lib/utils";
 import { Section } from "../../../types/sections";
 import { BmTour } from "../../../types/tours";
 import Image from "next/image";

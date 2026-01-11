@@ -24,7 +24,7 @@
       }
     ],
     "paths": {
-      "@templates/ecommerce-boilerplate/*": [
+      "@templates/template-boilerplate/*": [
         "./*"
       ],
       "@/*": [

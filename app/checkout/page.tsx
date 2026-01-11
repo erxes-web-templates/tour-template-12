@@ -12,21 +12,21 @@ import {
   CardFooter,
   CardHeader,
   CardTitle,
-} from "@templates/ecommerce-boilerplate/components/ui/card";
-import { Button } from "@templates/ecommerce-boilerplate/components/ui/button";
-import { Badge } from "@templates/ecommerce-boilerplate/components/ui/badge";
-import { Input } from "@templates/ecommerce-boilerplate/components/ui/input";
-import { Textarea } from "@templates/ecommerce-boilerplate/components/ui/textarea";
-import { Label } from "@templates/ecommerce-boilerplate/components/ui/label";
-import { Checkbox } from "@templates/ecommerce-boilerplate/components/ui/checkbox";
-import { RadioGroup, RadioGroupItem } from "@templates/ecommerce-boilerplate/components/ui/radio-group";
-import { useToast } from "@templates/ecommerce-boilerplate/hooks/use-toast";
+} from "@templates/template-boilerplate/components/ui/card";
+import { Button } from "@templates/template-boilerplate/components/ui/button";
+import { Badge } from "@templates/template-boilerplate/components/ui/badge";
+import { Input } from "@templates/template-boilerplate/components/ui/input";
+import { Textarea } from "@templates/template-boilerplate/components/ui/textarea";
+import { Label } from "@templates/template-boilerplate/components/ui/label";
+import { Checkbox } from "@templates/template-boilerplate/components/ui/checkbox";
+import { RadioGroup, RadioGroupItem } from "@templates/template-boilerplate/components/ui/radio-group";
+import { useToast } from "@templates/template-boilerplate/hooks/use-toast";
 import { useCart } from "../../lib/CartContext";
 import orderQueries from "../../graphql/order/queries";
 import orderMutations from "../../graphql/order/mutations";
 import authQueries from "../../graphql/auth/queries";
 import { Minus, Plus, Trash2 } from "lucide-react";
-import { templateUrl } from "@templates/ecommerce-boilerplate/lib/utils";
+import { templateUrl } from "@templates/template-boilerplate/lib/utils";
 import useClientPortal from "@/hooks/useClientPortal";
 
 const STEP_TITLES = ["Review Cart", "Delivery Details", "Confirm & Pay"];

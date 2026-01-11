@@ -1,9 +1,9 @@
 "use client";
 
 import { FormEvent } from "react";
-import { Label } from "@templates/ecommerce-boilerplate/components/ui/label";
-import { Input } from "@templates/ecommerce-boilerplate/components/ui/input";
-import { Button } from "@templates/ecommerce-boilerplate/components/ui/button";
+import { Label } from "@templates/template-boilerplate/components/ui/label";
+import { Input } from "@templates/template-boilerplate/components/ui/input";
+import { Button } from "@templates/template-boilerplate/components/ui/button";
 
 type PasswordForm = {
   currentPassword: string;
