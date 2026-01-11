@@ -3,11 +3,25 @@
 import { useMemo } from "react";
 import Image from "next/image";
 import Link from "next/link";
-import { Carousel, CarouselContent, CarouselItem, CarouselNext, CarouselPrevious } from "@/components/ui/carousel";
-import { Card, CardDescription, CardFooter, CardHeader, CardTitle } from "@/components/ui/card";
+import {
+  Carousel,
+  CarouselContent,
+  CarouselItem,
+  CarouselNext,
+  CarouselPrevious,
+} from "@/components/ui/carousel";
+import {
+  Card,
+  CardDescription,
+  CardFooter,
+  CardHeader,
+  CardTitle,
+} from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Section } from "../../../types/sections";
-import { getFileUrl, templateUrl } from "@/lib/utils";
+import { getFileUrl } from "@/lib/utils";
+import { templateUrl } from "@/lib/utils";
+import { isBuildMode } from "../../../lib/buildMode";
 
 type CarouselLinkType = "product" | "productCategory" | "external";
 
@@ -38,7 +52,9 @@ const resolveImageUrl = (key?: string | null) => {
   }
 };
 
-const resolveLink = (item: CarouselConfigItem): { href: string; isExternal: boolean } | null => {
+const resolveLink = (
+  item: CarouselConfigItem
+): { href: string; isExternal: boolean } | null => {
   const linkType = item.link?.type ?? ("external" as CarouselLinkType);
   const value = item.link?.value ?? item.url ?? "";
   if (!value) {
@@ -50,13 +66,23 @@ const resolveLink = (item: CarouselConfigItem): { href: string; isExternal: bool
   }
 
   if (linkType === "product") {
-    const base = templateUrl("/products");
-    return { href: `${base}&productId=${value}`, isExternal: false };
+    const isBuilder = isBuildMode();
+    return {
+      href: isBuilder
+        ? templateUrl(`/product&productId=${value}`)
+        : `/products/${value}`,
+      isExternal: false,
+    };
   }
 
   if (linkType === "productCategory") {
-    const base = templateUrl("/products");
-    return { href: `${base}&categoryId=${value}`, isExternal: false };
+    const isBuilder = isBuildMode();
+    return {
+      href: isBuilder
+        ? `${templateUrl("/products")}&categoryId=${value}`
+        : `/products?categoryId=${value}`,
+      isExternal: false,
+    };
   }
 
   return null;
@@ -65,7 +91,10 @@ const resolveLink = (item: CarouselConfigItem): { href: string; isExternal: bool
 const CarouselSection = ({ section }: { section: Section }) => {
   const title = section.config?.title ?? "Featured carousel";
   const description = section.config?.description ?? "";
-  const items: CarouselConfigItem[] = useMemo(() => section.config?.items ?? [], [section.config?.items]);
+  const items: CarouselConfigItem[] = useMemo(
+    () => section.config?.items ?? [],
+    [section.config?.items]
+  );
 
   if (!items.length) {
     return null;
@@ -80,7 +109,10 @@ const CarouselSection = ({ section }: { section: Section }) => {
             const link = resolveLink(item);
 
             return (
-              <CarouselItem key={item.id ?? item.title ?? Math.random()} className="basis-full">
+              <CarouselItem
+                key={item.id ?? item.title ?? Math.random()}
+                className="basis-full"
+              >
                 <div className="relative min-h-screen w-full">
                   {imageUrl ? (
                     <Image

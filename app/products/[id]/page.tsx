@@ -1,4 +1,4 @@
-import { isBuildMode } from "@/lib/buildMode";
+import { isBuildMode } from "../../../lib/buildMode";
 import ProductDetailPageClient from "../../_client/ProductDetailPage";
 import {
   fetchProductAverageReview,

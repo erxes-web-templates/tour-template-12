@@ -1,6 +1,6 @@
 import Link from "next/link";
 import Image from "next/image";
-import { isBuildMode } from "@/lib/buildMode";
+import { isBuildMode } from "../../../lib/buildMode";
 import ToursPageClient from "../_client/ToursPage";
 import { fetchBmTours } from "@/lib/fetchTours";
 import {

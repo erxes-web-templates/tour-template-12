@@ -1,7 +1,7 @@
 import pageData from "@/data/pages/contact.json";
 import { renderSections } from "@/lib/renderSections";
 import { Section } from "@/types/sections";
-import { isBuildMode } from "@/lib/buildMode";
+import { isBuildMode } from "../../../lib/buildMode";
 import ContactPageClient from "../_client/ContactPage";
 import HeroSection from "../_components/sections/HeroSection";
 import AboutSection from "../_components/sections/AboutSection";

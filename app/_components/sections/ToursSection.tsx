@@ -16,6 +16,7 @@ import {
   templateUrl,
   // templateUrlWithSlug,
 } from "@/lib/utils";
+import { isBuildMode } from "../../../lib/buildMode";
 import { toHtml } from "../../../lib/html";
 import { Section } from "../../../types/sections";
 import { BmTour } from "../../../types/tours";
@@ -32,6 +33,7 @@ const ToursSection = ({ section }: { section: Section }) => {
   });
 
   const tours = data?.bmToursGroup?.list || [];
+  const isBuilder = isBuildMode();
 
   console.log(tours);
 
@@ -69,7 +71,13 @@ const ToursSection = ({ section }: { section: Section }) => {
                 <span className="text-lg font-bold">
                   {dayjs(tour.items[0].startDate).format("YYYY-MM-DD")}
                 </span>
-                <Link href={templateUrl(`/tour&tourId=${tour.items[0]._id}`)}>
+                <Link
+                  href={
+                    isBuilder
+                      ? templateUrl(`/tour&tourId=${tour.items[0]._id}`)
+                      : `/tours/${tour.items[0]._id}`
+                  }
+                >
                   {" "}
                   <Button>{`Book Now`}</Button>
                 </Link>
@@ -78,7 +86,10 @@ const ToursSection = ({ section }: { section: Section }) => {
           ))}
         </div>
         <div className=" text-center mt-6 ">
-          <Link className="underline" href={templateUrl("/tours")}>
+          <Link
+            className="underline"
+            href={isBuilder ? templateUrl("/tours") : "/tours"}
+          >
             Show All tours
           </Link>
         </div>

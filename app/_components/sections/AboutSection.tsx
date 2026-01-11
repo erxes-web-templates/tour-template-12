@@ -4,10 +4,17 @@ import Image from "next/image";
 import { Section } from "../../../types/sections";
 import { getFileUrl, templateUrl } from "@/lib/utils";
 import { toHtml } from "../../../lib/html";
+import { isBuildMode } from "../../../lib/buildMode";
 import Link from "next/link";
 
 const AboutSection = ({ section }: { section: Section }) => {
   const isImageLeft = section.config.imagePosition === "left";
+  const isBuilder = isBuildMode();
+  const ctaHref = section.config.primaryCtaUrl
+    ? isBuilder
+      ? templateUrl(section.config.primaryCtaUrl)
+      : section.config.primaryCtaUrl
+    : "#";
 
   return (
     <section id="about" className="py-16">
@@ -39,7 +46,7 @@ const AboutSection = ({ section }: { section: Section }) => {
               dangerouslySetInnerHTML={toHtml(section.config.description)}
             ></p>
             {section.config.primaryCtaUrl && (
-              <Link href={templateUrl(section.config.primaryCtaUrl)}>
+              <Link href={ctaHref}>
                 <Button>{section.config.primaryCta}</Button>
               </Link>
             )}

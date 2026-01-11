@@ -8,8 +8,9 @@ import {
   type ProductSummary,
 } from "../../../graphql/products";
 import { Section } from "../../../types/sections";
-import { templateUrl } from "@/lib/utils";
 import { toHtml } from "../../../lib/html";
+import { templateUrl } from "@/lib/utils";
+import { isBuildMode } from "../../../lib/buildMode";
 import {
   Card,
   CardContent,
@@ -40,6 +41,7 @@ const ProductsSection = ({ section }: { section: Section }) => {
   const [buttonStates, setButtonStates] = useState<Record<string, ButtonState>>(
     {}
   );
+  const isBuilder = isBuildMode();
   const buttonTimers = useRef<Record<string, ReturnType<typeof setTimeout>>>(
     {}
   );
@@ -260,7 +262,11 @@ const ProductsSection = ({ section }: { section: Section }) => {
                   <CardFooter className="block md:flex items-center justify-end gap-2 border-t bg-muted/40 p-4">
                     <Button asChild variant="default" size="sm">
                       <Link
-                        href={templateUrl(`/product&productId=${product._id}`)}
+                        href={
+                          isBuilder
+                            ? templateUrl(`/product&productId=${product._id}`)
+                            : `/products/${product._id}`
+                        }
                       >
                         View product
                       </Link>
@@ -286,7 +292,9 @@ const ProductsSection = ({ section }: { section: Section }) => {
 
         <div className="mt-10 text-center">
           <Button asChild variant="outline">
-            <Link href={templateUrl("/products")}>Browse all products</Link>
+            <Link href={isBuilder ? templateUrl("/products") : "/products"}>
+              Browse all products
+            </Link>
           </Button>
         </div>
       </div>

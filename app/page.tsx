@@ -1,7 +1,7 @@
 import pageData from "@/data/pages/index.json";
 import { renderSections } from "@/lib/renderSections";
 import { Section } from "@/types/sections";
-import { isBuildMode } from "@/lib/buildMode";
+import { isBuildMode } from "../../../lib/buildMode";
 import HomePageClient from "./_client/HomePage";
 import HeroSection from "./_components/sections/HeroSection";
 import AboutSection from "./_components/sections/AboutSection";

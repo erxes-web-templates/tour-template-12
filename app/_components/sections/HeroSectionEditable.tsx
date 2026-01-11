@@ -8,6 +8,7 @@ import { Button } from "@/components/ui/button";
 import { getFileUrl, templateUrl } from "@/lib/utils";
 import AiPreviewOverlay from "@/components/common/AiPreviewOverlay";
 import { toHtml } from "../../../lib/html";
+import { isBuildMode } from "../../../lib/buildMode";
 
 type Section = {
   id?: string | number;
@@ -154,7 +155,13 @@ export default function HeroSectionEditable({ section }: { section: Section }) {
               dangerouslySetInnerHTML={toHtml(section.config.description)}
             />
             {section.config.primaryCtaUrl && (
-              <Link href={templateUrl(section.config.primaryCtaUrl)}>
+              <Link
+                href={
+                  isBuildMode()
+                    ? templateUrl(section.config.primaryCtaUrl)
+                    : section.config.primaryCtaUrl
+                }
+              >
                 <Button size="lg" variant="secondary">
                   {section.config.primaryCta}
                 </Button>
