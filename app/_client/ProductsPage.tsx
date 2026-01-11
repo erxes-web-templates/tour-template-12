@@ -4,19 +4,19 @@ import Image from "next/image";
 import Link from "next/link";
 import { useEffect, useMemo, useRef, useState } from "react";
 import { useSearchParams } from "next/navigation";
-import { Card, CardContent } from "@templates/template-boilerplate/components/ui/card";
-import { Button } from "@templates/template-boilerplate/components/ui/button";
-import { Badge } from "@templates/template-boilerplate/components/ui/badge";
-import { Checkbox } from "@templates/template-boilerplate/components/ui/checkbox";
-import { Label } from "@templates/template-boilerplate/components/ui/label";
-import { Slider } from "@templates/template-boilerplate/components/ui/slider";
+import { Card, CardContent } from "@/components/ui/card";
+import { Button } from "@/components/ui/button";
+import { Badge } from "@/components/ui/badge";
+import { Checkbox } from "@/components/ui/checkbox";
+import { Label } from "@/components/ui/label";
+import { Slider } from "@/components/ui/slider";
 import {
   Select,
   SelectContent,
   SelectItem,
   SelectTrigger,
   SelectValue,
-} from "@templates/template-boilerplate/components/ui/select";
+} from "@/components/ui/select";
 import { Star, SlidersHorizontal } from "lucide-react";
 import {
   Sheet,
@@ -24,16 +24,16 @@ import {
   SheetHeader,
   SheetTitle,
   SheetTrigger,
-} from "@templates/template-boilerplate/components/ui/sheet";
+} from "@/components/ui/sheet";
 import {
   useProductCategoriesQuery,
   useProductsQuery,
   type ProductCategory,
 } from "../../graphql/products";
 import type { ProductSummary } from "../../graphql/products/types";
-import { useCart } from "@templates/template-boilerplate/lib/CartContext";
-import { templateUrl } from "@templates/template-boilerplate/lib/utils";
-import { isBuildMode } from "@templates/template-boilerplate/lib/buildMode";
+import { useCart } from "../../lib/CartContext";
+import { templateUrl } from "../../lib/utils";
+import { isBuildMode } from "../../lib/buildMode";
 
 type SortOption = "featured" | "price-low" | "price-high" | "name-az";
 
@@ -472,7 +472,9 @@ export default function ProductsPage({
                           <Link
                             href={
                               isBuilder
-                                ? templateUrl(`/product&productId=${product.id}`)
+                                ? templateUrl(
+                                    `/product&productId=${product.id}`
+                                  )
                                 : `/products/${product.id}`
                             }
                           >

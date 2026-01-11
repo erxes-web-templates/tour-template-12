@@ -1,8 +1,8 @@
 import Link from "next/link";
 import Image from "next/image";
-import { isBuildMode } from "@templates/template-boilerplate/lib/buildMode";
+import { isBuildMode } from "@/lib/buildMode";
 import ToursPageClient from "../_client/ToursPage";
-import { fetchBmTours } from "@templates/template-boilerplate/lib/fetchTours";
+import { fetchBmTours } from "@/lib/fetchTours";
 import {
   Card,
   CardContent,
@@ -10,10 +10,10 @@ import {
   CardFooter,
   CardHeader,
   CardTitle,
-} from "@templates/template-boilerplate/components/ui/card";
-import { Button } from "@templates/template-boilerplate/components/ui/button";
-import { getFileUrl } from "@templates/template-boilerplate/lib/utils";
-import type { BmTour } from "@templates/template-boilerplate/types/tours";
+} from "@/components/ui/card";
+import { Button } from "@/components/ui/button";
+import { getFileUrl } from "@/lib/utils";
+import type { BmTour } from "@/types/tours";
 
 export default async function ToursPage() {
   if (isBuildMode()) {

@@ -11,9 +11,9 @@ import {
 import { useRouter, useSearchParams, useParams } from "next/navigation";
 import { CPDetail, MenuItem } from "../../types/cms";
 import { useQuery } from "@apollo/client";
-import { GET_MENUS } from "@/app/dashboard/projects/_graphql/queries";
+import { GET_CMS_MENU_LIST } from "../../graphql/queries";
 import Image from "next/image";
-import { getFileUrl, templateUrl } from "@templates/template-boilerplate/lib/utils";
+import { getFileUrl, templateUrl } from "@/lib/utils";
 import {
   ShoppingCart,
   Search,
@@ -23,11 +23,11 @@ import {
   Plus,
   Trash2,
 } from "lucide-react";
-import { Button } from "@templates/template-boilerplate/components/ui/button";
-import { Input } from "@templates/template-boilerplate/components/ui/input";
-import { Badge } from "@templates/template-boilerplate/components/ui/badge";
-import { Sheet, SheetContent, SheetTrigger } from "@templates/template-boilerplate/components/ui/sheet";
-import { ScrollArea } from "@templates/template-boilerplate/components/ui/scroll-area";
+import { Button } from "@/components/ui/button";
+import { Input } from "@/components/ui/input";
+import { Badge } from "@/components/ui/badge";
+import { Sheet, SheetContent, SheetTrigger } from "@/components/ui/sheet";
+import { ScrollArea } from "@/components/ui/scroll-area";
 import { useCart } from "../../lib/CartContext";
 import { useProductsQuery } from "../../graphql/products";
 
@@ -58,7 +58,7 @@ export default function Header({ cpDetail }: { cpDetail: CPDetail }) {
     []
   );
 
-  const { data } = useQuery(GET_MENUS, {
+  const { data } = useQuery(GET_CMS_MENU_LIST, {
     variables: {
       clientPortalId: params.id,
       kind: "main",

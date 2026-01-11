@@ -1,4 +1,4 @@
-import { CP_GET_CONFIG } from "@templates/template-boilerplate/graphql/queries";
+import { CP_GET_CONFIG } from "../graphql/queries";
 import { getClient } from "./client";
 
 export async function fetchCpConfig(cpId: string) {

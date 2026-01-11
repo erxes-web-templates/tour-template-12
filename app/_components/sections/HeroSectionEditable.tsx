@@ -4,9 +4,9 @@
 import React, { useEffect, useMemo, useRef, useState } from "react";
 import Image from "next/image";
 import Link from "next/link";
-import { Button } from "@templates/template-boilerplate/components/ui/button";
-import { getFileUrl, templateUrl } from "@templates/template-boilerplate/lib/utils";
-import AiPreviewOverlay from "@templates/template-boilerplate/components/common/AiPreviewOverlay";
+import { Button } from "@/components/ui/button";
+import { getFileUrl, templateUrl } from "@/lib/utils";
+import AiPreviewOverlay from "@/components/common/AiPreviewOverlay";
 
 type Section = {
   id?: string | number;

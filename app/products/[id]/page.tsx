@@ -1,11 +1,11 @@
-import { isBuildMode } from "@templates/template-boilerplate/lib/buildMode";
+import { isBuildMode } from "@/lib/buildMode";
 import ProductDetailPageClient from "../../_client/ProductDetailPage";
 import {
   fetchProductAverageReview,
   fetchProductDetail,
   fetchProductReviews,
   fetchProductSimilarities,
-} from "@templates/template-boilerplate/graphql/products/server";
+} from "../../../graphql/products/server";
 
 type PageProps = {
   params: { id: string };

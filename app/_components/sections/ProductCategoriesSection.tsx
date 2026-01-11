@@ -5,9 +5,9 @@ import Link from "next/link";
 import { useMemo } from "react";
 import { useQuery } from "@apollo/client";
 import ecommerceQueries from "../../../graphql/products/queries";
-import { Card, CardContent, CardHeader, CardTitle } from "@templates/template-boilerplate/components/ui/card";
+import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Section } from "../../../types/sections";
-import { getFileUrl, templateUrl } from "@templates/template-boilerplate/lib/utils";
+import { getFileUrl, templateUrl } from "@/lib/utils";
 import EmptyState from "@/components/common/EmptyState";
 
 type ProductCategory = {

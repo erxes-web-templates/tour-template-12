@@ -7,10 +7,10 @@ import {
   CardFooter,
   CardHeader,
   CardTitle,
-} from "@templates/template-boilerplate/components/ui/card";
-import { Button } from "@templates/template-boilerplate/components/ui/button";
-import { Badge } from "@templates/template-boilerplate/components/ui/badge";
-import { getFileUrl } from "@templates/template-boilerplate/lib/utils";
+} from "@/components/ui/card";
+import { Button } from "@/components/ui/button";
+import { Badge } from "@/components/ui/badge";
+import { getFileUrl } from "@/lib/utils";
 
 type Order = {
   _id: string;

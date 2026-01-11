@@ -2,23 +2,17 @@
 
 import { useQuery } from "@apollo/client";
 import { useSearchParams } from "next/navigation";
-import {
-  TOUR_DETAIL_QUERY,
-  TOURS_GROUP_QUERY,
-} from "@templates/template-boilerplate/graphql/queries";
+import { TOUR_DETAIL_QUERY, TOURS_GROUP_QUERY } from "../../graphql/queries";
 import {
   Accordion,
   AccordionContent,
   AccordionItem,
   AccordionTrigger,
-} from "@templates/template-boilerplate/components/ui/accordion";
-import usePage from "@templates/template-boilerplate/lib/usePage";
+} from "@/components/ui/accordion";
+import usePage from "../../lib/usePage";
 import Image from "next/image";
-import {
-  getFileUrl,
-  templateUrl,
-} from "@templates/template-boilerplate/lib/utils";
-import { Button } from "@templates/template-boilerplate/components/ui/button";
+import { getFileUrl, templateUrl } from "@/lib/utils";
+import { Button } from "@/components/ui/button";
 import Link from "next/link";
 type TourDetailPageProps = {
   initialTourId?: string;

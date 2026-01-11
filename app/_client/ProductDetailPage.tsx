@@ -4,38 +4,35 @@ import Link from "next/link";
 import { useMemo, useCallback, useEffect, useState, useRef } from "react";
 import { useParams, useSearchParams } from "next/navigation";
 import { ArrowLeft, CheckCircle2, Heart, Star } from "lucide-react";
-import { Badge } from "@templates/template-boilerplate/components/ui/badge";
-import { Button } from "@templates/template-boilerplate/components/ui/button";
-import {
-  Card,
-  CardContent,
-} from "@templates/template-boilerplate/components/ui/card";
+import { Badge } from "@/components/ui/badge";
+import { Button } from "@/components/ui/button";
+import { Card, CardContent } from "@/components/ui/card";
 import { useMutation, useQuery } from "@apollo/client";
-import { useToast } from "@templates/template-boilerplate/hooks/use-toast";
+import { useToast } from "@/hooks/use-toast";
 import {
   Accordion,
   AccordionContent,
   AccordionItem,
   AccordionTrigger,
-} from "@templates/template-boilerplate/components/ui/accordion";
+} from "@/components/ui/accordion";
 import {
   useProductAverageReviewQuery,
   useProductDetailQuery,
   useProductSimilaritiesQuery,
-} from "@templates/template-boilerplate/graphql/products";
+} from "../../graphql/products";
 import type {
   ProductDetail,
   ProductReviewSummary,
   ProductReviewsData,
   ProductSummary,
-} from "@templates/template-boilerplate/graphql/products/types";
-import { useCart } from "@templates/template-boilerplate/lib/CartContext";
-import authQueries from "@templates/template-boilerplate/graphql/auth/queries";
-import productMutations from "@templates/template-boilerplate/graphql/products/mutations";
-import ecommerceQueries from "@templates/template-boilerplate/graphql/ecommerce/queries";
-import ecommerceMutations from "@templates/template-boilerplate/graphql/ecommerce/mutations";
-import { templateUrl } from "@templates/template-boilerplate/lib/utils";
-import { isBuildMode } from "@templates/template-boilerplate/lib/buildMode";
+} from "../../graphql/products/types";
+import { useCart } from "../../lib/CartContext";
+import authQueries from "../../graphql/auth/queries";
+import productMutations from "../../graphql/products/mutations";
+import ecommerceQueries from "../../graphql/ecommerce/queries";
+import ecommerceMutations from "../../graphql/ecommerce/mutations";
+import { templateUrl } from "@/lib/utils";
+import { isBuildMode } from "../../lib/buildMode";
 import {
   ProductReviews,
   type ProductReview,

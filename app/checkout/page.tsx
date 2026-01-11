@@ -12,21 +12,21 @@ import {
   CardFooter,
   CardHeader,
   CardTitle,
-} from "@templates/template-boilerplate/components/ui/card";
-import { Button } from "@templates/template-boilerplate/components/ui/button";
-import { Badge } from "@templates/template-boilerplate/components/ui/badge";
-import { Input } from "@templates/template-boilerplate/components/ui/input";
-import { Textarea } from "@templates/template-boilerplate/components/ui/textarea";
-import { Label } from "@templates/template-boilerplate/components/ui/label";
-import { Checkbox } from "@templates/template-boilerplate/components/ui/checkbox";
-import { RadioGroup, RadioGroupItem } from "@templates/template-boilerplate/components/ui/radio-group";
-import { useToast } from "@templates/template-boilerplate/hooks/use-toast";
+} from "@/components/ui/card";
+import { Button } from "@/components/ui/button";
+import { Badge } from "@/components/ui/badge";
+import { Input } from "@/components/ui/input";
+import { Textarea } from "@/components/ui/textarea";
+import { Label } from "@/components/ui/label";
+import { Checkbox } from "@/components/ui/checkbox";
+import { RadioGroup, RadioGroupItem } from "@/components/ui/radio-group";
+import { useToast } from "@/hooks/use-toast";
 import { useCart } from "../../lib/CartContext";
 import orderQueries from "../../graphql/order/queries";
 import orderMutations from "../../graphql/order/mutations";
 import authQueries from "../../graphql/auth/queries";
 import { Minus, Plus, Trash2 } from "lucide-react";
-import { templateUrl } from "@templates/template-boilerplate/lib/utils";
+import { templateUrl } from "@/lib/utils";
 import useClientPortal from "@/hooks/useClientPortal";
 
 const STEP_TITLES = ["Review Cart", "Delivery Details", "Confirm & Pay"];

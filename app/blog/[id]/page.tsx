@@ -1,8 +1,8 @@
 import Image from "next/image";
-import { isBuildMode } from "@templates/template-boilerplate/lib/buildMode";
+import { isBuildMode } from "@/lib/buildMode";
 import BlogPostPageClient from "../../_client/BlogPostPage";
-import { fetchCmsPost } from "@templates/template-boilerplate/lib/fetchCms";
-import { getFileUrl } from "@templates/template-boilerplate/lib/utils";
+import { fetchCmsPost } from "@/lib/fetchCms";
+import { getFileUrl } from "@/lib/utils";
 
 type PageProps = {
   params: { id: string };

@@ -1,16 +1,16 @@
 "use client";
 
 import { GET_CMS_POSTS } from "../../graphql/queries";
-import usePage from "@templates/template-boilerplate/lib/usePage";
+import usePage from "../../lib/usePage";
 import { CmsPost } from "../../types/cms";
 import { useQuery } from "@apollo/client";
 import { useParams, useSearchParams } from "next/navigation";
 import React from "react";
-import { Card, CardContent, CardHeader, CardTitle, CardFooter, CardDescription } from "@templates/template-boilerplate/components/ui/card";
+import { Card, CardContent, CardHeader, CardTitle, CardFooter, CardDescription } from "@/components/ui/card";
 import Image from "next/image";
-import { getFileUrl, templateUrl } from "@templates/template-boilerplate/lib/utils";
+import { getFileUrl, templateUrl } from "@/lib/utils";
 import Link from "next/link";
-import { Button } from "@templates/template-boilerplate/components/ui/button";
+import { Button } from "@/components/ui/button";
 
 const BlogsPage = () => {
   const searchParams = useSearchParams();

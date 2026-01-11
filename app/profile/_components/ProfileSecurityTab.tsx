@@ -1,9 +1,9 @@
 "use client";
 
 import { FormEvent } from "react";
-import { Label } from "@templates/template-boilerplate/components/ui/label";
-import { Input } from "@templates/template-boilerplate/components/ui/input";
-import { Button } from "@templates/template-boilerplate/components/ui/button";
+import { Label } from "@/components/ui/label";
+import { Input } from "@/components/ui/input";
+import { Button } from "@/components/ui/button";
 
 type PasswordForm = {
   currentPassword: string;

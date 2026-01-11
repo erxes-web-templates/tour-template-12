@@ -1,4 +1,4 @@
-import { Section } from "@templates/template-boilerplate/types/sections";
+import { Section } from "@/types/sections";
 import React from "react";
 
 const YoutubeSection = ({ section }: { section: Section }) => {

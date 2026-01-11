@@ -6,7 +6,7 @@ import Link from "next/link";
 import { Section } from "../../../types/sections";
 import authQueries from "../../../graphql/auth/queries";
 import orderQueries from "../../../graphql/order/queries";
-import { getFileUrl, templateUrl } from "@templates/template-boilerplate/lib/utils";
+import { getFileUrl, templateUrl } from "@/lib/utils";
 import EmptyState from "@/components/common/EmptyState";
 import {
   Card,
@@ -15,8 +15,8 @@ import {
   CardFooter,
   CardHeader,
   CardTitle,
-} from "@templates/template-boilerplate/components/ui/card";
-import { Button } from "@templates/template-boilerplate/components/ui/button";
+} from "@/components/ui/card";
+import { Button } from "@/components/ui/button";
 
 type ViewedProduct = {
   _id: string;

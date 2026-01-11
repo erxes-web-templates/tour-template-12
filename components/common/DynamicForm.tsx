@@ -3,10 +3,10 @@ import React, { useEffect, useState } from "react";
 import { useForm } from "react-hook-form";
 import { z } from "zod";
 import { zodResolver } from "@hookform/resolvers/zod";
-import { Input } from "@templates/template-boilerplate/components/ui/input";
-import { Textarea } from "@templates/template-boilerplate/components/ui/textarea";
-import { Checkbox } from "@templates/template-boilerplate/components/ui/checkbox";
-import { Button } from "@templates/template-boilerplate/components/ui/button";
+import { Input } from "@/components/ui/input";
+import { Textarea } from "@/components/ui/textarea";
+import { Checkbox } from "@/components/ui/checkbox";
+import { Button } from "@/components/ui/button";
 import {
   Form,
   FormControl,
@@ -15,19 +15,19 @@ import {
   FormItem,
   FormLabel,
   FormMessage,
-} from "@templates/template-boilerplate/components/ui/form";
-import { Card, CardContent, CardHeader, CardTitle } from "@templates/template-boilerplate/components/ui/card";
+} from "@/components/ui/form";
+import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import PhoneInput from "react-phone-input-2";
 import "react-phone-input-2/lib/style.css";
 import {
   Popover,
   PopoverContent,
   PopoverTrigger,
-} from "@templates/template-boilerplate/components/ui/popover";
+} from "@/components/ui/popover";
 import { format } from "date-fns";
 import { CalendarIcon } from "lucide-react";
-import { Calendar } from "@templates/template-boilerplate/components/ui/calendar";
-import { cn } from "@templates/template-boilerplate/lib/utils";
+import { Calendar } from "@/components/ui/calendar";
+import { cn } from "@/lib/utils";
 // Define the field interface based on the JSON structure
 interface FormField {
   _id: string;

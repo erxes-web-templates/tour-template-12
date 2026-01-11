@@ -12,12 +12,12 @@ import {
   CardFooter,
   CardHeader,
   CardTitle,
-} from "@templates/template-boilerplate/components/ui/card";
-import { Input } from "@templates/template-boilerplate/components/ui/input";
-import { Label } from "@templates/template-boilerplate/components/ui/label";
-import { Button } from "@templates/template-boilerplate/components/ui/button";
-import { useToast } from "@templates/template-boilerplate/hooks/use-toast";
-import { templateUrl } from "@templates/template-boilerplate/lib/utils";
+} from "@/components/ui/card";
+import { Input } from "@/components/ui/input";
+import { Label } from "@/components/ui/label";
+import { Button } from "@/components/ui/button";
+import { useToast } from "@/hooks/use-toast";
+import { templateUrl } from "@/lib/utils";
 
 type LoginResponse =
   | {

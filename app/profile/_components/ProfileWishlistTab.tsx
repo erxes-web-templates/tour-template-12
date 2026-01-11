@@ -7,9 +7,9 @@ import {
   CardFooter,
   CardHeader,
   CardTitle,
-} from "@templates/template-boilerplate/components/ui/card";
-import { Button } from "@templates/template-boilerplate/components/ui/button";
-import { getFileUrl, templateUrl } from "@templates/template-boilerplate/lib/utils";
+} from "@/components/ui/card";
+import { Button } from "@/components/ui/button";
+import { getFileUrl, templateUrl } from "@/lib/utils";
 import Link from "next/link";
 
 type WishlistItem = {

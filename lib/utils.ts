@@ -1,6 +1,7 @@
 import { clsx, type ClassValue } from "clsx";
 // import { useParams } from "next/navigation";
 import { twMerge } from "tailwind-merge";
+import { isBuildMode } from "./buildMode";
 
 export function cn(...inputs: ClassValue[]) {
   return twMerge(clsx(inputs));
@@ -50,6 +51,15 @@ export const getFileUrl = (url: string) => {
 };
 
 export const templateUrl = (slug: string) => {
+  if (!isBuildMode()) {
+    if (slug === "#") {
+      return "#";
+    }
+
+    const normalized = slug.startsWith("/") ? slug : `/${slug}`;
+    return normalized === "/home" ? "/" : normalized;
+  }
+
   if (typeof window !== "undefined") {
     if (slug === "#") {
       return "#";

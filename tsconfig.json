@@ -24,11 +24,8 @@
       }
     ],
     "paths": {
-      "@templates/template-boilerplate/*": [
-        "./*"
-      ],
       "@/*": [
-        "../web-builder/src/*"
+        "./*"
       ]
     }
   },

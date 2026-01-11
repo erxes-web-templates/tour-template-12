@@ -1,18 +1,18 @@
 import Image from "next/image";
 import Link from "next/link";
-import { isBuildMode } from "@templates/template-boilerplate/lib/buildMode";
+import { isBuildMode } from "@/lib/buildMode";
 import TourDetailPageClient from "../../_client/TourDetailPage";
 import {
   fetchBmTourDetail,
   fetchBmToursGroup,
-} from "@templates/template-boilerplate/lib/fetchTours";
-import { getFileUrl } from "@templates/template-boilerplate/lib/utils";
+} from "@/lib/fetchTours";
+import { getFileUrl } from "@/lib/utils";
 import {
   Accordion,
   AccordionContent,
   AccordionItem,
   AccordionTrigger,
-} from "@templates/template-boilerplate/components/ui/accordion";
+} from "@/components/ui/accordion";
 
 type PageProps = {
   params: { id: string };

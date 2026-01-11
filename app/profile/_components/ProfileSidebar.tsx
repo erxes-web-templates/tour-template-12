@@ -1,6 +1,6 @@
 "use client";
 
-import { cn } from "@templates/template-boilerplate/lib/utils";
+import { cn } from "@/lib/utils";
 
 type SidebarItem = {
   id: string;

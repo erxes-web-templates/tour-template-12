@@ -2,9 +2,9 @@ import {
   GET_CMS_MENU_LIST,
   GET_CMS_POST,
   GET_CMS_POSTS,
-} from "@templates/template-boilerplate/graphql/queries";
+} from "../graphql/queries";
 import { getClient } from "./client";
-import type { CmsMenuList, CmsMenuListVariables } from "@templates/template-boilerplate/types/cms";
+import type { CmsMenuList, CmsMenuListVariables } from "@/types/cms";
 
 export async function fetchMenuList(cpId: string, kind: string) {
   const client = getClient();

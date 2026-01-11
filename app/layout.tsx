@@ -1,10 +1,10 @@
 import type { Metadata } from "next";
 import "./globals.css";
-import data from "@templates/template-boilerplate/data/configs.json";
+import data from "@/data/configs.json";
 import ClientShell from "./_components/ClientShell";
-import { fetchCpConfig } from "@templates/template-boilerplate/lib/fetchCpConfig";
-import { isBuildMode } from "@templates/template-boilerplate/lib/buildMode";
-import type { CPDetail } from "@templates/template-boilerplate/types/cms";
+import { fetchCpConfig } from "@/lib/fetchCpConfig";
+import { isBuildMode } from "@/lib/buildMode";
+import type { CPDetail } from "@/types/cms";
 
 export const metadata: Metadata = {
   title: data.meta.title,

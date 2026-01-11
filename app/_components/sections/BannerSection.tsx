@@ -3,8 +3,8 @@
 import Link from "next/link";
 import Image from "next/image";
 import { Section } from "../../../types/sections";
-import { getFileUrl, templateUrl } from "@templates/template-boilerplate/lib/utils";
-import { Card, CardFooter } from "@templates/template-boilerplate/components/ui/card";
+import { getFileUrl, templateUrl } from "@/lib/utils";
+import { Card, CardFooter } from "@/components/ui/card";
 
 type LinkType = "product" | "productCategory" | "productTag" | "external";
 

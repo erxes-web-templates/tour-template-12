@@ -1,6 +1,6 @@
-// import { TOUR_DETAIL_QUERY, TOURS_QUERY } from "@templates/template-boilerplate/graphql/queries";
+// import { TOUR_DETAIL_QUERY, TOURS_QUERY } from "../../graphql/queries";
 // import { getClient } from "./client";
-// import { BmTourDetail, BmTourDetailVariables, BmToursData } from "@templates/template-boilerplate/types/tours";
+// import { BmTourDetail, BmTourDetailVariables, BmToursData } from "@/types/tours";
 
 // export async function fetchBmTours() {
 //   const client = getClient();

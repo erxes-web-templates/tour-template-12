@@ -1,17 +1,17 @@
 "use client";
 
 import Script from "next/script";
-import { ApolloWrapper } from "@templates/template-boilerplate/lib/apollo-wrapper";
-import { CartProvider } from "@templates/template-boilerplate/lib/CartContext";
+import { ApolloWrapper } from "@/lib/apollo-wrapper";
+import { CartProvider } from "@/lib/CartContext";
 import Header from "./Header";
 import Footer from "./Footer";
 import {
   Alert,
   AlertDescription,
   AlertTitle,
-} from "@templates/template-boilerplate/components/ui/alert";
-import { getEnv } from "@templates/template-boilerplate/lib/utils";
-import type { CPDetail } from "@templates/template-boilerplate/types/cms";
+} from "@/components/ui/alert";
+import { getEnv } from "@/lib/utils";
+import type { CPDetail } from "@/types/cms";
 
 type ClientShellProps = {
   children: React.ReactNode;

@@ -1,12 +1,12 @@
 "use client";
 
-import { GET_CMS_POST } from "@templates/template-boilerplate/graphql/queries";
-import usePage from "@templates/template-boilerplate/lib/usePage";
+import { GET_CMS_POST } from "../../graphql/queries";
+import usePage from "../../lib/usePage";
 import { useSearchParams } from "next/navigation";
 import React from "react";
 import { useQuery } from "@apollo/client";
 import Image from "next/image";
-import { getFileUrl } from "@templates/template-boilerplate/lib/utils";
+import { getFileUrl } from "@/lib/utils";
 
 type PostDetailPageProps = {
   initialPostId?: string;

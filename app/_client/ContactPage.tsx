@@ -2,7 +2,7 @@
 
 import type React from "react";
 import { useSearchParams } from "next/navigation";
-import usePage from "@templates/template-boilerplate/lib/usePage";
+import usePage from "../../lib/usePage";
 
 export default function ContactPage() {
   const searchParams = useSearchParams();

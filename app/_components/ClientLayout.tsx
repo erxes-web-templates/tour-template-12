@@ -25,12 +25,12 @@ import dynamic from "next/dynamic";
 import { useEffect, useState } from "react";
 import PageLoader from "@/components/common/PageLoader";
 import Script from "next/script";
-import { getEnv } from "@templates/template-boilerplate/lib/utils";
+import { getEnv } from "@/lib/utils";
 import InquiryPage from "../inquiry/page";
 import CheckoutPage from "../checkout/page";
 import { CartProvider } from "../../lib/CartContext";
 import PaymentPage from "../payment/page";
-import { Alert, AlertDescription, AlertTitle } from "@templates/template-boilerplate/components/ui/alert";
+import { Alert, AlertDescription, AlertTitle } from "@/components/ui/alert";
 
 const standardComponentRegistry = {
   home: TourBoilerPlateHome,

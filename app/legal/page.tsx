@@ -1,9 +1,9 @@
 "use client";
 
 import { useState, useEffect } from "react";
-import { Card } from "@templates/template-boilerplate/components/ui/card";
-import { Separator } from "@templates/template-boilerplate/components/ui/separator";
-import { Tabs, TabsContent, TabsList, TabsTrigger } from "@templates/template-boilerplate/components/ui/tabs";
+import { Card } from "@/components/ui/card";
+import { Separator } from "@/components/ui/separator";
+import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { ArrowUp, FileText, Shield, AlertCircle } from "lucide-react";
 
 export default function LegalPage() {

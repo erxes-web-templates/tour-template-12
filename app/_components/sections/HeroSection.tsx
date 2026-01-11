@@ -1,9 +1,9 @@
 import React from "react";
 import { Section } from "../../../types/sections";
-import { Button } from "@templates/template-boilerplate/components/ui/button";
+import { Button } from "@/components/ui/button";
 import Image from "next/image";
 import Link from "next/link";
-import { getFileUrl, templateUrl } from "@templates/template-boilerplate/lib/utils";
+import { getFileUrl, templateUrl } from "@/lib/utils";
 const HeroSection = ({ section }: { section: Section }) => {
   return (
     <section className="relative h-[600px]">

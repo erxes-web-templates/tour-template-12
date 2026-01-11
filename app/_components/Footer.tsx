@@ -1,8 +1,8 @@
 import { CPDetail, MenuItem } from "../../types/cms";
 import { useQuery } from "@apollo/client";
 import Link from "next/link";
-import { GET_MENUS } from "@/app/dashboard/projects/_graphql/queries";
-import { templateUrl } from "@templates/template-boilerplate/lib/utils";
+import { GET_CMS_MENU_LIST } from "../../graphql/queries";
+import { templateUrl } from "@/lib/utils";
 import {
   Twitter,
   Linkedin,
@@ -13,7 +13,7 @@ import {
 } from "lucide-react";
 
 export default function Footer({ cpDetail }: { cpDetail: CPDetail }) {
-  const { data } = useQuery(GET_MENUS, {
+  const { data } = useQuery(GET_CMS_MENU_LIST, {
     variables: {
       clientPortalId: cpDetail._id,
       kind: "footer",

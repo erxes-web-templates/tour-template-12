@@ -5,11 +5,11 @@ import { useQuery } from "@apollo/client";
 import Link from "next/link";
 import Image from "next/image";
 import React from "react";
-import { Card, CardContent, CardHeader, CardTitle, CardFooter, CardDescription } from "@templates/template-boilerplate/components/ui/card";
-import { Button } from "@templates/template-boilerplate/components/ui/button";
-import { getFileUrl, templateUrl } from "@templates/template-boilerplate/lib/utils";
+import { Card, CardContent, CardHeader, CardTitle, CardFooter, CardDescription } from "@/components/ui/card";
+import { Button } from "@/components/ui/button";
+import { getFileUrl, templateUrl } from "@/lib/utils";
 import { useSearchParams } from "next/navigation";
-import usePage from "@templates/template-boilerplate/lib/usePage";
+import usePage from "../../lib/usePage";
 import { BmTour } from "../../types/tours";
 const ToursPage = () => {
   const searchParams = useSearchParams();

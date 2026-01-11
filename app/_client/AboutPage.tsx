@@ -1,6 +1,6 @@
 "use client";
 
-import usePage from "@templates/template-boilerplate/lib/usePage";
+import usePage from "../../lib/usePage";
 import { useSearchParams } from "next/navigation";
 import React from "react";
 

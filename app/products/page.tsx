@@ -1,9 +1,9 @@
-import { isBuildMode } from "@templates/template-boilerplate/lib/buildMode";
+import { isBuildMode } from "@/lib/buildMode";
 import ProductsPageClient from "../_client/ProductsPage";
 import {
   fetchProductCategories,
   fetchProducts,
-} from "@templates/template-boilerplate/graphql/products/server";
+} from "../../graphql/products/server";
 
 export default async function ProductsPage() {
   if (isBuildMode()) {

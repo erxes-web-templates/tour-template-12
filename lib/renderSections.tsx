@@ -1,5 +1,5 @@
 import React from "react";
-import type { Section } from "@templates/template-boilerplate/types/sections";
+import type { Section } from "@/types/sections";
 
 type KnownSectionType =
   | "hero"
