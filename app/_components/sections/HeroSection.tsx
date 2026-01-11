@@ -5,7 +5,14 @@ import Image from "next/image";
 import Link from "next/link";
 import { getFileUrl, templateUrl } from "@/lib/utils";
 import { toHtml } from "../../../lib/html";
+import { isBuildMode } from "../../../lib/buildMode";
 const HeroSection = ({ section }: { section: Section }) => {
+  const isBuilder = isBuildMode();
+  const ctaHref = section.config.primaryCtaUrl
+    ? isBuilder
+      ? templateUrl(section.config.primaryCtaUrl)
+      : section.config.primaryCtaUrl
+    : "#";
   return (
     <section className="relative h-[600px]">
       {section.config.image && (
@@ -26,7 +33,7 @@ const HeroSection = ({ section }: { section: Section }) => {
             dangerouslySetInnerHTML={toHtml(section.config.description)}
           ></p>
           {section.config.primaryCtaUrl && (
-            <Link href={templateUrl(section.config.primaryCtaUrl)}>
+            <Link href={ctaHref}>
               <Button size="lg" variant="secondary">
                 {section.config.primaryCta}
               </Button>

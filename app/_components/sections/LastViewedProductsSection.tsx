@@ -7,6 +7,7 @@ import { Section } from "../../../types/sections";
 import authQueries from "../../../graphql/auth/queries";
 import orderQueries from "../../../graphql/order/queries";
 import { getFileUrl, templateUrl } from "@/lib/utils";
+import { isBuildMode } from "../../../lib/buildMode";
 import EmptyState from "@/components/common/EmptyState";
 import {
   Card,
@@ -45,6 +46,7 @@ const LastViewedProductsSection = ({ section }: { section: Section }) => {
   const description = section.config?.description ?? "";
   const limit = Math.max(1, Number(section.config?.limit ?? 6));
   const fallbackCustomerId: string | null = section.config?.customerId ?? null;
+  const isBuilder = isBuildMode();
 
   const { data: userData } = useQuery(authQueries.currentUser);
   const resolvedCustomerId =
@@ -161,11 +163,19 @@ const LastViewedProductsSection = ({ section }: { section: Section }) => {
                   <CardFooter className="mt-auto justify-end gap-2 border-t bg-muted/40 p-4">
                     <Button asChild variant="outline" size="sm">
                       <Link
-                        href={templateUrl(
-                          `/products${
-                            product?._id ? `?highlight=${product._id}` : ""
-                          }`
-                        )}
+                        href={
+                          isBuilder
+                            ? templateUrl(
+                                `/products${
+                                  product?._id
+                                    ? `?highlight=${product._id}`
+                                    : ""
+                                }`
+                              )
+                            : product?._id
+                            ? `/products?highlight=${product._id}`
+                            : "/products"
+                        }
                       >
                         View product
                       </Link>

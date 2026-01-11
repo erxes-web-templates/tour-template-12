@@ -15,6 +15,7 @@ import Link from "next/link";
 import { useQuery } from "@apollo/client";
 import { GET_CMS_POSTS } from "../../../graphql/queries";
 import { getFileUrl, templateUrl } from "@/lib/utils";
+import { isBuildMode } from "../../../lib/buildMode";
 import { toHtml } from "../../../lib/html";
 import { Section } from "../../../types/sections";
 import { useParams } from "next/navigation";
@@ -33,6 +34,7 @@ const CmsPostsSection = ({ section }: { section: Section }) => {
   });
 
   const posts = data?.cmsPosts || [];
+  const isBuilder = isBuildMode();
 
   return (
     <section className="py-16 bg-gray-100">
@@ -62,9 +64,11 @@ const CmsPostsSection = ({ section }: { section: Section }) => {
               </CardContent>
               <CardFooter className="flex justify-between items-center">
                 <Link
-                  href={templateUrl(
-                    `/post&postId=${post._id}&slug=${post.slug}`
-                  )}
+                  href={
+                    isBuilder
+                      ? templateUrl(`/post&postId=${post._id}&slug=${post.slug}`)
+                      : `/blog/${post._id}`
+                  }
                 >
                   {" "}
                   <Button>Read more</Button>
@@ -74,7 +78,10 @@ const CmsPostsSection = ({ section }: { section: Section }) => {
           ))}
         </div>
         <div className=" text-center mt-6 ">
-          <Link className="underline" href={templateUrl("/blogs")}>
+          <Link
+            className="underline"
+            href={isBuilder ? templateUrl("/blogs") : "/blog"}
+          >
             Show All blogs
           </Link>
         </div>
