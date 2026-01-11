@@ -16,6 +16,7 @@ import {
   templateUrl,
   // templateUrlWithSlug,
 } from "@/lib/utils";
+import { toHtml } from "@/lib/html";
 import { Section } from "../../../types/sections";
 import { BmTour } from "../../../types/tours";
 import Image from "next/image";
@@ -59,7 +60,7 @@ const ToursSection = ({ section }: { section: Section }) => {
                 <CardTitle>{tour.items[0].name}</CardTitle>
                 <CardDescription>
                   <p
-                    dangerouslySetInnerHTML={{ __html: tour.items[0].content }}
+                    dangerouslySetInnerHTML={toHtml(tour.items[0].content)}
                   />
                 </CardDescription>
               </CardContent>

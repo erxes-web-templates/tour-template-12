@@ -9,6 +9,7 @@ import {
 } from "../../../graphql/products";
 import { Section } from "../../../types/sections";
 import { templateUrl } from "@/lib/utils";
+import { toHtml } from "@/lib/html";
 import {
   Card,
   CardContent,
@@ -234,9 +235,9 @@ const ProductsSection = ({ section }: { section: Section }) => {
                       </CardTitle>
                       <CardDescription className="mt-2 line-clamp-2 text-sm">
                         <span
-                          dangerouslySetInnerHTML={{
-                            __html: product?.description ?? "",
-                          }}
+                          dangerouslySetInnerHTML={toHtml(
+                            product?.description ?? ""
+                          )}
                         ></span>
                       </CardDescription>
                     </div>

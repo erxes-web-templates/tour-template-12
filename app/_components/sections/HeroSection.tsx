@@ -4,6 +4,7 @@ import { Button } from "@/components/ui/button";
 import Image from "next/image";
 import Link from "next/link";
 import { getFileUrl, templateUrl } from "@/lib/utils";
+import { toHtml } from "@/lib/html";
 const HeroSection = ({ section }: { section: Section }) => {
   return (
     <section className="relative h-[600px]">
@@ -22,7 +23,7 @@ const HeroSection = ({ section }: { section: Section }) => {
           <h1 className="text-5xl font-bold mb-4">{section.config.title}</h1>
           <p
             className="text-xl mb-8"
-            dangerouslySetInnerHTML={{ __html: section.config.description }}
+            dangerouslySetInnerHTML={toHtml(section.config.description)}
           ></p>
           {section.config.primaryCtaUrl && (
             <Link href={templateUrl(section.config.primaryCtaUrl)}>
