@@ -1,3 +1,5 @@
+"use client";
+
 import React, { useState } from "react";
 import { Section } from "../../../types/sections";
 import { Card, CardContent } from "@/components/ui/card";

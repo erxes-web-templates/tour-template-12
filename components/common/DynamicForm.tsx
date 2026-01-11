@@ -1,4 +1,7 @@
+"use client";
+
 /* eslint-disable */
+
 import React, { useEffect, useState } from "react";
 import { useForm } from "react-hook-form";
 import { z } from "zod";
@@ -561,7 +564,6 @@ const DynamicForm: React.FC<DynamicFormProps> = ({
                           </FormLabel>
                           {description && (
                             <FormDescription>
-                              {" "}
                               <span
                                 dangerouslySetInnerHTML={{
                                   __html: description,

@@ -5,11 +5,7 @@ import { ApolloWrapper } from "@/lib/apollo-wrapper";
 import { CartProvider } from "@/lib/CartContext";
 import Header from "./Header";
 import Footer from "./Footer";
-import {
-  Alert,
-  AlertDescription,
-  AlertTitle,
-} from "@/components/ui/alert";
+import { Alert, AlertDescription, AlertTitle } from "@/components/ui/alert";
 import { getEnv } from "@/lib/utils";
 import type { CPDetail } from "@/types/cms";
 
@@ -31,7 +27,7 @@ export default function ClientShell({ children, cpDetail }: ClientShellProps) {
 
   return (
     <ApolloWrapper>
-      {missingPosToken && (
+      {/* {missingPosToken && (
         <div className="bg-amber-50 border-b border-amber-200">
           <div className="mx-auto max-w-6xl px-4 py-4">
             <Alert
@@ -48,7 +44,7 @@ export default function ClientShell({ children, cpDetail }: ClientShellProps) {
             </Alert>
           </div>
         </div>
-      )}
+      )} */}
       {cpDetail?.messengerBrandCode && baseUrl && (
         <Script
           id="erxes"
