@@ -23,7 +23,7 @@ const BlogsPage = () => {
     variables: {
       perPage: 10,
       page: 1,
-      clientPortalId: params.id,
+      clientPortalId: params.id || process.env.ERXES_CP_ID,
     },
   });
 

@@ -60,7 +60,7 @@ export default function Header({ cpDetail }: { cpDetail: CPDetail }) {
 
   const { data } = useQuery(GET_CMS_MENU_LIST, {
     variables: {
-      clientPortalId: params.id,
+      clientPortalId: params.id || process.env.ERXES_CP_ID,
       kind: "main",
     },
   });
