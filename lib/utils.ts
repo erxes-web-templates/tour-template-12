@@ -43,6 +43,9 @@ export const getEnv = (): any => {
 
 export const getFileUrl = (url: string) => {
   if (!url) return "";
+  if (!isBuildMode()) {
+    return `${process.env.ERXES_FILE_URL}${url}`;
+  }
   if (typeof window === "undefined") {
     return `${process.env.NEXT_PUBLIC_API_DOMAIN}/read-file?key=${url}`;
   }

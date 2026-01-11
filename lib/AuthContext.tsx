@@ -9,6 +9,7 @@ import {
 } from "react";
 import { gql, useQuery } from "@apollo/client";
 import { useRouter } from "next/navigation";
+import PageLoader from "../components/common/PageLoader";
 
 interface User {
   _id: string;
@@ -67,7 +68,7 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
   // }, [data, error, loading, router]);
 
   if (loading) {
-    return <div>Loading...123</div>;
+    return <PageLoader />;
   }
 
   return (
