@@ -66,7 +66,7 @@ export default function ClientBoilerplateLayout() {
 
   const { data, loading } = useQuery(GET_CMS_PAGES, {
     variables: {
-      clientPortalId: params.id,
+      clientPortalId: params.id || process.env.ERXES_CP_ID,
     },
   });
 

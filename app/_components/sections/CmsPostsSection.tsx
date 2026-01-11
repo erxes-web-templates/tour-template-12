@@ -25,7 +25,7 @@ const CmsPostsSection = ({ section }: { section: Section }) => {
     variables: {
       perPage: section.config.perPage,
       page: 1,
-      clientPortalId: params.id,
+      clientPortalId: params.id || process.env.ERXES_CP_ID,
       categoryId: section.config.categoryId,
     },
   });
