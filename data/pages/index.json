@@ -1,23 +1,63 @@
 {
-  "title": "Hom title",
-  "description": "This is the home page",
-  "coverImage": "https://www.google.com/images/branding/googlelogo/1x/googlelogo_color_272x92dp.png",
+  "title": "home",
+  "description": "home",
   "pageItems": [
     {
-      "config": {},
       "type": "hero",
-      "content": "",
+      "content": "Welcome to Adventure Awaits!",
       "order": 0,
-      "contentType": "cms:posts",
-      "contentTypeId": "5d9b1b3b1c9d440000f3f3b4"
+      "contentType": "imageText",
+      "contentTypeId": "",
+      "config": {
+        "image": {
+          "file": {
+            "path": "./MeetMongolia Tripadvisor (1).jpg",
+            "relativePath": "./MeetMongolia Tripadvisor (1).jpg"
+          },
+          "url": "erxes-saas/ZkzEYXlRPY5hiAgmRWHSoMeetMongolia Tripadvisor (1).jpg"
+        },
+        "title": " ",
+        "description": "<p>.</p>",
+        "primaryCta": "",
+        "primaryCtaUrl": ""
+      }
     },
     {
-      "config": {},
-      "type": "content",
-      "content": "",
+      "type": "tours",
+      "content": "tours",
       "order": 1,
-      "contentType": "cms:page",
-      "contentTypeId": "5d9b1b3b1c9d440000f3f3b4"
+      "contentType": "bm:tours",
+      "contentTypeId": "bm:tours",
+      "config": { "limit": 6 }
+    },
+    {
+      "type": "youtube",
+      "content": "",
+      "order": 2,
+      "contentType": "youtube",
+      "contentTypeId": "",
+      "config": { "videoUrl": "https://www.youtube.com/watch?v=GNoN2S1HlFE" }
+    },
+    {
+      "type": "imageText",
+      "content": "About Us",
+      "order": 3,
+      "contentType": "imageText",
+      "contentTypeId": "",
+      "config": {
+        "image": {
+          "file": {
+            "path": "./Photo by Tungalagbaatar (7) (1).jpg",
+            "relativePath": "./Photo by Tungalagbaatar (7) (1).jpg"
+          },
+          "url": "erxes-saas/9qMkhPQMNfF2ndrlMWICaPhoto by Tungalagbaatar (7) (1).jpg"
+        },
+        "title": "Who We Are",
+        "description": "<ul><li><p><span style=\"color: rgb(55, 65, 81)\">Explore the heart of Mongolia with your travel friend and expert “Meet Mongolia Join Tour” LLC.&nbsp; We extend a heartfelt welcome to adventurers, explorers, and those seeking unique cultural experiences. Immerse yourself in the rich tapestry of Mongolian traditions, breathtaking landscapes, and the legendary hospitality of the nomadic people.</span></p></li><li><p><span style=\"color: rgb(55, 65, 81)\">At www.meetmongolia.com, we curate unforgettable journeys that allow you to delve into the soul of Mongolia. From the vast expanse of the Gobi Desert to the pristine beauty of Khuvsgul Lake, our tours are crafted to provide authentic encounters, captivating adventures, and a deep appreciation for Mongolia's natural wonders and cultural heritage.</span></p></li><li><p><span style=\"color: rgb(55, 65, 81)\">Embark on a voyage with us, where every moment is a story waiting to be told, and every destination is a chapter in your travel diary. Let the spirit of Mongolia enchant you, and let our expert guides lead you on a remarkable odyssey through this land of boundless horizons.</span></p></li><li><p><span style=\"color: rgb(55, 65, 81)\">Thank you for considering Meet Mongolia Join Tours LLC for your Mongolian adventure. We are thrilled to be a part of your journey.</span></p></li></ul>",
+        "primaryCta": "",
+        "primaryCtaUrl": "",
+        "imagePosition": "left"
+      }
     }
   ]
 }

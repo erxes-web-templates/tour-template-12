@@ -3,6 +3,7 @@ import React from "react";
 import Image from "next/image";
 import { Section } from "../../../types/sections";
 import { getFileUrl, templateUrl } from "@/lib/utils";
+import { toHtml } from "@/lib/html";
 import Link from "next/link";
 
 const AboutSection = ({ section }: { section: Section }) => {
@@ -26,7 +27,10 @@ const AboutSection = ({ section }: { section: Section }) => {
             </div>
           )}
           <div className={`w-full md:w-1/2 ${isImageLeft ? "md:pl-8" : "md:pr-8"}`}>
-            <p className="text-lg mb-4" dangerouslySetInnerHTML={{ __html: section.config.description }}></p>
+            <p
+              className="text-lg mb-4"
+              dangerouslySetInnerHTML={toHtml(section.config.description)}
+            ></p>
             {section.config.primaryCtaUrl && (
               <Link href={templateUrl(section.config.primaryCtaUrl)}>
                 <Button>{section.config.primaryCta}</Button>

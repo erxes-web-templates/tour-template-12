@@ -2,7 +2,14 @@
   "cpId": "uWi-qkgaePtkcED5z9Qle",
   "template": "tour",
   "templateId": "tour-template-2",
-  "meta": { "title": "new", "description": "new", "logo": "", "favicon": "", "keywords": "", "author": "tourism" },
+  "meta": {
+    "title": "new",
+    "description": "new",
+    "logo": "",
+    "favicon": "",
+    "keywords": "",
+    "author": "tourism"
+  },
   "appearance": {
     "theme": "light",
     "baseFont": "Roboto, sans-serif",
@@ -16,9 +23,24 @@
       { "label": "About", "url": "about", "icon": "", "parentId": null },
       { "label": "Tours", "url": "tours", "icon": "", "parentId": null },
       { "label": "Login", "url": "login", "icon": "", "parentId": null },
-      { "label": "Child menu 1", "url": "child-menu-1", "icon": "", "parentId": "5wtF9_XNbRSvAz09F9p8p" },
-      { "label": "Child dmenu 2", "url": "child-dmenu-2", "icon": "", "parentId": "5wtF9_XNbRSvAz09F9p8p" },
-      { "label": "Child child menu 1", "url": "child-child-menu-1", "icon": "", "parentId": "mB56hYZWKQeiiJXCaFStQ" }
+      {
+        "label": "Child menu 1",
+        "url": "child-menu-1",
+        "icon": "",
+        "parentId": "5wtF9_XNbRSvAz09F9p8p"
+      },
+      {
+        "label": "Child dmenu 2",
+        "url": "child-dmenu-2",
+        "icon": "",
+        "parentId": "5wtF9_XNbRSvAz09F9p8p"
+      },
+      {
+        "label": "Child child menu 1",
+        "url": "child-child-menu-1",
+        "icon": "",
+        "parentId": "mB56hYZWKQeiiJXCaFStQ"
+      }
     ],
     "footerMenu": []
   },

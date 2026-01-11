@@ -247,7 +247,7 @@ export default function Header({ cpDetail }: { cpDetail: CPDetail }) {
                 onChange={handleInputChange}
                 onFocus={handleFocus}
                 onBlur={handleBlur}
-                placeholder="Search products..."
+                placeholder="Search..."
                 className="w-full pl-10"
               />
               {showSearchResults && (

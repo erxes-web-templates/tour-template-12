@@ -7,6 +7,7 @@ import Link from "next/link";
 import { Button } from "@/components/ui/button";
 import { getFileUrl, templateUrl } from "@/lib/utils";
 import AiPreviewOverlay from "@/components/common/AiPreviewOverlay";
+import { toHtml } from "@/lib/html";
 
 type Section = {
   id?: string | number;
@@ -150,9 +151,7 @@ export default function HeroSectionEditable({ section }: { section: Section }) {
             <h1 className="text-5xl font-bold mb-4">{section.config.title}</h1>
             <p
               className="text-xl mb-8"
-              dangerouslySetInnerHTML={{
-                __html: section.config.description || "",
-              }}
+              dangerouslySetInnerHTML={toHtml(section.config.description)}
             />
             {section.config.primaryCtaUrl && (
               <Link href={templateUrl(section.config.primaryCtaUrl)}>

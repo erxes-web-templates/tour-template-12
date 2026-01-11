@@ -2,6 +2,7 @@ import { Button } from "@/components/ui/button";
 import React from "react";
 import { Section } from "../../../types/sections";
 import { templateUrl } from "@/lib/utils";
+import { toHtml } from "@/lib/html";
 import Link from "next/link";
 
 const TextSection = ({ section }: { section: Section }) => {
@@ -15,7 +16,7 @@ const TextSection = ({ section }: { section: Section }) => {
           <div className={`w-full md:max-w-6xl mx-auto `}>
             <p
               className="text-lg mb-4"
-              dangerouslySetInnerHTML={{ __html: section.config.description }}
+              dangerouslySetInnerHTML={toHtml(section.config.description)}
             ></p>
             {section.config.primaryCtaUrl && (
               <Link href={templateUrl(section.config.primaryCtaUrl)}>
