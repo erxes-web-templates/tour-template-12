@@ -1,8 +1,8 @@
 import Link from "next/link";
 import Image from "next/image";
-import { isBuildMode } from "../../../lib/buildMode";
+import { isBuildMode } from "../../lib/buildMode";
 import ToursPageClient from "../_client/ToursPage";
-import { fetchBmTours } from "@/lib/fetchTours";
+import { fetchBmTours } from "../../lib/fetchTours";
 import {
   Card,
   CardContent,
@@ -20,7 +20,7 @@ export default async function ToursPage() {
     return <ToursPageClient />;
   }
 
-  const data = await fetchBmTours(1, 100, { status: "website" });
+  const data = await fetchBmTours();
   const tours = data?.list || [];
 
   return (

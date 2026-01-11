@@ -7,13 +7,10 @@ interface BmTour {
   viewCount: number;
   name: string;
   itineraryId: string;
+  itinerary: any;
   refNumber: string;
-  itinerary?: {
-    images: string[];
-  };
   images: string[];
   imageThumbnail: string;
-  items: any[];
 }
 
 interface BmToursData {
@@ -33,6 +30,19 @@ interface BmTourDetail {
   startDate: string;
   refNumber: string;
   viewCount: number;
+  itinerary: any;
+  images: string[];
+  imageThumbnail: string;
+  groupCode?: string;
+  items?: BmTour[];
+}
+
+interface BmToursGroupVariables {
+  status: string;
+  branchId?: string;
+  page?: number;
+  perPage?: number;
+  tags?: string[];
 }
 
 interface BmTourDetailVariables {
@@ -40,4 +50,38 @@ interface BmTourDetailVariables {
   branchId?: string;
 }
 
-export type { BmTour, BmToursData, BmTourDetail, BmTourDetailVariables };
+interface BmTourGroupDetailVariables {
+  groupCode: string;
+  status: string;
+}
+
+interface Itinerary {
+  _id: string;
+  images?: any;
+  branchId?: string;
+  content?: string;
+  info1?: string;
+  info2?: string;
+  info3?: string;
+  info4?: string;
+  location?: {
+    lat: number;
+    lng: number;
+    mapId: string;
+    name: string;
+  };
+  name: string;
+  status?: string;
+  totalcost?: number;
+  personCost?: any;
+}
+
+export type {
+  BmTour,
+  BmToursData,
+  BmTourDetail,
+  BmTourDetailVariables,
+  Itinerary,
+  BmToursGroupVariables,
+  BmTourGroupDetailVariables,
+};
