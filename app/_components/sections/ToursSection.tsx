@@ -18,7 +18,7 @@ import {
   templateUrl,
   // templateUrlWithSlug,
 } from "@/lib/utils";
-import { toHtml } from "@/lib/html";
+import { toHtml } from "../../../lib/html";
 import { Section } from "../../../types/sections";
 import { BmTour } from "../../../types/tours";
 import Image from "next/image";

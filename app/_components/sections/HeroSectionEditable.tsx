@@ -7,7 +7,7 @@ import Link from "next/link";
 import { Button } from "@/components/ui/button";
 import { getFileUrl, templateUrl } from "@/lib/utils";
 import AiPreviewOverlay from "@/components/common/AiPreviewOverlay";
-import { toHtml } from "@/lib/html";
+import { toHtml } from "../../../lib/html";
 
 type Section = {
   id?: string | number;

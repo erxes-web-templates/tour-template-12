@@ -4,7 +4,7 @@ import { Button } from "@/components/ui/button";
 import Image from "next/image";
 import Link from "next/link";
 import { getFileUrl, templateUrl } from "@/lib/utils";
-import { toHtml } from "@/lib/html";
+import { toHtml } from "../../../lib/html";
 const HeroSection = ({ section }: { section: Section }) => {
   return (
     <section className="relative h-[600px]">

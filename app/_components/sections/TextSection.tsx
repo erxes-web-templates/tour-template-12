@@ -2,7 +2,7 @@ import { Button } from "@/components/ui/button";
 import React from "react";
 import { Section } from "../../../types/sections";
 import { templateUrl } from "@/lib/utils";
-import { toHtml } from "@/lib/html";
+import { toHtml } from "../../../lib/html";
 import Link from "next/link";
 
 const TextSection = ({ section }: { section: Section }) => {

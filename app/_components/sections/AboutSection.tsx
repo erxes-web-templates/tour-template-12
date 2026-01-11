@@ -3,7 +3,7 @@ import React from "react";
 import Image from "next/image";
 import { Section } from "../../../types/sections";
 import { getFileUrl, templateUrl } from "@/lib/utils";
-import { toHtml } from "@/lib/html";
+import { toHtml } from "../../../lib/html";
 import Link from "next/link";
 
 const AboutSection = ({ section }: { section: Section }) => {
