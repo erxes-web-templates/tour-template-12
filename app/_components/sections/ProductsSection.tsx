@@ -9,7 +9,7 @@ import {
 } from "../../../graphql/products";
 import { Section } from "../../../types/sections";
 import { templateUrl } from "@/lib/utils";
-import { toHtml } from "@/lib/html";
+import { toHtml } from "../../../lib/html";
 import {
   Card,
   CardContent,

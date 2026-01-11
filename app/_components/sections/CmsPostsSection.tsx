@@ -13,7 +13,7 @@ import Link from "next/link";
 import { useQuery } from "@apollo/client";
 import { GET_CMS_POSTS } from "../../../graphql/queries";
 import { getFileUrl, templateUrl } from "@/lib/utils";
-import { toHtml } from "@/lib/html";
+import { toHtml } from "../../../lib/html";
 import { Section } from "../../../types/sections";
 import { useParams } from "next/navigation";
 import { CmsPost } from "../../../types/cms";
