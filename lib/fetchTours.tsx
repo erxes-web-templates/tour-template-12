@@ -3,7 +3,7 @@ import {
   TOUR_GROUP_DETAIL_QUERY,
   TOURS_GROUP_QUERY,
   TOURS_QUERY,
-} from "@/graphql/queries";
+} from "../graphql/queries";
 import { getClient } from "./client";
 import {
   BmTourDetail,
@@ -11,7 +11,7 @@ import {
   BmTourGroupDetailVariables,
   BmToursData,
   BmToursGroupVariables,
-} from "@/types/tours";
+} from "../types/tours";
 
 export async function fetchBmTours(
   page: number,

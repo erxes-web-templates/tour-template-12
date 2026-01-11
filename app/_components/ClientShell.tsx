@@ -1,13 +1,13 @@
 "use client";
 
 import Script from "next/script";
-import { ApolloWrapper } from "@/lib/apollo-wrapper";
-import { CartProvider } from "@/lib/CartContext";
+import { ApolloWrapper } from "../../lib/apollo-wrapper";
+import { CartProvider } from "../../lib/CartContext";
 import Header from "./Header";
 import Footer from "./Footer";
 import { Alert, AlertDescription, AlertTitle } from "@/components/ui/alert";
 import { getEnv } from "@/lib/utils";
-import type { CPDetail } from "@/types/cms";
+import type { CPDetail } from "../../types/cms";
 
 type ClientShellProps = {
   children: React.ReactNode;

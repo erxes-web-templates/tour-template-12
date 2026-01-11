@@ -1,8 +1,8 @@
 import Image from "next/image";
 import { isBuildMode } from "../../../lib/buildMode";
 import BlogPostPageClient from "../../_client/BlogPostPage";
-import { fetchCmsPost } from "@/lib/fetchCms";
-import { getFileUrl } from "@/lib/utils";
+import { fetchCmsPost } from "../../../lib/fetchCms";
+import { getFileUrl } from "../../../lib/utils";
 
 type PageProps = {
   params: { id: string };

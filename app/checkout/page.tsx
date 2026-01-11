@@ -12,22 +12,22 @@ import {
   CardFooter,
   CardHeader,
   CardTitle,
-} from "@/components/ui/card";
-import { Button } from "@/components/ui/button";
-import { Badge } from "@/components/ui/badge";
-import { Input } from "@/components/ui/input";
-import { Textarea } from "@/components/ui/textarea";
-import { Label } from "@/components/ui/label";
-import { Checkbox } from "@/components/ui/checkbox";
-import { RadioGroup, RadioGroupItem } from "@/components/ui/radio-group";
-import { useToast } from "@/hooks/use-toast";
+} from "../../components/ui/card";
+import { Button } from "../../components/ui/button";
+import { Badge } from "../../components/ui/badge";
+import { Input } from "../../components/ui/input";
+import { Textarea } from "../../components/ui/textarea";
+import { Label } from "../../components/ui/label";
+import { Checkbox } from "../../components/ui/checkbox";
+import { RadioGroup, RadioGroupItem } from "../../components/ui/radio-group";
+import { useToast } from "../../hooks/use-toast";
 import { useCart } from "../../lib/CartContext";
 import orderQueries from "../../graphql/order/queries";
 import orderMutations from "../../graphql/order/mutations";
 import authQueries from "../../graphql/auth/queries";
 import { Minus, Plus, Trash2 } from "lucide-react";
-import { templateUrl } from "@/lib/utils";
-import useClientPortal from "@/hooks/useClientPortal";
+import { templateUrl } from "../../lib/utils";
+import useClientPortal from "../../hooks/useClientPortal";
 
 const STEP_TITLES = ["Review Cart", "Delivery Details", "Confirm & Pay"];
 

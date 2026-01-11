@@ -2,8 +2,8 @@ import Link from "next/link";
 import Image from "next/image";
 import { isBuildMode } from "../../lib/buildMode";
 import BlogPageClient from "../_client/BlogPage";
-import { fetchCmsPosts } from "@/lib/fetchCms";
-import data from "@/data/configs.json";
+import { fetchCmsPosts } from "../../lib/fetchCms";
+import data from "../../data/configs.json";
 import {
   Card,
   CardContent,
@@ -11,10 +11,10 @@ import {
   CardFooter,
   CardHeader,
   CardTitle,
-} from "@/components/ui/card";
-import { Button } from "@/components/ui/button";
-import { getFileUrl } from "@/lib/utils";
-import type { CmsPost } from "@/types/cms";
+} from "../../components/ui/card";
+import { Button } from "../../components/ui/button";
+import { getFileUrl } from "../../lib/utils";
+import type { CmsPost } from "../../types/cms";
 
 export default async function BlogsPage() {
   if (isBuildMode()) {

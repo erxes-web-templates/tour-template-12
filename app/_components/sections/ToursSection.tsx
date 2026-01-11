@@ -46,7 +46,7 @@ const ToursSection = ({ section }: { section: Section }) => {
           {section?.config?.title || "Featured tours"}
         </h2>
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
-          {tours.map((tour: BmTour) => (
+          {tours.map((tour: any) => (
             <Card key={tour.items[0]._id}>
               <CardHeader>
                 {tour.items[0].imageThumbnail && (

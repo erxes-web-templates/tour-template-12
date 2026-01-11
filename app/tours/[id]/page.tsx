@@ -5,14 +5,14 @@ import TourDetailPageClient from "../../_client/TourDetailPage";
 import {
   fetchBmTourDetail,
   fetchBmToursGroup,
-} from "@/lib/fetchTours";
-import { getFileUrl } from "@/lib/utils";
+} from "../../../lib/fetchTours";
+import { getFileUrl } from "../../../lib/utils";
 import {
   Accordion,
   AccordionContent,
   AccordionItem,
   AccordionTrigger,
-} from "@/components/ui/accordion";
+} from "../../../components/ui/accordion";
 
 type PageProps = {
   params: { id: string };

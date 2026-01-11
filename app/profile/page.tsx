@@ -20,18 +20,18 @@ import {
   CardFooter,
   CardHeader,
   CardTitle,
-} from "@/components/ui/card";
-import { Button } from "@/components/ui/button";
-import { Label } from "@/components/ui/label";
-import { Input } from "@/components/ui/input";
-import { Badge } from "@/components/ui/badge";
-import { useToast } from "@/hooks/use-toast";
+} from "../../components/ui/card";
+import { Button } from "../../components/ui/button";
+import { Label } from "../../components/ui/label";
+import { Input } from "../../components/ui/input";
+import { Badge } from "../../components/ui/badge";
+import { useToast } from "../../hooks/use-toast";
 import ProfileSidebar from "./_components/ProfileSidebar";
 import ProfileOrdersTab from "./_components/ProfileOrdersTab";
 import ProfileWishlistTab from "./_components/ProfileWishlistTab";
 import ProfileViewedTab from "./_components/ProfileViewedTab";
 import ProfileSecurityTab from "./_components/ProfileSecurityTab";
-import { templateUrl } from "@/lib/utils";
+import { templateUrl } from "../../lib/utils";
 
 type User = {
   _id: string;

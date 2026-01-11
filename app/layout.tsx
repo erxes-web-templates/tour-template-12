@@ -1,10 +1,10 @@
 import type { Metadata } from "next";
 import "./globals.css";
-import data from "@/data/configs.json";
+import data from "../data/configs.json";
 import ClientShell from "./_components/ClientShell";
-import { fetchCpConfig } from "@/lib/fetchCpConfig";
+import { fetchCpConfig } from "../lib/fetchCpConfig";
 import { isBuildMode } from "../lib/buildMode";
-import type { CPDetail } from "@/types/cms";
+import type { CPDetail } from "../types/cms";
 
 export const metadata: Metadata = {
   title: data.meta.title,

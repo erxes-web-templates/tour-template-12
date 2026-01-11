@@ -10,17 +10,17 @@ import {
   CardFooter,
   CardHeader,
   CardTitle,
-} from "@/components/ui/card";
-import { Button } from "@/components/ui/button";
-import { getFileUrl } from "@/lib/utils";
-import type { BmTour } from "@/types/tours";
+} from "../../components/ui/card";
+import { Button } from "../../components/ui/button";
+import { getFileUrl } from "../../lib/utils";
+import type { BmTour } from "../../types/tours";
 
 export default async function ToursPage() {
   if (isBuildMode()) {
     return <ToursPageClient />;
   }
 
-  const data = await fetchBmTours();
+  const data = await fetchBmTours(1, 100, "website");
   const tours = data?.list || [];
 
   return (

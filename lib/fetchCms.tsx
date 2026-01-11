@@ -4,7 +4,7 @@ import {
   GET_CMS_POSTS,
 } from "../graphql/queries";
 import { getClient } from "./client";
-import type { CmsMenuList, CmsMenuListVariables } from "@/types/cms";
+import type { CmsMenuList, CmsMenuListVariables } from "../types/cms";
 
 export async function fetchMenuList(cpId: string, kind: string) {
   const client = getClient();
