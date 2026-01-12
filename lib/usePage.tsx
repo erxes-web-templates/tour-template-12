@@ -67,7 +67,7 @@ const usePage = (slug: string | null) => {
         return <LastViewedProductsSection section={section} />;
       case "banner":
         return <BannerSection section={section} />;
-      case "bookingForm":
+      case "booking-form":
         return <BookingFormSection section={section} />;
       default:
         return null;
