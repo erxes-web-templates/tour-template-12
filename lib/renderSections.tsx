@@ -16,6 +16,7 @@ type KnownSectionType =
   | "carousel"
   | "lastViewedProducts"
   | "banner"
+  | "bookingForm"
   | "content";
 
 interface RenderSectionsProps {

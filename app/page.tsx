@@ -17,6 +17,7 @@ import ProductCategoriesSection from "./_components/sections/ProductCategoriesSe
 import CarouselSection from "./_components/sections/CarouselSection";
 import LastViewedProductsSection from "./_components/sections/LastViewedProductsSection";
 import BannerSection from "./_components/sections/BannerSection";
+import BookingFormSection from "./_components/sections/BookingFormSection";
 
 export const metadata = {
   title: pageData.title,
@@ -43,6 +44,7 @@ export default function HomePage() {
     carousel: CarouselSection,
     lastViewedProducts: LastViewedProductsSection,
     banner: BannerSection,
+    bookingForm: BookingFormSection,
     content: TextSection,
   };
 
