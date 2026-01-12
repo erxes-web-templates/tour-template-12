@@ -1,4 +1,5 @@
 import { gql } from "@apollo/client";
+import orderQueries from "../order/queries";
 
 const commonFields = `
   _id
@@ -72,7 +73,7 @@ const productsByTag = gql`
 `;
 
 const productsMeta = gql`
-  query poscProducts($perPage: Int) {
+  query PoscProductsMeta($perPage: Int) {
     poscProducts(perPage: $perPage, isKiosk: true) {
       _id
       modifiedAt
@@ -130,21 +131,14 @@ const getInitialCategory = gql`
     poscProductCategoryDetail(_id: $_id) {
       _id
       name
-    }
-  }
-`;
-
-const getKioskCategory = gql`
-  query InitialCategory($_id: String) {
-    poscProductCategoryDetail(_id: $_id) {
-      _id
-      name
       attachment {
         url
       }
     }
   }
 `;
+
+const getKioskCategory = getInitialCategory;
 
 const productDetail = gql`
   query ProductDetail($_id: String) {
@@ -182,23 +176,7 @@ const productReview = gql`
   }
 `;
 
-const getLastProductView = gql`
-  query LastViewedItems($customerId: String!, $limit: Int) {
-    lastViewedItems(customerId: $customerId, limit: $limit) {
-      _id
-      productId
-      product {
-        _id
-        createdAt
-        attachment {
-          url
-        }
-        unitPrice
-        name
-      }
-    }
-  }
-`;
+const getLastProductView = orderQueries.getLastProductView;
 
 const getProductReviews = gql`
   query Productreviews($productIds: [String], $customerId: String) {
@@ -210,15 +188,7 @@ const getProductReviews = gql`
   }
 `;
 
-const getProductAverageReview = gql`
-  query Productreview($productId: String!) {
-    productreview(productId: $productId) {
-      average
-      length
-      productId
-    }
-  }
-`;
+const getProductAverageReview = productReview;
 
 const msdProductsRemainder = gql`
   query msdProductsRemainder($posToken: String, $productCodes: [String]) {

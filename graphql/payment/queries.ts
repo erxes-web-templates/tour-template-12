@@ -1,6 +1,6 @@
 import { gql } from '@apollo/client';
 
-const payment = gql`
+const payments = gql`
   query Payments {
     payments {
       _id
@@ -9,10 +9,35 @@ const payment = gql`
       status
       config
       createdAt
+      __typename
     }
   }
 `;
 
-const queries = { payment };
+const payment = payments;
+
+const invoiceDetail = gql`
+  query InvoiceDetail($id: String!) {
+    invoiceDetail(_id: $id) {
+      _id
+      invoiceNumber
+      amount
+      remainingAmount
+      phone
+      email
+      description
+      status
+      contentType
+      contentTypeId
+      createdAt
+      resolvedAt
+      redirectUri
+      paymentIds
+      data
+    }
+  }
+`;
+
+const queries = { payment, payments, invoiceDetail };
 
 export default queries;

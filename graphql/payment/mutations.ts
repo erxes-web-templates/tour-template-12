@@ -49,6 +49,8 @@ const createInvoice = gql`
   }
 `;
 
+const invoiceCreate = createInvoice;
+
 export const addTransaction = gql`
   mutation TransactionsAdd(
     $invoiceId: String!
@@ -74,12 +76,20 @@ export const addTransaction = gql`
   }
 `;
 
+const transactionsAdd = addTransaction;
+
 const checkInvoice = gql`
   mutation InvoicesCheck($id: String!) {
     invoicesCheck(_id: $id)
   }
 `;
 
-const mutations = { createInvoice, checkInvoice, addTransaction };
+const mutations = {
+  createInvoice,
+  invoiceCreate,
+  addTransaction,
+  transactionsAdd,
+  checkInvoice,
+};
 
 export default mutations;
