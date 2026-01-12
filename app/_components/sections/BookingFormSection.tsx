@@ -1,21 +1,30 @@
 "use client";
 
-import React, { useState } from "react";
+import React, { useMemo, useState } from "react";
 import { useRouter } from "next/navigation";
 import { Section } from "../../../types/sections";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Button } from "@/components/ui/button";
-import { templateUrl } from "@/lib/utils";
+import { cn, templateUrl } from "@/lib/utils";
+import { Calendar } from "@/components/ui/calendar";
+import {
+  Popover,
+  PopoverContent,
+  PopoverTrigger,
+} from "@/components/ui/popover";
+import { CalendarIcon } from "lucide-react";
+import { format } from "date-fns";
 
 const BookingFormSection = ({ section }: { section: Section }) => {
   const router = useRouter();
-  const [startDate, setStartDate] = useState("");
-  const [endDate, setEndDate] = useState("");
+  const [startDate, setStartDate] = useState<Date | undefined>();
+  const [endDate, setEndDate] = useState<Date | undefined>();
   const [adults, setAdults] = useState(1);
   const [children, setChildren] = useState(0);
   const [rooms, setRooms] = useState(1);
+  const today = useMemo(() => new Date(new Date().setHours(0, 0, 0, 0)), []);
 
   const title = section.config?.title ?? section.content ?? "Book your stay";
   const description =
@@ -30,8 +39,8 @@ const BookingFormSection = ({ section }: { section: Section }) => {
 
     const base = templateUrl("/booking");
     const url = new URL(base, window.location.origin);
-    url.searchParams.set("startDate", startDate);
-    url.searchParams.set("endDate", endDate);
+    url.searchParams.set("startDate", format(startDate, "yyyy-MM-dd"));
+    url.searchParams.set("endDate", format(endDate, "yyyy-MM-dd"));
     url.searchParams.set("adults", String(adults));
     url.searchParams.set("children", String(children));
     url.searchParams.set("rooms", String(rooms));
@@ -58,23 +67,72 @@ const BookingFormSection = ({ section }: { section: Section }) => {
             >
               <div className="space-y-2">
                 <Label htmlFor="booking-start-date">Check-in</Label>
-                <Input
-                  id="booking-start-date"
-                  type="date"
-                  value={startDate}
-                  onChange={(event) => setStartDate(event.target.value)}
-                  required
-                />
+                <Popover>
+                  <PopoverTrigger asChild>
+                    <Button
+                      id="booking-start-date"
+                      variant="outline"
+                      className={cn(
+                        "w-full justify-start text-left font-normal",
+                        !startDate && "text-muted-foreground"
+                      )}
+                    >
+                      <CalendarIcon className="mr-2 h-4 w-4" />
+                      {startDate ? (
+                        format(startDate, "PPP")
+                      ) : (
+                        <span>Pick a date</span>
+                      )}
+                    </Button>
+                  </PopoverTrigger>
+                  <PopoverContent className="w-auto p-0" align="start">
+                    <Calendar
+                      mode="single"
+                      selected={startDate}
+                      onSelect={(date) => {
+                        setStartDate(date);
+                        if (endDate && date && endDate < date) {
+                          setEndDate(undefined);
+                        }
+                      }}
+                      disabled={(date) => date < today}
+                      initialFocus
+                    />
+                  </PopoverContent>
+                </Popover>
               </div>
               <div className="space-y-2">
                 <Label htmlFor="booking-end-date">Check-out</Label>
-                <Input
-                  id="booking-end-date"
-                  type="date"
-                  value={endDate}
-                  onChange={(event) => setEndDate(event.target.value)}
-                  required
-                />
+                <Popover>
+                  <PopoverTrigger asChild>
+                    <Button
+                      id="booking-end-date"
+                      variant="outline"
+                      className={cn(
+                        "w-full justify-start text-left font-normal",
+                        !endDate && "text-muted-foreground"
+                      )}
+                    >
+                      <CalendarIcon className="mr-2 h-4 w-4" />
+                      {endDate ? (
+                        format(endDate, "PPP")
+                      ) : (
+                        <span>Pick a date</span>
+                      )}
+                    </Button>
+                  </PopoverTrigger>
+                  <PopoverContent className="w-auto p-0" align="start">
+                    <Calendar
+                      mode="single"
+                      selected={endDate}
+                      onSelect={setEndDate}
+                      disabled={(date) =>
+                        date < today || (startDate ? date < startDate : false)
+                      }
+                      initialFocus
+                    />
+                  </PopoverContent>
+                </Popover>
               </div>
               <div className="space-y-2">
                 <Label htmlFor="booking-adults">Adults</Label>
