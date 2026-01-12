@@ -13,6 +13,9 @@ const BookingFormSection = ({ section }: { section: Section }) => {
   const router = useRouter();
   const [startDate, setStartDate] = useState("");
   const [endDate, setEndDate] = useState("");
+  const [adults, setAdults] = useState(1);
+  const [children, setChildren] = useState(0);
+  const [rooms, setRooms] = useState(1);
 
   const title = section.config?.title ?? section.content ?? "Book your stay";
   const description =
@@ -29,6 +32,9 @@ const BookingFormSection = ({ section }: { section: Section }) => {
     const url = new URL(base, window.location.origin);
     url.searchParams.set("startDate", startDate);
     url.searchParams.set("endDate", endDate);
+    url.searchParams.set("adults", String(adults));
+    url.searchParams.set("children", String(children));
+    url.searchParams.set("rooms", String(rooms));
     router.push(url.toString().replace(window.location.origin, ""));
   };
 
@@ -48,7 +54,7 @@ const BookingFormSection = ({ section }: { section: Section }) => {
           <CardContent>
             <form
               onSubmit={handleSubmit}
-              className="grid gap-4 md:grid-cols-3"
+              className="grid gap-4 md:grid-cols-6"
             >
               <div className="space-y-2">
                 <Label htmlFor="booking-start-date">Check-in</Label>
@@ -70,7 +76,45 @@ const BookingFormSection = ({ section }: { section: Section }) => {
                   required
                 />
               </div>
-              <div className="flex items-end">
+              <div className="space-y-2">
+                <Label htmlFor="booking-adults">Adults</Label>
+                <Input
+                  id="booking-adults"
+                  type="number"
+                  min={1}
+                  value={adults}
+                  onChange={(event) =>
+                    setAdults(Math.max(1, Number(event.target.value)))
+                  }
+                  required
+                />
+              </div>
+              <div className="space-y-2">
+                <Label htmlFor="booking-children">Children</Label>
+                <Input
+                  id="booking-children"
+                  type="number"
+                  min={0}
+                  value={children}
+                  onChange={(event) =>
+                    setChildren(Math.max(0, Number(event.target.value)))
+                  }
+                />
+              </div>
+              <div className="space-y-2">
+                <Label htmlFor="booking-rooms">Rooms</Label>
+                <Input
+                  id="booking-rooms"
+                  type="number"
+                  min={1}
+                  value={rooms}
+                  onChange={(event) =>
+                    setRooms(Math.max(1, Number(event.target.value)))
+                  }
+                  required
+                />
+              </div>
+              <div className="flex items-end md:col-span-6">
                 <Button type="submit" className="w-full">
                   Check rooms
                 </Button>
