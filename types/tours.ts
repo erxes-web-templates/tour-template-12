@@ -1,79 +1,85 @@
 interface BmTour {
-  _id: string;
-  content: string;
-  startDate: string;
-  endDate: string;
-  cost: number;
-  viewCount: number;
-  name: string;
-  itineraryId: string;
-  itinerary: any;
-  refNumber: string;
-  images: string[];
-  imageThumbnail: string;
+  _id: string
+  content: string
+  startDate: string
+  endDate: string
+  cost: number
+  viewCount: number
+  name: string
+  itineraryId: string
+  itinerary: any
+  refNumber: string
+  images: string[]
+  imageThumbnail: string
+  groupSize: number
 }
 
 interface BmToursData {
   bmTours: {
-    total: number;
-    list: BmTour[];
-  };
+    total: number
+    list: BmTour[]
+  }
 }
 
 interface BmTourDetail {
-  _id: string;
-  branchId?: string;
-  content: string;
-  cost: number;
-  name: string;
-  status: string;
-  startDate: string;
-  refNumber: string;
-  viewCount: number;
-  itinerary: any;
-  images: string[];
-  imageThumbnail: string;
-  groupCode?: string;
-  items?: BmTour[];
+  _id: string
+  branchId?: string
+  content: string
+  cost: number
+  name: string
+  status: string
+  startDate: string
+  refNumber: string
+  viewCount: number
+  itinerary: any
+  images: string[]
+  imageThumbnail: string
+  groupCode?: string
+  items?: BmTour[]
 }
 
 interface BmToursGroupVariables {
-  status: string;
-  branchId?: string;
-  page?: number;
-  perPage?: number;
-  tags?: string[];
+  status: string
+  branchId?: string
+  page?: number
+  perPage?: number
+  tags?: string[]
 }
 
 interface BmTourDetailVariables {
-  id: string;
-  branchId?: string;
+  id: string
+  branchId?: string
 }
 
 interface BmTourGroupDetailVariables {
-  groupCode: string;
-  status: string;
+  groupCode: string
+  status: string
 }
 
 interface Itinerary {
-  _id: string;
-  images?: any;
-  branchId?: string;
-  content?: string;
-  info1?: string;
-  info2?: string;
-  info3?: string;
-  info4?: string;
+  _id: string
+  images?: any
+  branchId?: string
+  content?: string
+  info1?: string
+  info2?: string
+  info3?: string
+  info4?: string
   location?: {
-    lat: number;
-    lng: number;
-    mapId: string;
-    name: string;
-  };
-  name: string;
-  status?: string;
-  totalcost?: number;
-  personCost?: any;
+    lat: number
+    lng: number
+    mapId: string
+    name: string
+  }
+  name: string
+  status?: string
+  totalcost?: number
+  personCost?: any
+}
+
+interface TourGroup {
+  _id: string
+  items: BmTour[]
 }
 
 export type {
@@ -84,4 +90,5 @@ export type {
   Itinerary,
   BmToursGroupVariables,
   BmTourGroupDetailVariables,
-};
+  TourGroup,
+}

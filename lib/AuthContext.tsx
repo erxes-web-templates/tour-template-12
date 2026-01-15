@@ -1,4 +1,4 @@
-"use client";
+"use client"
 
 import {
   createContext,
@@ -6,81 +6,79 @@ import {
   ReactNode,
   useEffect,
   useState,
-} from "react";
-import { gql, useQuery } from "@apollo/client";
-import { useRouter } from "next/navigation";
-import PageLoader from "../components/common/PageLoader";
+} from "react"
+import { gql, useQuery } from "@apollo/client"
+import { useRouter } from "next/navigation"
+import PageLoader from "../components/common/PageLoader"
 
 interface User {
-  _id: string;
-  details: {
-    avatar: string;
-    firstName: string;
-    fullName: string;
-    lastName: string;
-    shortName: string;
-  };
-  username: string;
-  email: string;
+  _id: string
+  firstName?: string
+  lastName?: string
+  email?: string
+  phone?: string
+  erxesCustomerId?: string
 }
 
 interface AuthContextType {
-  user: User | null;
+  user: User | null
+  loading: boolean
+  refetch: () => void
 }
 
-const AuthContext = createContext<AuthContextType | undefined>(undefined);
+const AuthContext = createContext<AuthContextType | undefined>(undefined)
 
 export const AuthProvider = ({ children }: { children: ReactNode }) => {
-  const [user, setUser] = useState<User | null>(null);
-  const router = useRouter();
+  const [user, setUser] = useState<User | null>(null)
 
   const ME_QUERY = gql`
-    query me {
-      currentUser {
+    query clientPortalCurrentUser {
+      clientPortalCurrentUser {
         _id
-        details {
-          avatar
-          firstName
-          fullName
-          lastName
-          shortName
-        }
-        username
+        firstName
+        lastName
         email
+        phone
+        erxesCustomerId
       }
     }
-  `;
+  `
 
-  const { data, loading, error } = useQuery(ME_QUERY, {
+  const { data, loading, error, refetch } = useQuery(ME_QUERY, {
     fetchPolicy: "network-only",
-  });
+    context: {
+      headers: {
+        authorization: sessionStorage.getItem("token")
+          ? `Bearer ${sessionStorage.getItem("token")}`
+          : "",
+      },
+    },
+  })
 
-  // useEffect(() => {
-  //   if (error) {
-  //     router.push("/auth/login");
-  //   }
-
-  //   if (!loading && !data?.currentUser) {
-  //     router.push("/auth/login");
-  //   } else if (data?.currentUser) {
-  //     setUser(data.currentUser);
-  //   }
-  // }, [data, error, loading, router]);
+  useEffect(() => {
+    if (!loading && data?.clientPortalCurrentUser) {
+      setUser(data.clientPortalCurrentUser)
+    } else if (!loading && !data?.clientPortalCurrentUser) {
+      setUser(null)
+    }
+  }, [data, loading])
 
   if (loading) {
-    return <PageLoader />;
+    return <PageLoader />
   }
 
   return (
-    <AuthContext.Provider value={{ user }}>{children}</AuthContext.Provider>
-  );
-};
+    <AuthContext.Provider value={{ user, loading, refetch }}>
+      {children}
+    </AuthContext.Provider>
+  )
+}
 
 // Export the context for use in other files
 export const useAuthContext = () => {
-  const context = useContext(AuthContext);
+  const context = useContext(AuthContext)
   if (context === undefined) {
-    throw new Error("useAuthContext must be used within an AuthProvider");
+    throw new Error("useAuthContext must be used within an AuthProvider")
   }
-  return context;
-};
+  return context
+}

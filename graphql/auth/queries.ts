@@ -1,4 +1,4 @@
-import { gql } from '@apollo/client';
+import { gql } from "@apollo/client"
 
 const currentUser = gql`
   query clientPortalCurrentUser {
@@ -12,7 +12,7 @@ const currentUser = gql`
       email
     }
   }
-`;
+`
 
 const userDetail = gql`
   query UserDetail {
@@ -21,7 +21,7 @@ const userDetail = gql`
       isPhoneVerified
     }
   }
-`;
+`
 
 const currentConfig = gql`
   query CurrentConfig {
@@ -42,7 +42,7 @@ const currentConfig = gql`
       }
     }
   }
-`;
+`
 
 const branchDetail = gql`
   query branchDetail($id: String!) {
@@ -62,8 +62,13 @@ const branchDetail = gql`
       }
     }
   }
-`;
+`
 
-const queries = { currentUser, currentConfig, userDetail, branchDetail };
+const queries = {
+  currentUser,
+  currentConfig,
+  userDetail,
+  branchDetail,
+}
 
-export default queries;
+export default queries

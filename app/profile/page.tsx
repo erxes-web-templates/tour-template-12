@@ -1,18 +1,17 @@
-"use client";
+"use client"
 
-import { useEffect, useMemo, useState } from "react";
-import Link from "next/link";
+import { useEffect, useMemo, useState } from "react"
+import Link from "next/link"
 import {
   useRouter,
   useParams,
   useSearchParams,
   redirect,
-} from "next/navigation";
-import { useMutation, useQuery } from "@apollo/client";
-import authQueries from "../../graphql/auth/queries";
-import authMutations from "../../graphql/auth/mutations";
-import orderQueries from "../../graphql/order/queries";
-import ecommerceQueries from "../../graphql/ecommerce/queries";
+} from "next/navigation"
+import { useMutation, useQuery } from "@apollo/client"
+import authQueries from "../../graphql/auth/queries"
+import authMutations from "../../graphql/auth/mutations"
+import orderQueries from "../../graphql/order/queries"
 import {
   Card,
   CardContent,
@@ -20,71 +19,69 @@ import {
   CardFooter,
   CardHeader,
   CardTitle,
-} from "../../components/ui/card";
-import { Button } from "../../components/ui/button";
-import { Label } from "../../components/ui/label";
-import { Input } from "../../components/ui/input";
-import { Badge } from "../../components/ui/badge";
-import { useToast } from "../../hooks/use-toast";
-import ProfileSidebar from "./_components/ProfileSidebar";
-import ProfileOrdersTab from "./_components/ProfileOrdersTab";
-import ProfileWishlistTab from "./_components/ProfileWishlistTab";
-import ProfileViewedTab from "./_components/ProfileViewedTab";
-import ProfileSecurityTab from "./_components/ProfileSecurityTab";
-import { templateUrl } from "../../lib/utils";
+} from "../../components/ui/card"
+import { Button } from "../../components/ui/button"
+import { Label } from "../../components/ui/label"
+import { Input } from "../../components/ui/input"
+import { Badge } from "../../components/ui/badge"
+import { useToast } from "../../hooks/use-toast"
+import ProfileSidebar from "./_components/ProfileSidebar"
+import ProfileOrdersTab from "./_components/ProfileOrdersTab"
+import ProfileWishlistTab from "./_components/ProfileWishlistTab"
+import ProfileViewedTab from "./_components/ProfileViewedTab"
+import ProfileSecurityTab from "./_components/ProfileSecurityTab"
+import { templateUrl } from "../../lib/utils"
 
 type User = {
-  _id: string;
-  firstName?: string | null;
-  lastName?: string | null;
-  email?: string | null;
-  phone?: string | null;
-  erxesCustomerId?: string | null;
-};
+  _id: string
+  firstName?: string | null
+  lastName?: string | null
+  email?: string | null
+  phone?: string | null
+  erxesCustomerId?: string | null
+}
 
 const SIDEBAR_ITEMS = [
   { id: "profile", label: "Хувийн мэдээлэл" },
   { id: "orders", label: "Захиалгууд" },
-  { id: "wishlist", label: "Хүслийн жагсаалт" },
-  { id: "viewed", label: "Үзсэн" },
   { id: "security", label: "Нууц үг" },
   { id: "logout", label: "Гарах" },
-] as const;
+] as const
 
-type SidebarKey = (typeof SIDEBAR_ITEMS)[number]["id"];
+type SidebarKey = (typeof SIDEBAR_ITEMS)[number]["id"]
 
 const resolveClientPortalId = (
   paramsValue?: string | string[],
   searchValue?: string | null
 ) => {
   if (searchValue) {
-    return searchValue;
+    return searchValue
   }
   if (Array.isArray(paramsValue)) {
-    return paramsValue[0] ?? "";
+    return paramsValue[0] ?? ""
   }
-  return paramsValue ?? "";
-};
+  return paramsValue ?? ""
+}
 
 export default function ProfilePage() {
-  const router = useRouter();
-  const params = useParams<{ id?: string }>();
-  const searchParams = useSearchParams();
-  const { toast } = useToast();
+  const router = useRouter()
+  const params = useParams<{ id?: string }>()
+  const searchParams = useSearchParams()
+  const { toast } = useToast()
 
-  const [activeTab, setActiveTab] = useState<SidebarKey>("profile");
+  const [activeTab, setActiveTab] = useState<SidebarKey>("profile")
 
-  const { data, loading, error, refetch } = useQuery(authQueries.currentUser);
-  const { data: userDetailData } = useQuery(authQueries.userDetail);
+  const { data, loading, error, refetch } = useQuery(authQueries.currentUser)
+  const { data: userDetailData } = useQuery(authQueries.userDetail)
   const user: User | null = useMemo(
     () => data?.clientPortalCurrentUser ?? null,
     [data]
-  );
+  )
 
   const clientPortalId = resolveClientPortalId(
     params?.id,
     searchParams?.get("clientPortalId")
-  );
+  )
 
   const {
     data: ordersData,
@@ -98,21 +95,7 @@ export default function ProfilePage() {
     },
     skip: !user?.erxesCustomerId,
     fetchPolicy: "cache-and-network",
-  });
-
-  const {
-    data: wishlistData,
-    loading: wishlistLoading,
-    refetch: refetchWishlist,
-  } = useQuery(ecommerceQueries.wishlist, {
-    variables: {
-      customerId: user?.erxesCustomerId ?? undefined,
-      page: 1,
-      perPage: 50,
-    },
-    skip: !user?.erxesCustomerId,
-    fetchPolicy: "cache-and-network",
-  });
+  })
 
   const {
     data: viewedData,
@@ -125,14 +108,14 @@ export default function ProfilePage() {
     },
     skip: !user?.erxesCustomerId,
     fetchPolicy: "cache-and-network",
-  });
+  })
 
   const [formState, setFormState] = useState({
     firstName: "",
     lastName: "",
     email: "",
     phone: "",
-  });
+  })
 
   useEffect(() => {
     if (user) {
@@ -141,25 +124,22 @@ export default function ProfilePage() {
         lastName: user.lastName ?? "",
         email: user.email ?? "",
         phone: user.phone ?? "",
-      });
+      })
     }
-  }, [user]);
+  }, [user])
 
   const [passwordForm, setPasswordForm] = useState({
     currentPassword: "",
     newPassword: "",
     confirmPassword: "",
-  });
+  })
 
-  const orders = useMemo(() => ordersData?.fullOrders ?? [], [ordersData]);
-  const wishlistItems = useMemo(
-    () => wishlistData?.wishlist ?? [],
-    [wishlistData]
-  );
+  const orders = useMemo(() => ordersData?.fullOrders ?? [], [ordersData])
+
   const viewedItems = useMemo(
     () => viewedData?.lastViewedItems ?? [],
     [viewedData]
-  );
+  )
 
   const [updateUser, { loading: updating }] = useMutation(
     authMutations.userEdit,
@@ -169,32 +149,32 @@ export default function ProfilePage() {
           title: "Шинэчилж чадсангүй",
           description: err.message,
           variant: "destructive",
-        });
+        })
       },
       onCompleted() {
         toast({
           title: "Амжилттай хадгаллаа",
           description: "Таны мэдээллийг шинэчиллээ.",
-        });
-        refetch();
+        })
+        refetch()
       },
     }
-  );
+  )
 
   const [logoutMutation, { loading: loggingOut }] = useMutation(
     authMutations.logout,
     {
       onCompleted() {
-        sessionStorage.removeItem("token");
-        sessionStorage.removeItem("refreshToken");
+        sessionStorage.removeItem("token")
+        sessionStorage.removeItem("refreshToken")
         toast({
           title: "Амжилттай гарлаа",
           description: "Та дахин нэвтрэх боломжтой.",
-        });
-        router.push("/auth/login");
+        })
+        window.location.href = templateUrl("/auth/login")
       },
     }
-  );
+  )
 
   const [changePasswordMutation, { loading: changingPassword }] = useMutation(
     authMutations.userChangePassword,
@@ -204,31 +184,31 @@ export default function ProfilePage() {
           title: "Нууц үг солиход алдаа гарлаа",
           description: err.message,
           variant: "destructive",
-        });
+        })
       },
       onCompleted() {
         toast({
           title: "Нууц үг шинэчлэгдлээ",
           description: "Шинэ нууц үг үйлчилж эхэллээ.",
-        });
+        })
         setPasswordForm({
           currentPassword: "",
           newPassword: "",
           confirmPassword: "",
-        });
+        })
       },
     }
-  );
+  )
 
   const handleSubmit = async (event: React.FormEvent<HTMLFormElement>) => {
-    event.preventDefault();
+    event.preventDefault()
     if (!user?._id) {
       toast({
         title: "Алдаа гарлаа",
         description: "Хэрэглэгчийн мэдээллийг олсонгүй.",
         variant: "destructive",
-      });
-      return;
+      })
+      return
     }
 
     await updateUser({
@@ -239,8 +219,8 @@ export default function ProfilePage() {
         email: formState.email,
         phone: formState.phone,
       },
-    });
-  };
+    })
+  }
 
   const handlePasswordFormChange = (
     field: keyof typeof passwordForm,
@@ -249,21 +229,21 @@ export default function ProfilePage() {
     setPasswordForm((prev) => ({
       ...prev,
       [field]: value,
-    }));
-  };
+    }))
+  }
 
   const handlePasswordSubmit = async (
     event: React.FormEvent<HTMLFormElement>
   ) => {
-    event.preventDefault();
+    event.preventDefault()
 
     if (passwordForm.newPassword !== passwordForm.confirmPassword) {
       toast({
         title: "Нууц үг таарахгүй байна",
         description: "Шинэ нууц үг болон баталгаажуулалт ижил байх ёстой.",
         variant: "destructive",
-      });
-      return;
+      })
+      return
     }
 
     await changePasswordMutation({
@@ -271,66 +251,60 @@ export default function ProfilePage() {
         currentPassword: passwordForm.currentPassword,
         newPassword: passwordForm.newPassword,
       },
-    });
-  };
+    })
+  }
 
   const handleSidebarClick = (id: SidebarKey) => {
     if (id === "logout") {
-      logoutMutation();
-      return;
+      logoutMutation()
+      return
     }
     if (id === "orders") {
-      refetchOrders();
+      refetchOrders()
     }
-    if (id === "wishlist") {
-      refetchWishlist();
-    }
-    if (id === "viewed") {
-      refetchViewed();
-    }
-    setActiveTab(id);
-  };
+    setActiveTab(id)
+  }
 
   const renderSummary = () => (
-    <div className="grid gap-4 md:grid-cols-3">
-      <div className="rounded-lg border bg-muted/40 p-4">
-        <p className="text-xs font-medium uppercase text-muted-foreground">
+    <div className='grid gap-4 md:grid-cols-3'>
+      <div className='rounded-lg border bg-muted/40 p-4'>
+        <p className='text-xs font-medium uppercase text-muted-foreground'>
           Хувийн мэдээлэл
         </p>
-        <p className="mt-2 text-base font-semibold">{`${
+        <p className='mt-2 text-base font-semibold'>{`${
           formState.firstName || "–"
         } ${formState.lastName || ""}`}</p>
       </div>
-      <div className="rounded-lg border bg-muted/40 p-4">
-        <p className="text-xs font-medium uppercase text-muted-foreground">
+      <div className='rounded-lg border bg-muted/40 p-4'>
+        <p className='text-xs font-medium uppercase text-muted-foreground'>
           Гар утас
         </p>
-        <p className="mt-2 text-base font-semibold">{formState.phone || "—"}</p>
+        <p className='mt-2 text-base font-semibold'>{formState.phone || "—"}</p>
       </div>
-      <div className="rounded-lg border bg-muted/40 p-4">
-        <p className="text-xs font-medium uppercase text-muted-foreground">
+      <div className='rounded-lg border bg-muted/40 p-4'>
+        <p className='text-xs font-medium uppercase text-muted-foreground'>
           Цахим хаяг
         </p>
-        <p className="mt-2 text-base font-semibold">{formState.email || "—"}</p>
+        <p className='mt-2 text-base font-semibold'>{formState.email || "—"}</p>
         {userDetailData?.clientPortalCurrentUser?.isEmailVerified && (
           <Badge
-            variant="outline"
-            className="mt-2 border-green-500 text-green-600"
+            variant='outline'
+            className='mt-2 border-green-500 text-green-600'
           >
             Баталгаажсан
           </Badge>
         )}
       </div>
     </div>
-  );
+  )
 
   const renderProfileForm = () => (
-    <form className="space-y-6" onSubmit={handleSubmit}>
-      <div className="grid gap-4 md:grid-cols-2">
-        <div className="space-y-2">
-          <Label htmlFor="firstName">Нэр</Label>
+    <form className='space-y-6' onSubmit={handleSubmit}>
+      <div className='grid gap-4 md:grid-cols-2'>
+        <div className='space-y-2'>
+          <Label htmlFor='firstName'>Нэр</Label>
           <Input
-            id="firstName"
+            id='firstName'
             value={formState.firstName}
             onChange={(event) =>
               setFormState((prev) => ({
@@ -341,10 +315,10 @@ export default function ProfilePage() {
             required
           />
         </div>
-        <div className="space-y-2">
-          <Label htmlFor="lastName">Овог</Label>
+        <div className='space-y-2'>
+          <Label htmlFor='lastName'>Овог</Label>
           <Input
-            id="lastName"
+            id='lastName'
             value={formState.lastName}
             onChange={(event) =>
               setFormState((prev) => ({
@@ -355,11 +329,11 @@ export default function ProfilePage() {
             required
           />
         </div>
-        <div className="space-y-2">
-          <Label htmlFor="email">Цахим шуудан</Label>
+        <div className='space-y-2'>
+          <Label htmlFor='email'>Цахим шуудан</Label>
           <Input
-            id="email"
-            type="email"
+            id='email'
+            type='email'
             value={formState.email}
             onChange={(event) =>
               setFormState((prev) => ({
@@ -370,11 +344,11 @@ export default function ProfilePage() {
             required
           />
         </div>
-        <div className="space-y-2">
-          <Label htmlFor="phone">Гар утас</Label>
+        <div className='space-y-2'>
+          <Label htmlFor='phone'>Гар утас</Label>
           <Input
-            id="phone"
-            type="tel"
+            id='phone'
+            type='tel'
             value={formState.phone}
             onChange={(event) =>
               setFormState((prev) => ({
@@ -385,98 +359,93 @@ export default function ProfilePage() {
           />
         </div>
       </div>
-      <Button type="submit" disabled={updating} className="w-full md:w-auto">
+      <Button type='submit' disabled={updating} className='w-full md:w-auto'>
         {updating ? "Хадгалж байна…" : "Өөрчлөлт хадгалах"}
       </Button>
     </form>
-  );
+  )
 
   if (loading) {
     return (
-      <div className="flex min-h-screen items-center justify-center bg-muted/10 px-6 py-12">
-        <Card className="w-full max-w-md animate-pulse">
+      <div className='flex min-h-screen items-center justify-center bg-muted/10 px-6 py-12'>
+        <Card className='w-full max-w-md animate-pulse'>
           <CardHeader>
-            <div className="h-6 w-1/3 rounded bg-muted/60" />
+            <div className='h-6 w-1/3 rounded bg-muted/60' />
           </CardHeader>
-          <CardContent className="space-y-4">
-            <div className="h-10 w-full rounded bg-muted/50" />
-            <div className="h-10 w-full rounded bg-muted/50" />
-            <div className="h-10 w-full rounded bg-muted/50" />
+          <CardContent className='space-y-4'>
+            <div className='h-10 w-full rounded bg-muted/50' />
+            <div className='h-10 w-full rounded bg-muted/50' />
+            <div className='h-10 w-full rounded bg-muted/50' />
           </CardContent>
         </Card>
       </div>
-    );
+    )
   }
 
   if (error) {
-    redirect(templateUrl("/login"));
+    redirect(templateUrl("/auth/login"))
   }
 
   if (!user) {
     return (
-      <div className="flex min-h-screen items-center justify-center bg-muted/10 px-6 py-12">
-        <Card className="w-full max-w-md">
-          <CardHeader className="space-y-2 text-center">
-            <CardTitle className="text-xl font-semibold">
+      <div className='flex min-h-screen items-center justify-center bg-muted/10 px-6 py-12'>
+        <Card className='w-full max-w-md'>
+          <CardHeader className='space-y-2 text-center'>
+            <CardTitle className='text-xl font-semibold'>
               Та нэвтрээгүй байна
             </CardTitle>
             <CardDescription>Профайл харахын тулд нэвтэрнэ үү.</CardDescription>
           </CardHeader>
-          <CardFooter className="justify-center gap-3">
-            <Button asChild variant="default">
-              <Link href={templateUrl("/login")}>Нэвтрэх</Link>
+          <CardFooter className='justify-center gap-3'>
+            <Button asChild variant='default'>
+              <Link href={templateUrl("/auth/login")}>Нэвтрэх</Link>
             </Button>
-            <Button asChild variant="outline">
-              <Link href={templateUrl("/register")}>Бүртгүүлэх</Link>
+            <Button asChild variant='outline'>
+              <Link href={templateUrl("/auth/register")}>Бүртгүүлэх</Link>
             </Button>
           </CardFooter>
         </Card>
       </div>
-    );
+    )
   }
 
   const cardTitleMap: Record<SidebarKey, string> = {
     profile: "Хувийн мэдээлэл",
     orders: "Захиалгын түүх",
-    wishlist: "Хүслийн жагсаалт",
-    viewed: "Үзсэн бүтээгдэхүүнүүд",
     security: "Нууц үг солих",
     logout: "",
-  };
+  }
 
   const cardDescriptionMap: Record<SidebarKey, string> = {
     profile: "Цахим худалдаанд ашиглах хувийн мэдээллээ шинэчлэх боломжтой.",
     orders: "Та хийсэн худалдан авалтын захиалгуудыг эндээс харах боломжтой.",
-    wishlist:
-      "Та сонирхож буй бараануудаа энд хадгалж, дараа нь худалдан авах боломжтой.",
-    viewed: "Сүүлийн үед үзсэн бараанууд энд хадгалагдана.",
     security: "Нууц үгээ шинэчилж, аюулгүй байдлаа хангаарай.",
     logout: "",
-  };
+  }
 
-  const cardTitle = cardTitleMap[activeTab] || "Хувийн мэдээлэл";
+  const cardTitle = cardTitleMap[activeTab] || "Хувийн мэдээлэл"
   const cardDescription =
     cardDescriptionMap[activeTab] ||
-    "Цахим худалдаанд ашиглах хувийн мэдээллээ шинэчлэх боломжтой.";
+    "Цахим худалдаанд ашиглах хувийн мэдээллээ шинэчлэх боломжтой."
 
   return (
-    <div className="min-h-screen bg-muted/10 px-4 py-10 sm:px-6 lg:px-10">
-      <div className="mx-auto w-full space-y-6">
-        <div className="space-y-1">
-          <h1 className="text-2xl font-bold tracking-tight">Хувийн мэдээлэл</h1>
-          <p className="text-sm text-muted-foreground">Мэдээлэл засах</p>
+    <div className='min-h-screen bg-muted/10 px-4 py-10 sm:px-6 lg:px-10'>
+      <div className='mx-auto w-full space-y-6'>
+        <div className='space-y-1'>
+          <h1 className='text-2xl font-bold tracking-tight'>Хувийн мэдээлэл</h1>
+          <p className='text-sm text-muted-foreground'>Мэдээлэл засах</p>
         </div>
-        <div className="grid gap-6 lg:grid-cols-[220px_1fr]">
+        <div className='grid gap-6 lg:grid-cols-[220px_1fr]'>
           <ProfileSidebar
             items={SIDEBAR_ITEMS}
             activeId={activeTab}
-            onSelect={handleSidebarClick}
+            onSelect={(id) => handleSidebarClick(id as SidebarKey)}
           />
-          <section className="space-y-6">
+          <section className='space-y-6'>
             {renderSummary()}
-            <Card className="border bg-white shadow-sm">
+            <Card className='border bg-white shadow-sm'>
               <CardHeader>
-                <CardTitle className="text-lg font-semibold">
+                <CardTitle className='text-lg font-semibold'>
                   {cardTitle}
                 </CardTitle>
                 {cardDescription && (
@@ -488,18 +457,7 @@ export default function ProfilePage() {
                 {activeTab === "orders" && (
                   <ProfileOrdersTab orders={orders} loading={ordersLoading} />
                 )}
-                {activeTab === "wishlist" && (
-                  <ProfileWishlistTab
-                    items={wishlistItems}
-                    loading={wishlistLoading}
-                  />
-                )}
-                {activeTab === "viewed" && (
-                  <ProfileViewedTab
-                    items={viewedItems}
-                    loading={viewedLoading}
-                  />
-                )}
+
                 {activeTab === "security" && (
                   <ProfileSecurityTab
                     form={passwordForm}
@@ -508,14 +466,9 @@ export default function ProfilePage() {
                     onSubmit={handlePasswordSubmit}
                   />
                 )}
-                {[
-                  "profile",
-                  "orders",
-                  "wishlist",
-                  "viewed",
-                  "security",
-                ].indexOf(activeTab) === -1 && (
-                  <p className="text-sm text-muted-foreground">
+                {["profile", "orders", "security"].indexOf(activeTab) ===
+                  -1 && (
+                  <p className='text-sm text-muted-foreground'>
                     Энэ хэсгийг удахгүй идэвхжүүлнэ.
                   </p>
                 )}
@@ -525,5 +478,5 @@ export default function ProfilePage() {
         </div>
       </div>
     </div>
-  );
+  )
 }

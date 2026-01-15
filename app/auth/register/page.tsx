@@ -1,10 +1,10 @@
-"use client";
+"use client"
 
-import { useState } from "react";
-import Link from "next/link";
-import { useRouter, useParams, useSearchParams } from "next/navigation";
-import { useMutation } from "@apollo/client";
-import { mutations } from "../../../graphql/auth";
+import { useState } from "react"
+import Link from "next/link"
+import { useRouter, useParams, useSearchParams } from "next/navigation"
+import { useMutation } from "@apollo/client"
+import { mutations } from "../../../graphql/auth"
 import {
   Card,
   CardContent,
@@ -12,38 +12,38 @@ import {
   CardFooter,
   CardHeader,
   CardTitle,
-} from "../../../components/ui/card";
-import { Input } from "../../../components/ui/input";
-import { Label } from "../../../components/ui/label";
-import { Button } from "../../../components/ui/button";
-import { useToast } from "../../../hooks/use-toast";
-import { templateUrl } from "../../../lib/utils";
+} from "../../../components/ui/card"
+import { Input } from "../../../components/ui/input"
+import { Label } from "../../../components/ui/label"
+import { Button } from "../../../components/ui/button"
+import { useToast } from "../../../hooks/use-toast"
+import { templateUrl } from "../../../lib/utils"
 
 const resolveClientPortalId = (
   paramsValue?: string | string[],
   searchValue?: string | null
 ) => {
   if (searchValue) {
-    return searchValue;
+    return searchValue
   }
 
   if (Array.isArray(paramsValue)) {
-    return paramsValue[0] ?? "";
+    return paramsValue[0] ?? ""
   }
 
-  return paramsValue ?? "";
-};
+  return paramsValue ?? ""
+}
 
 export default function RegisterPage() {
-  const router = useRouter();
-  const params = useParams<{ id?: string }>();
-  const searchParams = useSearchParams();
-  const { toast } = useToast();
+  const router = useRouter()
+  const params = useParams<{ id?: string }>()
+  const searchParams = useSearchParams()
+  const { toast } = useToast()
 
-  const clientPortalId = resolveClientPortalId(
-    params?.id,
-    searchParams?.get("clientPortalId")
-  );
+  const clientPortalId =
+    resolveClientPortalId(params?.id, searchParams?.get("clientPortalId")) ||
+    process.env.ERXES_CP_ID ||
+    ""
 
   const [formState, setFormState] = useState({
     firstName: "",
@@ -52,7 +52,7 @@ export default function RegisterPage() {
     phone: "",
     username: "",
     password: "",
-  });
+  })
 
   const [registerMutation, { loading }] = useMutation(mutations.createUser, {
     onError(error) {
@@ -60,19 +60,19 @@ export default function RegisterPage() {
         title: "Registration failed",
         description: error.message,
         variant: "destructive",
-      });
+      })
     },
     onCompleted() {
       toast({
         title: "Account created",
         description: "You can now log in with your new credentials.",
-      });
-      router.push(templateUrl("/login"));
+      })
+      router.push(templateUrl("/auth/login"))
     },
-  });
+  })
 
   const handleSubmit = async (event: React.FormEvent<HTMLFormElement>) => {
-    event.preventDefault();
+    event.preventDefault()
 
     if (!clientPortalId) {
       toast({
@@ -80,8 +80,8 @@ export default function RegisterPage() {
         description:
           "Missing client portal identifier. Please contact support.",
         variant: "destructive",
-      });
-      return;
+      })
+      return
     }
 
     await registerMutation({
@@ -94,8 +94,8 @@ export default function RegisterPage() {
         username: formState.username,
         password: formState.password,
       },
-    });
-  };
+    })
+  }
 
   const handleChange =
     (field: keyof typeof formState) =>
@@ -103,14 +103,14 @@ export default function RegisterPage() {
       setFormState((prev) => ({
         ...prev,
         [field]: event.target.value,
-      }));
-    };
+      }))
+    }
 
   return (
-    <div className="flex min-h-screen items-center justify-center bg-muted/20 px-6 py-12">
-      <Card className="w-full max-w-2xl shadow-lg">
-        <CardHeader className="space-y-2 text-center">
-          <CardTitle className="text-2xl font-semibold">
+    <div className='flex min-h-screen items-center justify-center bg-muted/20 px-6 py-12'>
+      <Card className='w-full max-w-2xl shadow-lg'>
+        <CardHeader className='space-y-2 text-center'>
+          <CardTitle className='text-2xl font-semibold'>
             Create an account
           </CardTitle>
           <CardDescription>
@@ -118,71 +118,71 @@ export default function RegisterPage() {
           </CardDescription>
         </CardHeader>
         <CardContent>
-          <form className="grid gap-6 md:grid-cols-2" onSubmit={handleSubmit}>
-            <div className="space-y-2">
-              <Label htmlFor="firstName">First name</Label>
+          <form className='grid gap-6 md:grid-cols-2' onSubmit={handleSubmit}>
+            <div className='space-y-2'>
+              <Label htmlFor='firstName'>First name</Label>
               <Input
-                id="firstName"
+                id='firstName'
                 value={formState.firstName}
                 onChange={handleChange("firstName")}
                 required
               />
             </div>
-            <div className="space-y-2">
-              <Label htmlFor="lastName">Last name</Label>
+            <div className='space-y-2'>
+              <Label htmlFor='lastName'>Last name</Label>
               <Input
-                id="lastName"
+                id='lastName'
                 value={formState.lastName}
                 onChange={handleChange("lastName")}
                 required
               />
             </div>
-            <div className="space-y-2">
-              <Label htmlFor="email">Email</Label>
+            <div className='space-y-2'>
+              <Label htmlFor='email'>Email</Label>
               <Input
-                id="email"
-                type="email"
-                autoComplete="email"
+                id='email'
+                type='email'
+                autoComplete='email'
                 value={formState.email}
                 onChange={handleChange("email")}
                 required
               />
             </div>
-            <div className="space-y-2">
-              <Label htmlFor="phone">Phone</Label>
+            <div className='space-y-2'>
+              <Label htmlFor='phone'>Phone</Label>
               <Input
-                id="phone"
-                type="tel"
+                id='phone'
+                type='tel'
                 value={formState.phone}
                 onChange={handleChange("phone")}
-                placeholder="+1 (555) 123-4567"
+                placeholder='+1 (555) 123-4567'
               />
             </div>
-            <div className="space-y-2">
-              <Label htmlFor="username">Username</Label>
+            <div className='space-y-2'>
+              <Label htmlFor='username'>Username</Label>
               <Input
-                id="username"
+                id='username'
                 value={formState.username}
                 onChange={handleChange("username")}
                 required
               />
             </div>
-            <div className="space-y-2">
-              <Label htmlFor="password">Password</Label>
+            <div className='space-y-2'>
+              <Label htmlFor='password'>Password</Label>
               <Input
-                id="password"
-                type="password"
-                autoComplete="new-password"
+                id='password'
+                type='password'
+                autoComplete='new-password'
                 value={formState.password}
                 onChange={handleChange("password")}
                 minLength={8}
                 required
               />
             </div>
-            <div className="md:col-span-2">
+            <div className='md:col-span-2'>
               <Button
-                type="submit"
-                className="w-full md:w-auto"
+                type='submit'
+                className='w-full md:w-auto'
                 disabled={loading}
               >
                 {loading ? "Creating account…" : "Create account"}
@@ -190,16 +190,16 @@ export default function RegisterPage() {
             </div>
           </form>
         </CardContent>
-        <CardFooter className="justify-center text-sm text-muted-foreground">
+        <CardFooter className='justify-center text-sm text-muted-foreground'>
           <span>Already have an account?</span>
           <Link
-            href={templateUrl("/login")}
-            className="ml-1 font-medium text-primary hover:underline"
+            href={templateUrl("/auth/login")}
+            className='ml-1 font-medium text-primary hover:underline'
           >
             Sign in
           </Link>
         </CardFooter>
       </Card>
     </div>
-  );
+  )
 }

@@ -1,5 +1,5 @@
-import React from "react";
-import type { Section } from "../types/sections";
+import React from "react"
+import type { Section } from "../types/sections"
 
 type KnownSectionType =
   | "hero"
@@ -11,40 +11,37 @@ type KnownSectionType =
   | "gallery"
   | "contact"
   | "text"
-  | "products"
-  | "productCategories"
   | "carousel"
-  | "lastViewedProducts"
   | "banner"
   | "bookingForm"
-  | "content";
+  | "content"
 
 interface RenderSectionsProps {
-  sections: Section[];
+  sections: Section[]
   components: {
-    [key in KnownSectionType]?: React.ComponentType<{ section: Section }>;
-  };
+    [key in KnownSectionType]?: React.ComponentType<{ section: Section }>
+  }
 }
 
 export function renderSections({ sections, components }: RenderSectionsProps) {
   if (!sections || !Array.isArray(sections)) {
-    console.warn("Invalid or missing sections array");
-    return null;
+    console.warn("Invalid or missing sections array")
+    return null
   }
 
   return sections.map((section, index) => {
     if (!section || typeof section !== "object" || !section.type) {
-      console.warn(`Invalid section at index ${index}`);
-      return null;
+      console.warn(`Invalid section at index ${index}`)
+      return null
     }
 
-    const Component = components[section.type as KnownSectionType];
+    const Component = components[section.type as KnownSectionType]
 
     if (!Component) {
-      console.warn(`No component found for section type: ${section.type}`);
-      return null;
+      console.warn(`No component found for section type: ${section.type}`)
+      return null
     }
 
-    return <Component key={index} section={section} />;
-  });
+    return <Component key={index} section={section} />
+  })
 }

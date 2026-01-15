@@ -1,4 +1,9 @@
-import { ApolloClient, HttpLink, InMemoryCache, type NormalizedCacheObject } from "@apollo/client";
+import {
+  ApolloClient,
+  HttpLink,
+  InMemoryCache,
+  type NormalizedCacheObject,
+} from "@apollo/client"
 
 const createClient = () =>
   new ApolloClient({
@@ -8,12 +13,14 @@ const createClient = () =>
       uri: process.env.ERXES_API_URL,
       credentials: "include",
       headers: {
-        "Access-Control-Allow-Origin": process.env.ERXES_URL || "",
+        // "Access-Control-Allow-Origin": process.env.ERXES_URL || "",
+        "erxes-app-token": process.env.ERXES_APP_TOKEN || "",
       },
       fetchOptions: {
         cache: "no-store",
       },
     }),
-  });
+  })
 
-export const getClient = (): ApolloClient<NormalizedCacheObject> => createClient();
+export const getClient = (): ApolloClient<NormalizedCacheObject> =>
+  createClient()

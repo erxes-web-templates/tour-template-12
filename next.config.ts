@@ -1,24 +1,23 @@
-import path from "path";
-import type { NextConfig } from "next";
+import path from "path"
+import type { NextConfig } from "next"
 
 const nextConfig: NextConfig = {
   env: {
-    ERXES_API_URL: "http://localhost:4000/graphql",
-    ERXES_URL: "http://localhost:4000",
-    ERXES_FILE_URL: "http://localhost:4000/read-file?key=",
-    ERXES_CP_ID: "UUuZ5v2YQnwjEj5r_iVQz",
-    NEXT_PUBLIC_PMS_TOKEN: "",
-    TEMPLATE_TYPE: "hotel",
+    ERXES_API_URL: "https://meetmongolia.app.erxes.io/gateway/graphql",
+    ERXES_URL: "https://meetmongolia.app.erxes.io/gateway",
+    ERXES_FILE_URL: "https://meetmongolia.app.erxes.io/gateway/read-file?key=",
+    ERXES_CP_ID: "Xi_XyNdE0MyH4qxhQgj2d",
+    TEMPLATE_TYPE: "tours",
     ERXES_APP_TOKEN:
-      "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJhcHAiOnsibmFtZSI6IkJNUyB0ZXN0IiwiY3JlYXRlZEF0IjoiMjAyNC0xMi0wMlQxMTowOTowOC42MDNaIiwidXNlckdyb3VwSWQiOiJuTlBtbmtKbXdHdHEycXVoeiIsImV4cGlyZURhdGUiOiIyMDI1LTAxLTAzVDAyOjU0OjU2LjIwOFoiLCJub0V4cGlyZSI6dHJ1ZSwiYWxsb3dBbGxQZXJtaXNzaW9uIjp0cnVlLCJfaWQiOiJiYU5DZ0FTVXNkMWdheFBYVV83VGUiLCJfX3YiOjB9LCJpYXQiOjE3MzMyODA5MDh9.xPo9ijx7LsHfs3NamL836hFhJMtUnnB0sGbDztSKi3E",
+      "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJhcHAiOnsibmFtZSI6Ik1lZXQgTW9uZ29saWEiLCJjcmVhdGVkQXQiOiIyMDI1LTA1LTI3VDA0OjIzOjUxLjIxMFoiLCJ1c2VyR3JvdXBJZCI6IjRFSHlkVERBaXMyTGRRblpuIiwiZXhwaXJlRGF0ZSI6IjIwMjUtMDYtMjZUMDg6NTc6MzEuNzA1WiIsIm5vRXhwaXJlIjp0cnVlLCJhbGxvd0FsbFBlcm1pc3Npb24iOnRydWUsIl9pZCI6Im9oZW44LW9qY3N0bXBtLW5Zb2dWUiIsIl9fdiI6MH0sImlhdCI6MTc0ODMzNjI4MH0.09smswpoLOXd4emEX4BiT4oh1ofFSrXuhJbeyEVNcec",
   },
   images: {
     unoptimized: true,
   },
   webpack: (config) => {
-    config.resolve.alias["@"] = path.resolve(__dirname);
-    return config;
+    config.resolve.alias["@"] = path.resolve(__dirname)
+    return config
   },
-};
+}
 
-export default nextConfig;
+export default nextConfig

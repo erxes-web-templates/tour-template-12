@@ -1,4 +1,4 @@
-import { gql } from "@apollo/client";
+import { gql } from "@apollo/client"
 
 export const TOURS_QUERY = gql`
   query BmTours($page: Int, $perPage: Int, $status: String) {
@@ -19,10 +19,11 @@ export const TOURS_QUERY = gql`
           images
         }
         refNumber
+        groupSize
       }
     }
   }
-`;
+`
 
 export const TOUR_DETAIL_QUERY = gql`
   query BmTourDetail($id: String!, $branchId: String) {
@@ -31,6 +32,7 @@ export const TOUR_DETAIL_QUERY = gql`
       branchId
       content
       cost
+      duration
       name
       status
       startDate
@@ -38,9 +40,10 @@ export const TOUR_DETAIL_QUERY = gql`
       viewCount
       images
       imageThumbnail
+      groupSize
     }
   }
-`;
+`
 
 export const CP_GET_CONFIG = gql`
   query clientPortalGetConfig($_id: String!) {
@@ -160,7 +163,7 @@ export const CP_GET_CONFIG = gql`
       language
     }
   }
-`;
+`
 
 export const GET_CMS_PAGE = gql`
   query CmsPage($id: String, $slug: String) {
@@ -180,7 +183,7 @@ export const GET_CMS_PAGE = gql`
       }
     }
   }
-`;
+`
 
 export const GET_CMS_MENU = gql`
   query CmsMenu($id: String!) {
@@ -201,7 +204,7 @@ export const GET_CMS_MENU = gql`
       }
     }
   }
-`;
+`
 
 export const GET_CMS_MENU_LIST = gql`
   query CmsMenuList($clientPortalId: String!, $kind: String) {
@@ -217,7 +220,7 @@ export const GET_CMS_MENU_LIST = gql`
       order
     }
   }
-`;
+`
 
 export const GET_CMS_PAGES = gql`
   query CmsPages($clientPortalId: String!) {
@@ -231,7 +234,7 @@ export const GET_CMS_PAGES = gql`
       updatedAt
     }
   }
-`;
+`
 
 export const GET_CMS_POSTS = gql`
   query CmsPosts(
@@ -308,7 +311,7 @@ export const GET_CMS_POSTS = gql`
       }
     }
   }
-`;
+`
 
 export const GET_CMS_POST = gql`
   query CmsPost($slug: String, $id: String, $language: String) {
@@ -357,7 +360,7 @@ export const GET_CMS_POST = gql`
       }
     }
   }
-`;
+`
 
 export const GET_CMS_POST_LIST = gql`
   query PostList(
@@ -459,7 +462,7 @@ export const GET_CMS_POST_LIST = gql`
       __typename
     }
   }
-`;
+`
 
 export const GET_FORM_DETAIL = gql`
   query FormDetail($id: String!) {
@@ -485,7 +488,7 @@ export const GET_FORM_DETAIL = gql`
       }
     }
   }
-`;
+`
 
 export const INQUIRY_FORM = gql`
   query Forms($type: String, $brandId: String, $searchValue: String) {
@@ -538,7 +541,7 @@ export const INQUIRY_FORM = gql`
       }
     }
   }
-`;
+`
 
 export const TOURS_GROUP_QUERY = gql`
   query bmToursGroup(
@@ -590,7 +593,7 @@ export const TOURS_GROUP_QUERY = gql`
       }
     }
   }
-`;
+`
 
 export const TOUR_GROUP_DETAIL_QUERY = gql`
   query BmToursGroupDetail($groupCode: String, $status: String) {
@@ -628,4 +631,4 @@ export const TOUR_GROUP_DETAIL_QUERY = gql`
       }
     }
   }
-`;
+`

@@ -1,45 +1,36 @@
-import { gql } from '@apollo/client';
+import { gql } from "@apollo/client"
 
-const addEditParamDefs = `$items: [OrderItemInput], $totalAmount: Float!, $type: String!, $customerId: String, $registerNumber: String, $billType: String, $origin: String, $dueDate: Date, $branchId: String, $deliveryInfo: JSON, $description: String, $saleStatus: String`;
-
-const addEditParams = `items: $items, totalAmount: $totalAmount, type: $type, customerId: $customerId, registerNumber: $registerNumber, billType: $billType, origin: $origin, dueDate: $dueDate, branchId: $branchId, deliveryInfo: $deliveryInfo, description: $description, saleStatus: $saleStatus`;
-
-const ordersAdd = gql`
-  mutation ordersAdd(${addEditParamDefs}) {
-    ordersAdd(${addEditParams}) {
-     _id
+const bmOrderAdd = gql`
+  mutation BmOrderAdd($order: BmsOrderInput) {
+    bmOrderAdd(order: $order) {
+      _id
+      branchId
+      customerId
+      tourId
+      amount
+      status
+      note
+      numberOfPeople
+      type
+      additionalCustomers
+      isChild
+      parent
     }
   }
-`;
+`
 
-const ordersEdit = gql`
-  mutation ordersEdit($_id: String!, ${addEditParamDefs}) {
-    ordersEdit(_id: $_id, ${addEditParams}) {
-      _id,
+const bmOrderEdit = gql`
+  mutation BmOrderEdit($_id: String!, $order: BmsOrderInput) {
+    bmOrderEdit(_id: $_id, order: $order) {
+      _id
       status
     }
   }
-`;
-
-const orderChangeSaleStatus = gql`
-  mutation OrderChangeSaleStatus($_id: String!, $saleStatus: String) {
-    orderChangeSaleStatus(_id: $_id, saleStatus: $saleStatus) {
-      _id
-    }
-  }
-`;
-
-const ordersCancel = gql`
-  mutation OrdersCancel($_id: String!) {
-    ordersCancel(_id: $_id)
-  }
-`;
+`
 
 const mutations = {
-  ordersAdd,
-  ordersEdit,
-  ordersCancel,
-  orderChangeSaleStatus
-};
+  bmOrderAdd,
+  bmOrderEdit,
+}
 
-export default mutations;
+export default mutations
