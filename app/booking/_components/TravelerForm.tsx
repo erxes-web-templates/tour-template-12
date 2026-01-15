@@ -1,7 +1,7 @@
 "use client"
 
 import React, { useState } from "react"
-import { useQuery } from "@apollo/client"
+import { useQuery, useMutation } from "@apollo/client"
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card"
 import { Input } from "@/components/ui/input"
 import { Label } from "@/components/ui/label"
@@ -32,6 +32,9 @@ import { User, Check, ChevronsUpDown } from "lucide-react"
 import { cn } from "@/lib/utils"
 import { nationalities } from "@/lib/utils"
 import paymentQueries from "@/graphql/payment/queries"
+import { mutations as customerMutations } from "@/graphql/customer"
+import { mutations as kbMutations } from "@/graphql/kb"
+import { useFindOrCreateCustomer } from "@/hooks/useFindOrCreateCustomer"
 
 interface TravelerData {
   firstName: string
@@ -50,7 +53,9 @@ interface TravelerFormProps {
     firstName?: string
     lastName?: string
     email?: string
+    erxesCustomerId?: string
   }
+  customerId?: string 
   paymentType?: string
   setPaymentType?: (value: string) => void
   note?: string
@@ -64,6 +69,7 @@ export default function TravelerForm({
   onChange,
   isLead = false,
   currentUser,
+  customerId,
   paymentType,
   setPaymentType,
   note,
@@ -72,12 +78,10 @@ export default function TravelerForm({
 }: TravelerFormProps) {
   const [open, setOpen] = useState(false)
 
-  // Helper function to check if field has error
   const hasError = (field: string) => {
     return validationErrors[`${index}-${field}`] === true
   }
 
-  // Fetch payment methods
   const { data: paymentsData, loading: paymentsLoading } = useQuery(
     paymentQueries.payments,
     {
@@ -86,6 +90,88 @@ export default function TravelerForm({
   )
 
   const payments = paymentsData?.payments || []
+
+  // Mutations
+  const [updateCustomer] = useMutation(customerMutations.editCustomer)
+  const [saveBrowserInfo] = useMutation(kbMutations.saveBrowserInfo)
+  
+  // Hook to find or create customer (search first, then create if not found)
+  const { handleFindOrCreateCustomer } = useFindOrCreateCustomer()
+
+  // State to store found/created customer ID for non-lead travelers
+  const [createdCustomerId, setCreatedCustomerId] = useState<string | null>(
+    null
+  )
+
+  // Handle gender change for lead traveler
+  const handleGenderChange = async (value: string) => {
+    onChange(index, "gender", value)
+
+    if (isLead && currentUser?.erxesCustomerId) {
+      try {
+        const sexValue = value === "male" ? 1 : value === "female" ? 2 : 0
+
+        await updateCustomer({
+          variables: {
+            _id: currentUser.erxesCustomerId,
+            sex: sexValue,
+          },
+        })
+      } catch (error) {
+        console.error("Failed to update customer gender:", error)
+      }
+    }
+  }
+
+  // Handle nationality change for all travelers
+  const handleNationalityChange = async (nationalityName: string) => {
+    onChange(index, "nationality", nationalityName)
+
+    // Find the nationality object to get the code
+    const selectedNationality = nationalities.find(
+      (nat) => nat.Name === nationalityName
+    )
+
+    if (!selectedNationality) return
+
+    try {
+      // Get customer ID
+      let targetCustomerId = isLead
+        ? currentUser?.erxesCustomerId
+        : customerId || createdCustomerId
+
+      // If no customer ID exists for non-lead traveler, find or create customer
+      // This will search by email first, then create if not found
+      if (!isLead && !targetCustomerId && data.firstName && data.lastName && data.email) {
+        targetCustomerId = await handleFindOrCreateCustomer({
+          firstName: data.firstName,
+          lastName: data.lastName,
+          email: data.email,
+          gender: data.gender,
+        })
+
+        if (targetCustomerId) {
+          setCreatedCustomerId(targetCustomerId)
+        }
+      }
+
+      // Save nationality to customer location
+      if (targetCustomerId) {
+        await saveBrowserInfo({
+          variables: {
+            customerId: targetCustomerId,
+            browserInfo: {
+              country: selectedNationality.Name,
+              countryCode: selectedNationality.Code,
+              userAgent: navigator.userAgent,
+            },
+          },
+        })
+      }
+    } catch (error) {
+      console.error("Failed to save nationality:", error)
+    }
+  }
 
   return (
     <Card>
@@ -164,7 +250,7 @@ export default function TravelerForm({
             </Label>
             <Select
               value={data.gender}
-              onValueChange={(value) => onChange(index, "gender", value)}
+              onValueChange={handleGenderChange}
             >
               <SelectTrigger
                 className={cn(hasError("gender") && "border-red-500")}
@@ -206,28 +292,26 @@ export default function TravelerForm({
                     <CommandGroup>
                       {nationalities.map((nationality) => (
                         <CommandItem
-                          key={nationality}
-                          value={nationality}
+                          key={nationality.Code}
+                          value={nationality.Name}
                           onSelect={(currentValue) => {
-                            onChange(
-                              index,
-                              "nationality",
+                            const newValue =
                               currentValue === data.nationality.toLowerCase()
                                 ? ""
-                                : nationality
-                            )
+                                : nationality.Name
+                            handleNationalityChange(newValue)
                             setOpen(false)
                           }}
                         >
                           <Check
                             className={cn(
                               "mr-2 h-4 w-4",
-                              data.nationality === nationality
+                              data.nationality === nationality.Name
                                 ? "opacity-100"
                                 : "opacity-0"
                             )}
                           />
-                          {nationality}
+                          {nationality.Name}
                         </CommandItem>
                       ))}
                     </CommandGroup>

@@ -1,3 +1,26 @@
-const mutations = {};
+import { gql } from "@apollo/client"
 
-export default mutations;
+const saveBrowserInfo = gql`
+  mutation widgetsSaveBrowserInfo(
+    $customerId: String
+    $visitorId: String
+    $browserInfo: JSON!
+  ) {
+    widgetsSaveBrowserInfo(
+      customerId: $customerId
+      visitorId: $visitorId
+      browserInfo: $browserInfo
+    ) {
+      customer {
+        _id
+        location
+      }
+    }
+  }
+`
+
+const mutations = {
+  saveBrowserInfo,
+}
+
+export default mutations

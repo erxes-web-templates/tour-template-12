@@ -6,6 +6,7 @@ import { useQuery, useMutation } from "@apollo/client"
 import { useAtom } from "jotai"
 import { TOUR_DETAIL_QUERY } from "@/graphql/queries"
 import orderMutations from "@/graphql/order/mutations"
+import orderQueries from "@/graphql/order/queries"
 import paymentMutations from "@/graphql/payment/mutations"
 import paymentQueries from "@/graphql/payment/queries"
 import PageLoader from "@/components/common/PageLoader"
@@ -21,6 +22,7 @@ import {
   orderIdAtom,
   invoiceIdAtom,
   validationErrorsAtom,
+  clearBookingData,
   type TravelerData,
 } from "@/store/bookingStore"
 
@@ -35,6 +37,7 @@ import { PaymentStep } from "./_components/PaymentStep"
 const BookingPage = () => {
   const searchParams = useSearchParams()
   const tourId = searchParams.get("tourId")
+  const existingOrderId = searchParams.get("orderId")
   const numberOfPeople = parseInt(searchParams.get("people") || "1")
   const selectedDate = searchParams.get("selectedDate")
 
@@ -56,9 +59,28 @@ const BookingPage = () => {
   const { handleFindOrCreateCustomer, loading: customerLoading } =
     useFindOrCreateCustomer()
 
+  // Fetch orders if we need to find an existing order
+  const { data: ordersData, loading: ordersLoading } = useQuery(
+    orderQueries.bmOrders,
+    {
+      variables: { customerId: currentUser?.erxesCustomerId },
+      skip: !existingOrderId || !currentUser?.erxesCustomerId,
+      fetchPolicy: "network-only",
+    }
+  )
+
+  // Find the specific order from the list
+  const existingOrder = React.useMemo(() => {
+    if (!existingOrderId || !ordersData?.bmOrders?.list) return null
+    return ordersData.bmOrders.list.find((order: any) => order._id === existingOrderId)
+  }, [existingOrderId, ordersData])
+
+  // Determine which tourId to use (from URL or from existing order)
+  const effectiveTourId = tourId || existingOrder?.tourId
+
   const { data, loading, error } = useQuery(TOUR_DETAIL_QUERY, {
-    variables: { id: tourId },
-    skip: !tourId,
+    variables: { id: effectiveTourId },
+    skip: !effectiveTourId,
   })
 
   // Fetch payment methods to get selected payment _id
@@ -130,10 +152,10 @@ const BookingPage = () => {
                 paymentId: selectedPayment._id,
                 amount: orderAmount,
                 details: {
-                  socialDeeplink: transaction.response.socialDeeplink,
-                  checksum: transaction.response.checksum,
-                  invoice: transaction.response.invoice,
-                  transactionId: transaction.response.transactionId,
+                  socialDeeplink: transaction.response.socialDeeplink || "",
+                  checksum: transaction.response.checksum || "",
+                  invoice: transaction.response.invoice || "",
+                  transactionId: transaction.response.transactionId || "",
                 },
               },
             })
@@ -146,28 +168,40 @@ const BookingPage = () => {
             // Store payment data for PaymentStep
             setPaymentData({
               paymentKind:
-                transactionData?.paymentKind || transaction.paymentKind,
-              invoice: paymentResponse?.invoice || transaction.response.invoice,
+                transactionData?.paymentKind || transaction.paymentKind || paymentType,
+              invoice: paymentResponse?.invoice || transaction.response?.invoice || "",
               socialDeeplink:
                 paymentResponse?.socialDeeplink ||
-                transaction.response.socialDeeplink,
+                transaction.response?.socialDeeplink || "",
             })
 
             toast.success(
               "Booking, invoice and transaction created successfully!"
             )
             setCurrentStep(2)
+            setIsSubmitting(false)
           } catch (transactionError: any) {
+            console.error("Transaction error:", transactionError)
             toast.error(
               "Invoice created but transaction update failed: " +
                 transactionError.message
             )
+            // Still proceed to payment step even if transaction update fails
+            setCurrentStep(2)
             setIsSubmitting(false)
           }
         } else {
-          // If no transaction response, just proceed to next step
+          // If no transaction response, set basic payment data and proceed
+          // Store basic payment data
+          setPaymentData({
+            paymentKind: paymentType,
+            invoice: "",
+            socialDeeplink: "",
+          })
+          
           toast.success("Booking and invoice created successfully!")
           setCurrentStep(2)
+          setIsSubmitting(false)
         }
       } catch (error: any) {
         toast.error("Booking created but invoice failed: " + error.message)
@@ -182,9 +216,197 @@ const BookingPage = () => {
 
   const tour = data?.bmTourDetail
 
+  // Ensure we're on step 2 if we have orderId and invoiceId (payment ready)
+  useEffect(() => {
+    if (orderId && invoiceId && currentStep !== 2 && !existingOrderId) {
+      setCurrentStep(2)
+    }
+  }, [orderId, invoiceId, currentStep, existingOrderId, setCurrentStep])
+
+  // Track the last processed URL parameters to detect changes
+  const lastTourIdRef = React.useRef<string | null>(null)
+  const lastExistingOrderIdRef = React.useRef<string | null>(null)
+
+  // Clear previous order data when URL parameters change (tourId or existingOrderId)
+  // This ensures fresh booking doesn't show old payment data
+  useEffect(() => {
+    const tourIdChanged = tourId !== lastTourIdRef.current
+    const orderIdChanged = existingOrderId !== lastExistingOrderIdRef.current
+
+    if (tourIdChanged || orderIdChanged) {
+      // URL parameters changed - clear all previous booking data
+      if (existingOrderId) {
+        // Paying for existing order - clear but keep ref
+        setOrderId(null)
+        setInvoiceId(null)
+        setPaymentData(null)
+        setCurrentStep(1)
+      } else {
+        // Fresh booking - clear everything
+        setOrderId(null)
+        setInvoiceId(null)
+        setPaymentData(null)
+        if (currentStep === 2) {
+          setCurrentStep(1)
+        }
+      }
+
+      // Update refs
+      lastTourIdRef.current = tourId
+      lastExistingOrderIdRef.current = existingOrderId
+    }
+    // Only run when URL parameters change
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [tourId, existingOrderId])
+
+  // Create invoice for existing order
+  const handlePayExistingOrder = React.useCallback(async () => {
+    if (!existingOrder || !paymentType) {
+      toast.error("Order or payment method not found")
+      return
+    }
+
+    setIsSubmitting(true)
+
+    try {
+      // Find selected payment _id from payments list
+      const selectedPayment = paymentsData?.payments?.find(
+        (p: any) => p.kind === paymentType
+      )
+
+      if (!selectedPayment) {
+        toast.error("Selected payment method not found")
+        setIsSubmitting(false)
+        return
+      }
+
+      // Create invoice for existing order
+      const invoiceResponse = await invoiceCreate({
+        variables: {
+          amount: existingOrder.amount,
+          email: currentUser?.email,
+          description: `Payment for order ${existingOrder._id}`,
+          customerId: currentUser?.erxesCustomerId,
+          customerType: "customer",
+          contentTypeId: existingOrder._id,
+          paymentIds: [selectedPayment._id],
+        },
+      })
+
+      const invoiceData = invoiceResponse.data?.invoiceCreate
+      const createdInvoiceId = invoiceData?._id
+      const transaction = invoiceData?.transactions?.[0]
+
+      if (!createdInvoiceId) {
+        toast.error("Invoice creation failed")
+        setIsSubmitting(false)
+        return
+      }
+
+      // Store invoice ID
+      setInvoiceId(createdInvoiceId)
+
+      // Update transaction with additional details if transaction exists
+      if (transaction?._id && transaction?.response) {
+        try {
+          const transactionResponse = await transactionsAdd({
+            variables: {
+              invoiceId: createdInvoiceId,
+              paymentId: selectedPayment._id,
+              amount: existingOrder.amount,
+              details: {
+                socialDeeplink: transaction.response.socialDeeplink,
+                checksum: transaction.response.checksum,
+                invoice: transaction.response.invoice,
+                transactionId: transaction.response.transactionId,
+              },
+            },
+          })
+
+          // Get payment data from transactionsAdd response
+          const transactionData =
+            transactionResponse.data?.paymentTransactionsAdd
+          const paymentResponse = transactionData?.response
+
+          // Store payment data for PaymentStep
+          setPaymentData({
+            paymentKind:
+              transactionData?.paymentKind || transaction.paymentKind,
+            invoice: paymentResponse?.invoice || transaction.response.invoice,
+            socialDeeplink:
+              paymentResponse?.socialDeeplink ||
+              transaction.response.socialDeeplink,
+          })
+
+          toast.success("Invoice created successfully!")
+        } catch (transactionError: any) {
+          toast.error(
+            "Invoice created but transaction update failed: " +
+              transactionError.message
+          )
+        }
+      } else {
+        toast.success("Invoice created successfully!")
+      }
+
+      setIsSubmitting(false)
+    } catch (error: any) {
+      toast.error("Failed to create invoice: " + error.message)
+      setIsSubmitting(false)
+    }
+  }, [
+    existingOrder,
+    paymentType,
+    paymentsData,
+    currentUser,
+    invoiceCreate,
+    transactionsAdd,
+    setInvoiceId,
+    setPaymentData,
+    setIsSubmitting,
+  ])
+
+  // If existing order is loaded, set it up for payment
+  useEffect(() => {
+    if (existingOrder && existingOrderId && orderId !== existingOrder._id) {
+      setOrderId(existingOrder._id)
+      if (existingOrder.type) {
+        setPaymentType(existingOrder.type)
+      }
+      // Skip to payment step
+      setCurrentStep(2)
+    }
+  }, [existingOrder, existingOrderId, orderId, setOrderId, setPaymentType, setCurrentStep])
+
+  // Auto-create invoice when existing order is ready and we're on payment step
+  useEffect(() => {
+    if (
+      existingOrder &&
+      existingOrderId &&
+      orderId === existingOrder._id &&
+      currentStep === 2 &&
+      !paymentData &&
+      !invoiceId &&
+      !isSubmitting &&
+      paymentsData?.payments
+    ) {
+      handlePayExistingOrder()
+    }
+  }, [
+    existingOrder,
+    existingOrderId,
+    orderId,
+    currentStep,
+    paymentData,
+    invoiceId,
+    isSubmitting,
+    paymentsData,
+    handlePayExistingOrder,
+  ])
+
   // Initialize travelers with current user data for lead traveler
   useEffect(() => {
-    if (currentUser && travelers.length === 0) {
+    if (currentUser && travelers.length === 0 && !existingOrderId) {
       const initialTravelers: TravelerData[] = Array.from(
         { length: numberOfPeople },
         (_, index) => {
@@ -214,15 +436,53 @@ const BookingPage = () => {
 
   // Store redirect URL for after login
   useEffect(() => {
-    if (tourId && !currentUser && !userLoading) {
-      const currentUrl = `/booking?tourId=${tourId}&people=${numberOfPeople}${
-        selectedDate ? `&selectedDate=${selectedDate}` : ""
-      }`
+    if (effectiveTourId && !currentUser && !userLoading) {
+      let currentUrl = `/booking?tourId=${effectiveTourId}&people=${numberOfPeople}`
+      if (selectedDate) currentUrl += `&selectedDate=${selectedDate}`
+      if (existingOrderId) currentUrl += `&orderId=${existingOrderId}`
       localStorage.setItem("redirectAfterLogin", currentUrl)
     }
-  }, [tourId, currentUser, userLoading, numberOfPeople, selectedDate])
+  }, [effectiveTourId, currentUser, userLoading, numberOfPeople, selectedDate, existingOrderId])
 
-  if (!tourId) {
+  // Clear booking data when starting a new booking (different tour or parameters)
+  // Skip this if we're paying for an existing order OR if we have an active orderId (processing)
+  useEffect(() => {
+    if (typeof window !== "undefined" && effectiveTourId && !existingOrderId && !orderId) {
+      const bookingKey = `current-booking-params`
+      const currentParams = {
+        tourId: effectiveTourId,
+        numberOfPeople,
+        selectedDate: selectedDate || "",
+      }
+      const storedParams = localStorage.getItem(bookingKey)
+
+      if (storedParams) {
+        const parsed = JSON.parse(storedParams)
+        // Check if any parameter has changed
+        if (
+          parsed.tourId !== effectiveTourId ||
+          parsed.numberOfPeople !== numberOfPeople ||
+          parsed.selectedDate !== (selectedDate || "")
+        ) {
+          // Parameters changed - clear old booking data
+          clearBookingData()
+          setTravelers([])
+          setPaymentType("")
+          setNote("")
+          setCurrentStep(1)
+          setPaymentData(null)
+          setOrderId(null)
+          setInvoiceId(null)
+          setValidationErrors({})
+        }
+      }
+
+      // Store current parameters
+      localStorage.setItem(bookingKey, JSON.stringify(currentParams))
+    }
+  }, [effectiveTourId, numberOfPeople, selectedDate, existingOrderId, orderId])
+
+  if (!effectiveTourId) {
     return (
       <div className='container mx-auto p-4 py-12 text-center'>
         <h1 className='text-2xl font-bold text-gray-800'>No Tour Selected</h1>
@@ -233,7 +493,7 @@ const BookingPage = () => {
     )
   }
 
-  if (userLoading || loading) {
+  if (userLoading || loading || (existingOrderId && ordersLoading)) {
     return <PageLoader />
   }
 
@@ -253,7 +513,9 @@ const BookingPage = () => {
     )
   }
 
-  const totalCost = tour.cost * numberOfPeople
+  // Use existing order data if available, otherwise calculate
+  const effectiveNumberOfPeople = existingOrder?.numberOfPeople || numberOfPeople
+  const totalCost = existingOrder?.amount || (tour.cost * numberOfPeople)
 
   const handleTravelerChange = (
     index: number,
@@ -372,10 +634,10 @@ const BookingPage = () => {
       await bmOrderAdd({
         variables: {
           order: {
-            tourId: tourId,
+            tourId: effectiveTourId,
             customerId: leadCustomerId,
             amount: totalCost,
-            numberOfPeople: numberOfPeople,
+            numberOfPeople: effectiveNumberOfPeople,
             type: paymentType,
             note: note || undefined,
             status: "pending",
@@ -436,10 +698,10 @@ const BookingPage = () => {
 
           {/* Sidebar */}
           <div className='md:col-span-1 space-y-6'>
-            <TourDetailsSidebar tour={tour} numberOfPeople={numberOfPeople} />
+            <TourDetailsSidebar tour={tour} numberOfPeople={effectiveNumberOfPeople} />
             <PriceSummary
               costPerPerson={tour.cost}
-              numberOfPeople={numberOfPeople}
+              numberOfPeople={effectiveNumberOfPeople}
               totalCost={totalCost}
             />
           </div>

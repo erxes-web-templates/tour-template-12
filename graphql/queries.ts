@@ -586,7 +586,6 @@ export const TOURS_GROUP_QUERY = gql`
           info3
           info4
           info5
-          extra
           images
           imageThumbnail
         }
@@ -625,7 +624,6 @@ export const TOUR_GROUP_DETAIL_QUERY = gql`
         info3
         info4
         info5
-        extra
         images
         imageThumbnail
       }

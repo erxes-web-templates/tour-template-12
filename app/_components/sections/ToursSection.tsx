@@ -60,9 +60,9 @@ const ToursSection = ({ section }: { section: Section }) => {
               </CardHeader>
               <CardContent>
                 <CardTitle>{tour.items[0].name}</CardTitle>
-                <CardDescription>
-                  <p dangerouslySetInnerHTML={toHtml(tour.items[0].content)} />
-                </CardDescription>
+                <CardDescription
+                  dangerouslySetInnerHTML={toHtml(tour.items[0].content)}
+                />
               </CardContent>
               <CardFooter className='flex justify-between items-center'>
                 <span className='text-lg font-bold'>{tour.items[0].cost}</span>

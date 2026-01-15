@@ -27,8 +27,6 @@ import { Badge } from "../../components/ui/badge"
 import { useToast } from "../../hooks/use-toast"
 import ProfileSidebar from "./_components/ProfileSidebar"
 import ProfileOrdersTab from "./_components/ProfileOrdersTab"
-import ProfileWishlistTab from "./_components/ProfileWishlistTab"
-import ProfileViewedTab from "./_components/ProfileViewedTab"
 import ProfileSecurityTab from "./_components/ProfileSecurityTab"
 import { templateUrl } from "../../lib/utils"
 
@@ -87,28 +85,14 @@ export default function ProfilePage() {
     data: ordersData,
     loading: ordersLoading,
     refetch: refetchOrders,
-  } = useQuery(orderQueries.fullOrders, {
+  } = useQuery(orderQueries.bmOrders, {
     variables: {
       customerId: user?.erxesCustomerId ?? undefined,
-      sortField: "createdAt",
-      sortDirection: -1,
     },
     skip: !user?.erxesCustomerId,
     fetchPolicy: "cache-and-network",
   })
 
-  const {
-    data: viewedData,
-    loading: viewedLoading,
-    refetch: refetchViewed,
-  } = useQuery(orderQueries.getLastProductView, {
-    variables: {
-      customerId: user?.erxesCustomerId ?? "",
-      limit: 16,
-    },
-    skip: !user?.erxesCustomerId,
-    fetchPolicy: "cache-and-network",
-  })
 
   const [formState, setFormState] = useState({
     firstName: "",
@@ -134,12 +118,9 @@ export default function ProfilePage() {
     confirmPassword: "",
   })
 
-  const orders = useMemo(() => ordersData?.fullOrders ?? [], [ordersData])
+  const orders = useMemo(() => ordersData?.bmOrders?.list ?? [], [ordersData])
 
-  const viewedItems = useMemo(
-    () => viewedData?.lastViewedItems ?? [],
-    [viewedData]
-  )
+
 
   const [updateUser, { loading: updating }] = useMutation(
     authMutations.userEdit,

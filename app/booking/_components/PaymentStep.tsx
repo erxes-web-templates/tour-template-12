@@ -54,8 +54,7 @@ export const PaymentStep: React.FC<PaymentStepProps> = ({
 
         // Check if payment is successful
         if (
-          transaction?.status === "paid" ||
-          transaction?.status === "success"
+          transaction?.status === "paid" || transaction?.status === "completed" || transaction?.status === "success"
         ) {
           // Update order status to paid
           if (orderId && !paymentCompleted) {
@@ -72,7 +71,7 @@ export const PaymentStep: React.FC<PaymentStepProps> = ({
       },
     }
   )
-  // Determine payment URL based on payment kind
+
   const getPaymentUrl = () => {
     if (!paymentData) return null
 
@@ -81,9 +80,8 @@ export const PaymentStep: React.FC<PaymentStepProps> = ({
         return paymentData.invoice
           ? `https://ecommerce.golomtbank.com/payment/en/${paymentData.invoice}`
           : null
-      case "qpay":
-        // QPay might use socialDeeplink or different URL
-        return paymentData.socialDeeplink || null
+      case "qpayQuickqr":
+        return `${process.env.ERXES_URL}/pl:payment/invoice/${invoiceId}`
       default:
         return null
     }

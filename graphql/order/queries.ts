@@ -10,8 +10,31 @@ const invoices = `
   }
 `
 
+const bmOrders = gql`
+  query BmOrders($customerId: String) {
+    bmOrders(customerId: $customerId) {
+      total
+      list {
+        _id
+        branchId
+        customerId
+        tourId
+        amount
+        status
+        note
+        numberOfPeople
+        type
+        additionalCustomers
+        isChild
+        parent
+      }
+    }
+  }
+`
+
 const queries = {
   invoices,
+  bmOrders,
 }
 
 export default queries

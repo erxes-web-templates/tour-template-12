@@ -24,6 +24,21 @@ const addCustomer = gql`
   }
 `
 
-const mutations = { addCustomer }
+const editCustomer = gql`
+  mutation customersEdit(
+    $_id: String!
+    $sex: Int
+  ) {
+    customersEdit(
+      _id: $_id
+      sex: $sex
+    ) {
+      _id
+      sex
+    }
+  }
+`
+
+const mutations = { addCustomer, editCustomer }
 
 export default mutations

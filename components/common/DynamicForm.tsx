@@ -30,6 +30,7 @@ import {
 import { format } from "date-fns";
 import { CalendarIcon } from "lucide-react";
 import { Calendar } from "@/components/ui/calendar";
+import { RadioGroup, RadioGroupItem } from "@/components/ui/radio-group";
 import { cn } from "@/lib/utils";
 // Define the field interface based on the JSON structure
 interface FormField {
@@ -52,12 +53,14 @@ interface DynamicFormProps {
   formData: FormData;
   submitForm: (data: any) => void;
   submitted?: boolean; // Optional, used to indicate if the form has been submitted
+  tourName?: string; // Optional, used to auto-populate "Selected tour name" field
 }
 
 const DynamicForm: React.FC<DynamicFormProps> = ({
   formData,
   submitForm,
   submitted,
+  tourName,
 }) => {
   const [browserInfo, setBrowserInfo] = useState({});
   const fields = formData.fields;
@@ -86,6 +89,20 @@ const DynamicForm: React.FC<DynamicFormProps> = ({
   const generateZodSchema = () => {
     const schemaMap: Record<string, any> = {};
 
+    // Helper function to detect if field should be treated as date
+    const isDateFieldByText = (field: FormField) => {
+      const dateKeywords = [
+        "date",
+        "start the tour",
+        "possible date",
+        "departure date",
+        "travel date",
+        "tour date",
+      ];
+      const fieldTextLower = field.text?.toLowerCase() || "";
+      return dateKeywords.some((keyword) => fieldTextLower.includes(keyword));
+    };
+
     fields?.forEach((field) => {
       let schema: any = z.string();
 
@@ -94,15 +111,13 @@ const DynamicForm: React.FC<DynamicFormProps> = ({
         schema = z.string().email("Invalid email format");
       } else if (field.validation === "phone") {
         schema = z.string().min(5, "Invalid phone number");
-      } else if (field.validation === "date") {
+      } else if (field.validation === "date" || isDateFieldByText(field)) {
         schema = z.date({
-          required_error: `${field.text} is required`,
-          invalid_type_error: "Please select a valid date",
+          message: "Please select a valid date",
         });
       } else if (field.validation === "datetime") {
         schema = z.date({
-          required_error: `${field.text} is required`,
-          invalid_type_error: "Please select a valid date and time",
+          message: "Please select a valid date and time",
         });
       } else {
         // Default string validation
@@ -111,7 +126,7 @@ const DynamicForm: React.FC<DynamicFormProps> = ({
 
       // Apply required/optional logic
       if (field.isRequired) {
-        if (field.validation === "date" || field.validation === "datetime") {
+        if (field.validation === "date" || field.validation === "datetime" || isDateFieldByText(field)) {
           // Date fields are already required by default with z.date()
           schema = schema;
         } else if (
@@ -125,7 +140,7 @@ const DynamicForm: React.FC<DynamicFormProps> = ({
           schema = schema.min(1, `${field.text} is required`);
         }
       } else {
-        if (field.validation === "date" || field.validation === "datetime") {
+        if (field.validation === "date" || field.validation === "datetime" || isDateFieldByText(field)) {
           schema = schema.optional();
         } else {
           schema = schema.optional();
@@ -137,6 +152,13 @@ const DynamicForm: React.FC<DynamicFormProps> = ({
         schema = field.isRequired
           ? z.array(z.string()).min(1, "Please select at least one option")
           : z.array(z.string()).optional();
+      }
+
+      // For radio buttons, use string schema
+      if (field.type === "radio") {
+        schema = field.isRequired
+          ? z.string().min(1, "Please select an option")
+          : z.string().optional();
       }
 
       schemaMap[field._id] = schema;
@@ -151,13 +173,46 @@ const DynamicForm: React.FC<DynamicFormProps> = ({
   const getDefaultValues = () => {
     const defaultValues: Record<string, any> = {};
 
+    // Helper function to detect if field should be treated as date
+    const isDateFieldByText = (field: FormField) => {
+      const dateKeywords = [
+        "date",
+        "start the tour",
+        "possible date",
+        "departure date",
+        "travel date",
+        "tour date",
+      ];
+      const fieldTextLower = field.text?.toLowerCase() || "";
+      return dateKeywords.some((keyword) => fieldTextLower.includes(keyword));
+    };
+
     fields?.forEach((field) => {
       if (field.type === "check") {
         defaultValues[field._id] = [];
+      } else if (field.type === "radio") {
+        defaultValues[field._id] = "";
+      } else if (field.validation === "date" || field.validation === "datetime" || isDateFieldByText(field)) {
+        // Date fields should be undefined, not empty string
+        defaultValues[field._id] = undefined;
       } else {
+        // String fields default to empty string
         defaultValues[field._id] = "";
       }
     });
+
+    // Auto-populate tour name in default values if provided
+    if (tourName && fields) {
+      const tourNameField = fields.find((field) =>
+        field.text?.toLowerCase().includes("selected tour name") ||
+        field.text?.toLowerCase().includes("tour name") ||
+        field.text?.toLowerCase().includes("selected tour")
+      );
+
+      if (tourNameField) {
+        defaultValues[tourNameField._id] = tourName;
+      }
+    }
 
     return defaultValues;
   };
@@ -168,6 +223,26 @@ const DynamicForm: React.FC<DynamicFormProps> = ({
     defaultValues: getDefaultValues(),
   });
 
+  // Auto-populate tour name field if tourName prop changes after form initialization
+  useEffect(() => {
+    if (tourName && fields) {
+      // Find field that matches "Selected tour name" (case-insensitive)
+      const tourNameField = fields.find((field) =>
+        field.text?.toLowerCase().includes("selected tour name") ||
+        field.text?.toLowerCase().includes("tour name") ||
+        field.text?.toLowerCase().includes("selected tour")
+      );
+
+      if (tourNameField && tourName) {
+        // Only set value if it's different from current value to avoid unnecessary updates
+        const currentValue = form.getValues(tourNameField._id);
+        if (currentValue !== tourName) {
+          form.setValue(tourNameField._id, tourName, { shouldValidate: false });
+        }
+      }
+    }
+  }, [tourName, fields, form]);
+
   // Handle form submission
   const handleFormSubmit = (data: any) => {
     // Format data for the submitForm function
@@ -177,6 +252,7 @@ const DynamicForm: React.FC<DynamicFormProps> = ({
         browserInfo: browserInfo,
         submissions: formData.fields.map((field: any) => ({
           _id: field._id,
+          text: field.text || "",
           value: data[field._id],
         })),
       },
@@ -198,9 +274,7 @@ const DynamicForm: React.FC<DynamicFormProps> = ({
     <Form {...form}>
       <form onSubmit={form.handleSubmit(handleFormSubmit)}>
         <Card className="rounded-md shadow-lg">
-          <CardHeader>
-            <CardTitle>Contact Form</CardTitle>
-          </CardHeader>
+         
           <CardContent className=" grid grid-cols-2 gap-3 rounded-md">
             {fields?.map((field) => {
               const {
@@ -214,6 +288,41 @@ const DynamicForm: React.FC<DynamicFormProps> = ({
                 column,
               } = field;
               console.log(validation, text, type, "field");
+              
+              // Helper function to detect if field should use date picker
+              const shouldUseDatePicker = () => {
+                if (validation === "date" || validation === "datetime") {
+                  return true;
+                }
+                // Check if field text contains date-related keywords
+                const dateKeywords = [
+                  "date",
+                  "start the tour",
+                  "possible date",
+                  "departure date",
+                  "travel date",
+                  "tour date",
+                ];
+                const fieldTextLower = text?.toLowerCase() || "";
+                return dateKeywords.some((keyword) =>
+                  fieldTextLower.includes(keyword)
+                );
+              };
+
+              const isDateField = shouldUseDatePicker();
+
+              // Helper function to detect if field is the tour name field (should be disabled)
+              const isTourNameField = () => {
+                const fieldTextLower = text?.toLowerCase() || "";
+                return (
+                  fieldTextLower.includes("selected tour name") ||
+                  fieldTextLower.includes("tour name") ||
+                  fieldTextLower.includes("selected tour")
+                );
+              };
+
+              const shouldDisable = isTourNameField();
+
               switch (type) {
                 case "input":
                   return (
@@ -236,7 +345,7 @@ const DynamicForm: React.FC<DynamicFormProps> = ({
                             )}
                           </FormLabel>
                           {description && (
-                            <FormDescription>{description}</FormDescription>
+                            <FormDescription dangerouslySetInnerHTML={{ __html: description }} />
                           )}
                           <FormControl>
                             {validation === "datetime" ? (
@@ -320,7 +429,7 @@ const DynamicForm: React.FC<DynamicFormProps> = ({
                                   </div>
                                 </PopoverContent>
                               </Popover>
-                            ) : validation === "date" ? (
+                            ) : validation === "date" || isDateField ? (
                               <Popover>
                                 <PopoverTrigger asChild>
                                   <Button
@@ -355,7 +464,7 @@ const DynamicForm: React.FC<DynamicFormProps> = ({
                                 </PopoverContent>
                               </Popover>
                             ) : (
-                              <Input {...field} />
+                              <Input {...field} value={field.value || ""} disabled={shouldDisable} />
                             )}
                           </FormControl>
                           <FormMessage />
@@ -382,10 +491,10 @@ const DynamicForm: React.FC<DynamicFormProps> = ({
                             )}
                           </FormLabel>
                           {description && (
-                            <FormDescription>{description}</FormDescription>
+                            <FormDescription dangerouslySetInnerHTML={{ __html: description }} />
                           )}
                           <FormControl>
-                            <Input {...field} />
+                            <Input {...field} value={field.value || ""} disabled={shouldDisable} />
                           </FormControl>
                           <FormMessage />
                         </FormItem>
@@ -411,10 +520,10 @@ const DynamicForm: React.FC<DynamicFormProps> = ({
                             )}
                           </FormLabel>
                           {description && (
-                            <FormDescription>{description}</FormDescription>
+                            <FormDescription dangerouslySetInnerHTML={{ __html: description }} />
                           )}
                           <FormControl>
-                            <Input {...field} />
+                            <Input {...field} value={field.value || ""} disabled={shouldDisable} />
                           </FormControl>
                           <FormMessage />
                         </FormItem>
@@ -440,10 +549,10 @@ const DynamicForm: React.FC<DynamicFormProps> = ({
                             )}
                           </FormLabel>
                           {description && (
-                            <FormDescription>{description}</FormDescription>
+                            <FormDescription dangerouslySetInnerHTML={{ __html: description }} />
                           )}
                           <FormControl>
-                            <Input {...field} />
+                            <Input {...field} value={field.value || ""} disabled={shouldDisable} />
                           </FormControl>
                           <FormMessage />
                         </FormItem>
@@ -466,10 +575,10 @@ const DynamicForm: React.FC<DynamicFormProps> = ({
                             )}
                           </FormLabel>
                           {description && (
-                            <FormDescription>{description}</FormDescription>
+                            <FormDescription dangerouslySetInnerHTML={{ __html: description }} />
                           )}
                           <FormControl>
-                            <Input type="email" {...field} />
+                            <Input type="email" {...field} value={field.value || ""} disabled={shouldDisable} />
                           </FormControl>
                           <FormMessage />
                         </FormItem>
@@ -492,13 +601,14 @@ const DynamicForm: React.FC<DynamicFormProps> = ({
                             )}
                           </FormLabel>
                           {description && (
-                            <FormDescription>{description}</FormDescription>
+                            <FormDescription dangerouslySetInnerHTML={{ __html: description }} />
                           )}
                           <FormControl>
                             <PhoneInput
                               country={"us"}
-                              value={field.value}
+                              value={field.value || ""}
                               onChange={field.onChange}
+                              disabled={shouldDisable}
                               containerClass="w-full"
                               inputStyle={{
                                 width: "100%",
@@ -533,10 +643,10 @@ const DynamicForm: React.FC<DynamicFormProps> = ({
                             )}
                           </FormLabel>
                           {description && (
-                            <FormDescription>{description}</FormDescription>
+                            <FormDescription dangerouslySetInnerHTML={{ __html: description }} />
                           )}
                           <FormControl>
-                            <Textarea rows={4} {...field} />
+                            <Textarea rows={4} {...field} value={field.value || ""} disabled={shouldDisable} />
                           </FormControl>
                           <FormMessage />
                         </FormItem>
@@ -574,6 +684,8 @@ const DynamicForm: React.FC<DynamicFormProps> = ({
                           <FormControl>
                             <select
                               {...field}
+                              value={field.value || ""}
+                              disabled={shouldDisable}
                               className="w-full border rounded-md p-2"
                             >
                               <option value="">Select an option</option>
@@ -606,7 +718,7 @@ const DynamicForm: React.FC<DynamicFormProps> = ({
                               )}
                             </FormLabel>
                             {description && (
-                              <FormDescription>{description}</FormDescription>
+                                <FormDescription dangerouslySetInnerHTML={{ __html: description }} />
                             )}
                             <div className="mt-2 space-y-2">
                               {options.map((option, index) => (
@@ -657,6 +769,64 @@ const DynamicForm: React.FC<DynamicFormProps> = ({
                             </div>
                             <FormMessage />
                           </div>
+                        </FormItem>
+                      )}
+                    />
+                  );
+
+                case "radio":
+                  return (
+                    <FormField
+                      key={_id}
+                      control={form.control}
+                      name={_id}
+                      render={({ field }: any) => (
+                        <FormItem
+                          className={`${
+                            column && column === 2 ? `col-span-1` : `col-span-2`
+                          }`}
+                        >
+                          <FormLabel>
+                            {text}{" "}
+                            {isRequired && (
+                              <span className="text-red-500">*</span>
+                            )}
+                          </FormLabel>
+                          {description && (
+                            <FormDescription>
+                              <span
+                                dangerouslySetInnerHTML={{
+                                  __html: description,
+                                }}
+                              />
+                            </FormDescription>
+                          )}
+                          <FormControl>
+                            <RadioGroup
+                              onValueChange={field.onChange}
+                              value={field.value || ""}
+                              className="mt-2"
+                            >
+                              {options.map((option) => (
+                                <div
+                                  key={option}
+                                  className="flex items-center space-x-2"
+                                >
+                                  <RadioGroupItem
+                                    value={option}
+                                    id={`${_id}-${option}`}
+                                  />
+                                  <label
+                                    htmlFor={`${_id}-${option}`}
+                                    className="text-sm font-normal cursor-pointer"
+                                  >
+                                    {option}
+                                  </label>
+                                </div>
+                              ))}
+                            </RadioGroup>
+                          </FormControl>
+                          <FormMessage />
                         </FormItem>
                       )}
                     />

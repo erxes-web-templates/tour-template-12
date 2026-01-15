@@ -77,8 +77,6 @@ export default function PaymentTabs({ tourId, tour }: PaymentTabsProps) {
   const isBookingAvailable = !!tour.startDate
   const hasMultipleDates = groupTourItems.length > 0
 
-  console.log("tourGroupsize", tour.groupSize)
-
   // Get max group size from tour data or default to 10
   const maxGroupSize = tour.groupSize || 10
 
@@ -135,6 +133,7 @@ export default function PaymentTabs({ tourId, tour }: PaymentTabsProps) {
                 formData={inquiryForm}
                 submitForm={submitForm}
                 submitted={submitted}
+                tourName={tour.name}
               />
             </div>
           </TabsContent>

@@ -10,19 +10,24 @@ import {
 } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
-import { getFileUrl } from "@/lib/utils";
+import Link from "next/link";
+import { useQuery } from "@apollo/client";
+import { TOUR_DETAIL_QUERY } from "@/graphql/queries";
+import { useRouter } from "next/navigation";
 
 type Order = {
   _id: string;
-  createdAt?: string | null;
-  number?: string | null;
-  totalAmount?: number | null;
+  branchId?: string | null;
+  customerId?: string | null;
+  tourId?: string | null;
+  amount?: number | null;
   status?: string | null;
-  items?: Array<{
-    productName?: string | null;
-    productImgUrl?: string | null;
-    count?: number | null;
-  }>;
+  note?: string | null;
+  numberOfPeople?: number | null;
+  type?: string | null;
+  additionalCustomers?: any;
+  isChild?: boolean | null;
+  parent?: string | null;
 };
 
 type ProfileOrdersTabProps = {
@@ -30,7 +35,32 @@ type ProfileOrdersTabProps = {
   loading?: boolean;
 };
 
+const TourInfo = ({ tourId }: { tourId: string }) => {
+  const { data, loading } = useQuery(TOUR_DETAIL_QUERY, {
+    variables: { id: tourId },
+    skip: !tourId,
+  });
+
+  const tour = data?.bmTourDetail;
+
+  if (loading) {
+    return <span className="font-medium">Ачааллаж байна...</span>;
+  }
+
+  if (!tour) {
+    return <span className="font-medium">{tourId}</span>;
+  }
+
+  return (
+    <span className="font-medium">
+      {tour.name} (ID: {tour._id})
+    </span>
+  );
+};
+
 const ProfileOrdersTab = ({ orders, loading }: ProfileOrdersTabProps) => {
+  const router = useRouter();
+
   if (loading) {
     return (
       <p className="text-sm text-muted-foreground">
@@ -47,6 +77,12 @@ const ProfileOrdersTab = ({ orders, loading }: ProfileOrdersTabProps) => {
     );
   }
 
+  const handlePayNow = (order: Order) => {
+    if (order.tourId) {
+      router.push(`/booking?tourId=${order.tourId}&orderId=${order._id}`);
+    }
+  };
+
   return (
     <div className="space-y-4">
       {orders.map((order) => (
@@ -54,62 +90,63 @@ const ProfileOrdersTab = ({ orders, loading }: ProfileOrdersTabProps) => {
           <CardHeader className="flex flex-row items-center justify-between gap-3">
             <div>
               <CardTitle className="text-base font-semibold">
-                Захиалга #{order.number ?? order._id.slice(-6)}
+                Захиалга #{order._id.slice(-6)}
               </CardTitle>
               <CardDescription>
-                {order.createdAt
-                  ? new Date(order.createdAt).toLocaleString()
-                  : "—"}{" "}
-                · Нийт:{" "}
+                Нийт:{" "}
                 <span className="font-medium text-foreground">
-                  ₮{Number(order.totalAmount || 0).toLocaleString()}
+                  ₮{Number(order.amount || 0).toLocaleString()}
                 </span>
+                {order.numberOfPeople && (
+                  <span className="ml-2">
+                    · {order.numberOfPeople} хүн
+                  </span>
+                )}
               </CardDescription>
             </div>
             <Badge variant="outline">
               {order.status ?? "Төлөв тодорхойгүй"}
             </Badge>
           </CardHeader>
-          <CardContent className="grid gap-3 md:grid-cols-3">
-            {order.items?.slice(0, 3).map((item, index) => {
-              const imageUrl = item?.productImgUrl
-                ? getFileUrl(item.productImgUrl)
-                : undefined;
-              return (
-                <div
-                  key={`${order._id}-item-${index}`}
-                  className="flex gap-3 rounded-lg border bg-muted/30 p-3"
-                >
-                  <div className="relative h-16 w-16 overflow-hidden rounded-md bg-muted">
-                    {imageUrl ? (
-                      // eslint-disable-next-line @next/next/no-img-element -- static preview
-                      <img
-                        src={imageUrl}
-                        alt={item?.productName ?? "Product"}
-                        className="h-full w-full object-cover"
-                      />
-                    ) : (
-                      <div className="flex h-full w-full items-center justify-center text-xs text-muted-foreground">
-                        No image
-                      </div>
-                    )}
-                  </div>
-                  <div className="flex flex-1 flex-col justify-between text-sm">
-                    <p className="font-medium">
-                      {item?.productName ?? "Бараа"}
-                    </p>
-                    <p className="text-xs text-muted-foreground">
-                      Тоо: {item?.count ?? 1}
-                    </p>
-                  </div>
+          <CardContent className="space-y-2">
+            <div className="grid gap-2 text-sm">
+              {order.tourId && (
+                <div className="flex justify-between">
+                  <span className="text-muted-foreground">Аялал:</span>
+                  <TourInfo tourId={order.tourId} />
                 </div>
-              );
-            })}
+              )}
+              {order.type && (
+                <div className="flex justify-between">
+                  <span className="text-muted-foreground">Төрөл:</span>
+                  <span className="font-medium">{order.type}</span>
+                </div>
+              )}
+              {order.note && (
+                <div className="flex flex-col gap-1">
+                  <span className="text-muted-foreground">Тэмдэглэл:</span>
+                  <span className="text-sm">{order.note}</span>
+                </div>
+              )}
+            </div>
           </CardContent>
-          <CardFooter className="flex justify-end">
-            <Button variant="outline" size="sm">
-              Дэлгэрэнгүй харах
-            </Button>
+          <CardFooter className="flex justify-end gap-2">
+            {order.tourId && (
+              <Link href={`/tours/${order.tourId}`}>
+                <Button variant="outline" size="sm">
+                  Дэлгэрэнгүй харах
+                </Button>
+              </Link>
+            )}
+            {order.status?.toLowerCase() === "pending" && (
+              <Button
+                variant="default"
+                size="sm"
+                onClick={() => handlePayNow(order)}
+              >
+                Төлөх
+              </Button>
+            )}
           </CardFooter>
         </Card>
       ))}
