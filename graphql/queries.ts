@@ -41,6 +41,52 @@ export const TOUR_DETAIL_QUERY = gql`
       images
       imageThumbnail
       groupSize
+         itinerary {
+        groupDays {
+          day
+          images
+          content
+          elements {
+            elementId
+            element {
+              _id
+              name
+              icon
+              cost
+              categories
+              quick
+              duration
+              startTime
+              categoriesObject {
+                _id
+                name
+                parentId
+              }
+            }
+            orderOfDay
+          }
+          elementsQuick {
+            elementId
+            element {
+              _id
+              name
+              quick
+              icon
+              cost
+              duration
+              content
+              note
+              categories
+              categoriesObject {
+                _id
+                name
+                parentId
+              }
+            }
+            orderOfDay
+          }
+        }
+      } 
     }
   }
 `
@@ -588,6 +634,52 @@ export const TOURS_GROUP_QUERY = gql`
           info5
           images
           imageThumbnail
+             itinerary {
+        groupDays {
+          day
+          images
+          content
+          elements {
+            elementId
+            element {
+              _id
+              name
+              icon
+              cost
+              categories
+              quick
+              duration
+              startTime
+              categoriesObject {
+                _id
+                name
+                parentId
+              }
+            }
+            orderOfDay
+          }
+          elementsQuick {
+            elementId
+            element {
+              _id
+              name
+              quick
+              icon
+              cost
+              duration
+              content
+              note
+              categories
+              categoriesObject {
+                _id
+                name
+                parentId
+              }
+            }
+            orderOfDay
+          }
+        }
+      }
         }
       }
     }

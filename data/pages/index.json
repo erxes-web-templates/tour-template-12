@@ -4,6 +4,14 @@
 
   "pageItems": [
     {
+      "type": "youtube",
+      "content": "",
+      "order": 2,
+      "contentType": "youtube",
+      "contentTypeId": "",
+      "config": { "videoUrl": "https://www.youtube.com/watch?v=GNoN2S1HlFE" }
+    },
+    {
       "type": "hero",
       "content": "Welcome to Adventure Awaits!",
       "order": 0,
@@ -31,14 +39,7 @@
       "contentTypeId": "bm:tours",
       "config": { "limit": 6 }
     },
-    {
-      "type": "youtube",
-      "content": "",
-      "order": 2,
-      "contentType": "youtube",
-      "contentTypeId": "",
-      "config": { "videoUrl": "https://www.youtube.com/watch?v=GNoN2S1HlFE" }
-    },
+  
     {
       "type": "imageText",
       "content": "About Us",
@@ -59,6 +60,124 @@
         "primaryCtaUrl": "",
         "imagePosition": "left"
       }
+    },
+    {
+      "type": "text",
+      "content": "Ready for your next expedition?",
+      "order": 3,
+      "contentType": "text",
+      "contentTypeId": "",
+      "config": {
+        "title": "Who We Are",
+        "description": "<ul><li><p><span style=\"color: rgb(55, 65, 81)\">Explore the heart of Mongoenturers, explorers, and those seekingr journey.</span></p></li></ul>",
+        "primaryCta": "BOOK MY TRIP NOW",
+        "primaryCtaUrl": "/contact"
+      }
+    },
+
+
+
+    {
+      "type": "imageText",
+      "content": "About Us",
+      "order": 3,
+      "contentType": "imageText",
+      "contentTypeId": "",
+      "config": {
+        "image": {
+          "file": {
+            "path": "./Photo by Tungalagbaatar (7) (1).jpg",
+            "relativePath": "./Photo by Tungalagbaatar (7) (1).jpg"
+          },
+          "url": "erxes-saas/9qMkhPQMNfF2ndrlMWICaPhoto by Tungalagbaatar (7) (1).jpg"
+        },
+        "title": "Who We Are",
+        "description": "<ul><li><p><span style=\"color: rgb(55, 65, 81)\">Explore the heart of Mongolia with your travel friend and expert eet Mongolia Join Tour LLC.&nbsp; We extend a heartfelt welcome to adventurers, explorers, and those seeking unique cultural experiences. Immerse yourself in the rich tapestry of Mongolian traditions, breathtaking landscapes, and the legendary hospitality of the nomadic people.</span></p></li><li><p><span style=\"color: rgb(55, 65, 81)\">At www.meetmongolia.com, we curate unforgettable journeys that allow you to delve into the soul of Mongolia. From the vast expanse of the Gobi Desert to the pristine beauty of Khuvsgul Lake, our tours are crafted to provide authentic encounters, captivating adventures, and a deep appreciation for Mongolia's natural wonders and cultural heritage.</span></p></li><li><p><span style=\"color: rgb(55, 65, 81)\">Embark on a voyage with us, where every moment is a story waiting to be told, and every destination is a chapter in your travel diary. Let the spirit of Mongolia enchant you, and let our expert guides lead you on a remarkable odyssey through this land of boundless horizons.</span></p></li><li><p><span style=\"color: rgb(55, 65, 81)\">Thank you for considering Meet Mongolia Join Tours LLC for your Mongolian adventure. We are thrilled to be a part of your journey.</span></p></li></ul>",
+        "primaryCta": "",
+        "primaryCtaUrl": "",
+        "imagePosition": "right"
+      }
+    },
+    {
+      "type": "cmsPosts",
+      "content": "Blog Posts",
+      "order": 4,
+      "contentType": "cmsPosts",
+      "contentTypeId": "",
+      "config": {
+        "title": "Blogs",
+        "description": "LATEST STORIES",
+        "perPage": 3,
+        "categoryId": null
+      }
+    },
+    {
+      "type": "contact",
+      "content": "Contact Us",
+      "order": 6,
+      "contentType": "form",
+      "contentTypeId": "",
+      "config": {
+        "title": "Get in Touch",
+        "description": "Have questions? We'd love to hear from you. Send us a message and we'll respond as soon as possible.",
+        "formId": ""
+      }
+    },
+    {
+      "type": "gallery",
+      "content": "Gallery",
+      "order": 5,
+      "contentType": "gallery",
+      "contentTypeId": "",
+      "config": {
+        "images": [
+          {
+            "file": {
+              "path": "./AIn6CSsu8UU2NraE2Te0gDSC00790 (1).jpg",
+              "relativePath": "./AIn6CSsu8UU2NraE2Te0gDSC00790 (1).jpg"
+            },
+            "url": "erxes-saas/NWJdh0qEzqBdDeHhEc3kgAIn6CSsu8UU2NraE2Te0gDSC00790 (1).jpg"
+          },
+          {
+            "file": {
+              "path": "./BrPadbdNqq7rO8DKk9IOxDSC01048.jpg",
+              "relativePath": "./BrPadbdNqq7rO8DKk9IOxDSC01048.jpg"
+            },
+            "url": "erxes-saas/7DFHGwSXVGdKuPxB74XofBrPadbdNqq7rO8DKk9IOxDSC01048.jpg"
+          },
+          {
+            "file": {
+              "path": "./deDq6Nm5kv2cY9XQiD09zDSC00688 (3).jpg",
+              "relativePath": "./deDq6Nm5kv2cY9XQiD09zDSC00688 (3).jpg"
+            },
+            "url": "erxes-saas/wC1Z0F1qBbbsj7zfMwidideDq6Nm5kv2cY9XQiD09zDSC00688 (3).jpg"
+          },
+          {
+            "file": {
+              "path": "./feU5zh4ZFQZ5nTmiOf2VWDSC00657.jpg",
+              "relativePath": "./feU5zh4ZFQZ5nTmiOf2VWDSC00657.jpg"
+            },
+            "url": "erxes-saas/sL40FmqCqHrXUuvejPDZdfeU5zh4ZFQZ5nTmiOf2VWDSC00657.jpg"
+          },
+          {
+            "file": {
+              "path": "./jjVZsbiabuuML6PTmc6VoDSC00522.jpg",
+              "relativePath": "./jjVZsbiabuuML6PTmc6VoDSC00522.jpg"
+            },
+            "url": "erxes-saas/jvTTgQ7Q8Y4K9eokfrWNMjjVZsbiabuuML6PTmc6VoDSC00522.jpg"
+          },
+          {
+            "file": {
+              "path": "./JOCD4SZZSTyKAzAZFUk21DSC00959.jpg",
+              "relativePath": "./JOCD4SZZSTyKAzAZFUk21DSC00959.jpg"
+            },
+            "url": "erxes-saas/oRO6TmqJLZNBb5iOeyqw6JOCD4SZZSTyKAzAZFUk21DSC00959.jpg"
+          }
+        ],
+        "title": "Галерей",
+        "description": "test description"
+      }
     }
+  
   ]
 }
