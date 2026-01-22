@@ -12,16 +12,10 @@ import {
 } from "@/components/ui/carousel";
 import {
   Card,
-  CardDescription,
-  CardFooter,
-  CardHeader,
-  CardTitle,
 } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Section } from "../../../types/sections";
-import { getFileUrl } from "@/lib/utils";
-import { templateUrl } from "@/lib/utils";
-import { isBuildMode } from "../../../lib/buildMode";
+import { getFileUrl, templateUrl, isBuildMode } from "@/lib/utils";
 
 type CarouselLinkType = "product" | "productCategory" | "external";
 
@@ -37,138 +31,105 @@ type CarouselConfigItem = {
   url?: string;
 };
 
+// ... (resolveImageUrl болон resolveLink функцууд хэвээрээ үлдэнэ)
 const resolveImageUrl = (key?: string | null) => {
   if (!key) return undefined;
-  if (key.startsWith("http://") || key.startsWith("https://")) {
-    return key;
-  }
-  if (key.startsWith("/")) {
-    return key;
-  }
-  try {
-    return getFileUrl(key);
-  } catch {
-    return key;
-  }
+  if (key.startsWith("http://") || key.startsWith("https://")) return key;
+  if (key.startsWith("/")) return key;
+  try { return getFileUrl(key); } catch { return key; }
 };
 
-const resolveLink = (
-  item: CarouselConfigItem
-): { href: string; isExternal: boolean } | null => {
+const resolveLink = (item: CarouselConfigItem): { href: string; isExternal: boolean } | null => {
   const linkType = item.link?.type ?? ("external" as CarouselLinkType);
   const value = item.link?.value ?? item.url ?? "";
-  if (!value) {
-    return null;
-  }
-
-  if (linkType === "external") {
-    return { href: value, isExternal: true };
-  }
-
-  if (linkType === "product") {
-    const isBuilder = isBuildMode();
-    return {
-      href: isBuilder
-        ? templateUrl(`/product&productId=${value}`)
-        : `/products/${value}`,
-      isExternal: false,
-    };
-  }
-
-  if (linkType === "productCategory") {
-    const isBuilder = isBuildMode();
-    return {
-      href: isBuilder
-        ? `${templateUrl("/products")}&categoryId=${value}`
-        : `/products?categoryId=${value}`,
-      isExternal: false,
-    };
-  }
-
+  if (!value) return null;
+  if (linkType === "external") return { href: value, isExternal: true };
+  const isBuilder = isBuildMode();
+  if (linkType === "product") return {
+    href: isBuilder ? templateUrl(`/product&productId=${value}`) : `/products/${value}`,
+    isExternal: false,
+  };
+  if (linkType === "productCategory") return {
+    href: isBuilder ? `${templateUrl("/products")}&categoryId=${value}` : `/products?categoryId=${value}`,
+    isExternal: false,
+  };
   return null;
 };
 
 const CarouselSection = ({ section }: { section: Section }) => {
-  const title = section.config?.title ?? "Featured carousel";
-  const description = section.config?.description ?? "";
-  const items: CarouselConfigItem[] = useMemo(
-    () => section.config?.items ?? [],
-    [section.config?.items]
-  );
+  const items: CarouselConfigItem[] = useMemo(() => section.config?.items ?? [], [section.config?.items]);
 
-  if (!items.length) {
-    return null;
-  }
+  if (!items.length) return null;
 
   return (
-    <section className="relative">
-      <Carousel className="w-full">
-        <CarouselContent>
+    <section className="relative group select-none">
+      <Carousel className="w-full h-[600px] md:h-[800px]">
+        <CarouselContent className="ml-0 h-full">
           {items.map((item) => {
             const imageUrl = resolveImageUrl(item.image);
             const link = resolveLink(item);
 
             return (
-              <CarouselItem
-                key={item.id ?? item.title ?? Math.random()}
-                className="basis-full"
-              >
-                <div className="relative min-h-screen w-full">
+              <CarouselItem key={item.id ?? item.title ?? Math.random()} className="pl-0 basis-full h-full relative overflow-hidden">
+                {/* Image Layer */}
+                <div className="absolute inset-0 transition-transform duration-1000 group-hover:scale-105">
                   {imageUrl ? (
                     <Image
                       src={imageUrl}
-                      alt={item.title ?? "Carousel item"}
+                      alt={item.title ?? ""}
                       fill
                       className="object-cover"
                       sizes="100vw"
                       priority
                     />
                   ) : (
-                    <div className="flex h-full w-full items-center justify-center bg-muted text-muted-foreground">
-                      No image
-                    </div>
+                    <div className="flex h-full w-full items-center justify-center bg-slate-900 text-slate-500">No image</div>
                   )}
-                  <div className="absolute inset-0 bg-gradient-to-t from-black/80 via-black/30 to-black/5" />
-                  <div className="absolute inset-0 flex items-center justify-center px-6 py-12">
-                    <Card className="w-full max-w-3xl bg-black/50 text-white backdrop-blur-md">
-                      <CardHeader>
-                        <CardTitle className="text-3xl font-bold md:text-4xl">
-                          {item.title ?? "Untitled slide"}
-                        </CardTitle>
-                        {item.description && (
-                          <CardDescription className="mt-4 text-base text-white/80 md:text-lg">
-                            {item.description}
-                          </CardDescription>
-                        )}
-                      </CardHeader>
-                      {link && (
-                        <CardFooter className="flex justify-start gap-3">
-                          <Button
-                            asChild
-                            size="lg"
-                            className="bg-white text-black hover:bg-white/90"
-                          >
-                            <Link
-                              href={link.href}
-                              target={link.isExternal ? "_blank" : undefined}
-                              rel={link.isExternal ? "noopener noreferrer" : undefined}
-                            >
-                              Learn more
-                            </Link>
-                          </Button>
-                        </CardFooter>
+                  {/* Overlay Gradient */}
+                  <div className="absolute inset-0 bg-gradient-to-t from-[#141824]/90 via-[#141824]/40 to-transparent" />
+                </div>
+
+                {/* Content Layer */}
+                <div className="absolute inset-0 flex items-center justify-start container mx-auto px-8 md:px-16">
+                  <div className="max-w-2xl space-y-6">
+                    <div className="space-y-2 animate-in slide-in-from-bottom-4 duration-700">
+                      <div className="h-1.5 w-12 bg-[#692d91] rounded-full mb-4" />
+                      <h2 className="text-5xl md:text-7xl font-black italic uppercase tracking-tighter text-white leading-none">
+                        {item.title ?? "Untitled"}
+                      </h2>
+                      {item.description && (
+                        <p className="text-lg md:text-xl text-white/80 font-medium max-w-lg leading-relaxed">
+                          {item.description}
+                        </p>
                       )}
-                    </Card>
+                    </div>
+
+                    {link && (
+                      <div className="pt-4 animate-in fade-in slide-in-from-bottom-8 duration-1000">
+                        <Link
+                          href={link.href}
+                          target={link.isExternal ? "_blank" : undefined}
+                          className="inline-flex items-center justify-center bg-[#692d91] hover:bg-yellow-400 text-white hover:text-black px-10 py-4 rounded-[20px] text-lg font-black uppercase italic transition-all shadow-2xl hover:shadow-yellow-200/50 active:scale-95"
+                        >
+                          Learn more
+                        </Link>
+                      </div>
+                    )}
                   </div>
                 </div>
               </CarouselItem>
             );
           })}
         </CarouselContent>
-        <div className="pointer-events-none absolute inset-x-0 bottom-10 flex items-center justify-center gap-4">
-          <CarouselPrevious className="pointer-events-auto relative h-12 w-12 rounded-full bg-white/80 text-black hover:bg-white" />
-          <CarouselNext className="pointer-events-auto relative h-12 w-12 rounded-full bg-white/80 text-black hover:bg-white" />
+
+        {/* Navigation Buttons - Styled to match your UI */}
+        <div className="absolute bottom-10 right-10 flex gap-3 z-20">
+          <CarouselPrevious className="static translate-y-0 h-14 w-14 rounded-2xl bg-white/10 hover:bg-[#692d91] border-none text-white backdrop-blur-md transition-all active:scale-90" />
+          <CarouselNext className="static translate-y-0 h-14 w-14 rounded-2xl bg-white/10 hover:bg-[#692d91] border-none text-white backdrop-blur-md transition-all active:scale-90" />
         </div>
+
+        {/* Slide Indicator Line (Optional decorative element) */}
+        <div className="absolute bottom-0 left-0 h-1 bg-gradient-to-r from-[#692d91] to-yellow-400 z-30 animate-progress w-full opacity-50" />
       </Carousel>
     </section>
   );

@@ -113,7 +113,7 @@ export async function fetchBmToursGroupDetail(groupCode: string) {
 
   try {
     const { data } = await client.query<
-      { bmToursGroupDetail: BmTourDetail[] },
+    { bmToursGroupDetail: { _id: string; items: BmTourDetail[] } },
       BmTourGroupDetailVariables
     >({
       query: TOUR_GROUP_DETAIL_QUERY,
@@ -125,7 +125,7 @@ export async function fetchBmToursGroupDetail(groupCode: string) {
       },
     })
 
-    return data.bmToursGroupDetail
+      return data.bmToursGroupDetail?.items || []
   } catch (error) {
     console.error("Error fetching BM Tours Group Detail:", error)
     return null

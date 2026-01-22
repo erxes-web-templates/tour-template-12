@@ -58,6 +58,7 @@ type CmsPost = {
   slug: string;
   title: string;
   content: string;
+  expert: string
   thumbnail: {
     url: string;
     name: string;

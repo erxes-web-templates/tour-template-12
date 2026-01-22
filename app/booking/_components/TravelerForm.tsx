@@ -1,20 +1,20 @@
-"use client"
+"use client";
 
-import React, { useState } from "react"
-import { useQuery, useMutation } from "@apollo/client"
-import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card"
-import { Input } from "@/components/ui/input"
-import { Label } from "@/components/ui/label"
+import React, { useState } from "react";
+import { useQuery, useMutation } from "@apollo/client";
+import { Card, CardContent } from "@/components/ui/card";
+import { Input } from "@/components/ui/input";
+import { Label } from "@/components/ui/label";
 import {
   Select,
   SelectContent,
   SelectItem,
   SelectTrigger,
   SelectValue,
-} from "@/components/ui/select"
-import { Button } from "@/components/ui/button"
-import { Textarea } from "@/components/ui/textarea"
-import { Separator } from "@/components/ui/separator"
+} from "@/components/ui/select";
+import { Button } from "@/components/ui/button";
+import { Textarea } from "@/components/ui/textarea";
+import { Separator } from "@/components/ui/separator";
 import {
   Command,
   CommandEmpty,
@@ -22,45 +22,52 @@ import {
   CommandInput,
   CommandItem,
   CommandList,
-} from "@/components/ui/command"
+} from "@/components/ui/command";
 import {
   Popover,
   PopoverContent,
   PopoverTrigger,
-} from "@/components/ui/popover"
-import { User, Check, ChevronsUpDown } from "lucide-react"
-import { cn } from "@/lib/utils"
-import { nationalities } from "@/lib/utils"
-import paymentQueries from "@/graphql/payment/queries"
-import { mutations as customerMutations } from "@/graphql/customer"
-import { mutations as kbMutations } from "@/graphql/kb"
-import { useFindOrCreateCustomer } from "@/hooks/useFindOrCreateCustomer"
+} from "@/components/ui/popover";
+import {
+  User,
+  Check,
+  ChevronsUpDown,
+  CreditCard,
+  MessageSquareQuote,
+  ArrowRight
+} from "lucide-react";
+import { cn } from "@/lib/utils";
+import { nationalities } from "@/lib/utils";
+import paymentQueries from "@/graphql/payment/queries";
+import { mutations as customerMutations } from "@/graphql/customer";
+import { mutations as kbMutations } from "@/graphql/kb";
+import { useFindOrCreateCustomer } from "@/hooks/useFindOrCreateCustomer";
 
 interface TravelerData {
-  firstName: string
-  lastName: string
-  email: string
-  gender: string
-  nationality: string
+  firstName: string;
+  lastName: string;
+  email: string;
+  gender: string;
+  nationality: string;
 }
 
 interface TravelerFormProps {
-  index: number
-  data: TravelerData
-  onChange: (index: number, field: keyof TravelerData, value: string) => void
-  isLead?: boolean
+  index: number;
+  data: TravelerData;
+  onChange: (index: number, field: keyof TravelerData, value: string) => void;
+  isLead?: boolean;
   currentUser?: {
-    firstName?: string
-    lastName?: string
-    email?: string
-    erxesCustomerId?: string
-  }
-  customerId?: string 
-  paymentType?: string
-  setPaymentType?: (value: string) => void
-  note?: string
-  setNote?: (value: string) => void
-  validationErrors?: { [key: string]: boolean }
+    firstName?: string;
+    lastName?: string;
+    email?: string;
+    erxesCustomerId?: string;
+  };
+  customerId?: string;
+  paymentType?: string;
+  setPaymentType?: (value: string) => void;
+  note?: string;
+  setNote?: (value: string) => void;
+  validationErrors?: { [key: string]: boolean };
 }
 
 export default function TravelerForm({
@@ -76,86 +83,66 @@ export default function TravelerForm({
   setNote,
   validationErrors = {},
 }: TravelerFormProps) {
-  const [open, setOpen] = useState(false)
+  const [open, setOpen] = useState(false);
 
   const hasError = (field: string) => {
-    return validationErrors[`${index}-${field}`] === true
-  }
+    return validationErrors[`${index}-${field}`] === true;
+  };
 
   const { data: paymentsData, loading: paymentsLoading } = useQuery(
     paymentQueries.payments,
-    {
-      fetchPolicy: "cache-and-network",
-    }
-  )
+    { fetchPolicy: "cache-and-network" },
+  );
 
-  const payments = paymentsData?.payments || []
-
-  // Mutations
-  const [updateCustomer] = useMutation(customerMutations.editCustomer)
-  const [saveBrowserInfo] = useMutation(kbMutations.saveBrowserInfo)
-  
-  // Hook to find or create customer (search first, then create if not found)
-  const { handleFindOrCreateCustomer } = useFindOrCreateCustomer()
-
-  // State to store found/created customer ID for non-lead travelers
+  const payments = paymentsData?.payments || [];
+  const [updateCustomer] = useMutation(customerMutations.editCustomer);
+  const [saveBrowserInfo] = useMutation(kbMutations.saveBrowserInfo);
+  const { handleFindOrCreateCustomer } = useFindOrCreateCustomer();
   const [createdCustomerId, setCreatedCustomerId] = useState<string | null>(
-    null
-  )
+    null,
+  );
 
-  // Handle gender change for lead traveler
   const handleGenderChange = async (value: string) => {
-    onChange(index, "gender", value)
-
+    onChange(index, "gender", value);
     if (isLead && currentUser?.erxesCustomerId) {
       try {
-        const sexValue = value === "male" ? 1 : value === "female" ? 2 : 0
-
+        const sexValue = value === "male" ? 1 : value === "female" ? 2 : 0;
         await updateCustomer({
-          variables: {
-            _id: currentUser.erxesCustomerId,
-            sex: sexValue,
-          },
-        })
+          variables: { _id: currentUser.erxesCustomerId, sex: sexValue },
+        });
       } catch (error) {
-        console.error("Failed to update customer gender:", error)
+        console.error("Failed to update customer gender:", error);
       }
     }
-  }
+  };
 
-  // Handle nationality change for all travelers
   const handleNationalityChange = async (nationalityName: string) => {
-    onChange(index, "nationality", nationalityName)
-
-    // Find the nationality object to get the code
+    onChange(index, "nationality", nationalityName);
     const selectedNationality = nationalities.find(
-      (nat) => nat.Name === nationalityName
-    )
-
-    if (!selectedNationality) return
+      (nat) => nat.Name === nationalityName,
+    );
+    if (!selectedNationality) return;
 
     try {
-      // Get customer ID
       let targetCustomerId = isLead
         ? currentUser?.erxesCustomerId
-        : customerId || createdCustomerId
-
-      // If no customer ID exists for non-lead traveler, find or create customer
-      // This will search by email first, then create if not found
-      if (!isLead && !targetCustomerId && data.firstName && data.lastName && data.email) {
+        : customerId || createdCustomerId;
+      if (
+        !isLead &&
+        !targetCustomerId &&
+        data.firstName &&
+        data.lastName &&
+        data.email
+      ) {
         targetCustomerId = await handleFindOrCreateCustomer({
           firstName: data.firstName,
           lastName: data.lastName,
           email: data.email,
           gender: data.gender,
-        })
-
-        if (targetCustomerId) {
-          setCreatedCustomerId(targetCustomerId)
-        }
+        });
+        if (targetCustomerId) setCreatedCustomerId(targetCustomerId);
       }
 
-      // Save nationality to customer location
       if (targetCustomerId) {
         await saveBrowserInfo({
           variables: {
@@ -166,128 +153,130 @@ export default function TravelerForm({
               userAgent: navigator.userAgent,
             },
           },
-        })
+        });
       }
     } catch (error) {
-      console.error("Failed to save nationality:", error)
+      console.error("Failed to save nationality:", error);
     }
-  }
+  };
 
   return (
-    <Card>
-      <CardHeader>
-        <CardTitle className='flex items-center gap-2'>
-          <User className='h-5 w-5' />
-          {isLead ? "Lead Traveler (You)" : `Traveler ${index + 1}`}
-        </CardTitle>
-      </CardHeader>
-      <CardContent className='space-y-4'>
-        <div className='grid md:grid-cols-2 gap-4'>
-          <div className='space-y-2'>
-            <Label htmlFor={`firstName-${index}`}>
-              First Name <span className='text-red-500'>*</span>
+    <Card className="w-full border-none shadow-none bg-transparent">
+      {/* Header Section */}
+      <div className="flex items-center gap-4 mb-10">
+        <div className="w-12 h-12 rounded-full bg-[#0F172A] flex items-center justify-center text-white shadow-lg shadow-slate-200">
+          <User size={22} />
+        </div>
+        <div>
+          <h3 className="text-xl font-black uppercase tracking-tight text-[#0F172A]">
+            {isLead ? "Lead Traveler" : `Traveler ${index + 1}`}
+          </h3>
+          <p className="text-[11px] text-slate-400 font-bold uppercase tracking-[0.2em] mt-0.5">
+            {isLead ? "Primary Contact Information" : "Passenger Details"}
+          </p>
+        </div>
+      </div>
+
+      <CardContent className="p-0 space-y-12">
+        {/* Input Grid - Full Width Layout */}
+        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-x-10 gap-y-8">
+          <div className="space-y-2.5">
+            <Label className="text-[11px] font-black uppercase tracking-widest text-slate-500 ml-1">
+              First Name *
             </Label>
             <Input
-              id={`firstName-${index}`}
               value={data.firstName}
               onChange={(e) => onChange(index, "firstName", e.target.value)}
-              placeholder='John'
-              required
+              placeholder="Enter first name"
               disabled={isLead}
               className={cn(
-                hasError("firstName") &&
-                  "border-red-500 focus-visible:ring-red-500"
+                "h-14 bg-slate-50/80 border-none rounded-xl text-base font-medium focus-visible:ring-2 focus-visible:ring-slate-200 transition-all",
+                hasError("firstName") && "bg-red-50 ring-2 ring-red-100",
               )}
             />
           </div>
 
-          <div className='space-y-2'>
-            <Label htmlFor={`lastName-${index}`}>
-              Last Name <span className='text-red-500'>*</span>
+          <div className="space-y-2.5">
+            <Label className="text-[11px] font-black uppercase tracking-widest text-slate-500 ml-1">
+              Last Name *
             </Label>
             <Input
-              id={`lastName-${index}`}
               value={data.lastName}
               onChange={(e) => onChange(index, "lastName", e.target.value)}
-              placeholder='Doe'
-              required
+              placeholder="Enter last name"
               disabled={isLead}
               className={cn(
-                hasError("lastName") &&
-                  "border-red-500 focus-visible:ring-red-500"
+                "h-14 bg-slate-50/80 border-none rounded-xl text-base font-medium focus-visible:ring-2 focus-visible:ring-slate-200 transition-all",
+                hasError("lastName") && "bg-red-50 ring-2 ring-red-100",
               )}
             />
           </div>
-        </div>
 
-        <div className='space-y-2'>
-          <Label htmlFor={`email-${index}`}>
-            Email <span className='text-red-500'>*</span>
-          </Label>
-          <Input
-            id={`email-${index}`}
-            type='email'
-            value={data.email}
-            onChange={(e) => onChange(index, "email", e.target.value)}
-            placeholder='john.doe@example.com'
-            required
-            disabled={isLead}
-            className={cn(
-              hasError("email") && "border-red-500 focus-visible:ring-red-500"
-            )}
-          />
-          {!isLead && (
-            <p className='text-xs text-gray-500'>
-              We'll check if this email exists in our system
-            </p>
-          )}
-        </div>
-
-        <div className='grid md:grid-cols-2 gap-4'>
-          <div className='space-y-2'>
-            <Label htmlFor={`gender-${index}`}>
-              Gender <span className='text-red-500'>*</span>
+          <div className="space-y-2.5">
+            <Label className="text-[11px] font-black uppercase tracking-widest text-slate-500 ml-1">
+              Email Address *
             </Label>
-            <Select
-              value={data.gender}
-              onValueChange={handleGenderChange}
-            >
+            <Input
+              type="email"
+              value={data.email}
+              onChange={(e) => onChange(index, "email", e.target.value)}
+              placeholder="example@mail.com"
+              disabled={isLead}
+              className={cn(
+                "h-14 bg-slate-50/80 border-none rounded-xl text-base font-medium focus-visible:ring-2 focus-visible:ring-slate-200 transition-all",
+                hasError("email") && "bg-red-50 ring-2 ring-red-100",
+              )}
+            />
+          </div>
+
+          <div className="space-y-2.5">
+            <Label className="text-[11px] font-black uppercase tracking-widest text-slate-500 ml-1">
+              Gender *
+            </Label>
+            <Select value={data.gender} onValueChange={handleGenderChange}>
               <SelectTrigger
-                className={cn(hasError("gender") && "border-red-500")}
+                className={cn(
+                  "h-14 bg-slate-50/80 border-none rounded-xl text-base font-medium",
+                  hasError("gender") && "bg-red-50 ring-2 ring-red-100",
+                )}
               >
-                <SelectValue placeholder='Select gender' />
+                <SelectValue placeholder="Select gender" />
               </SelectTrigger>
-              <SelectContent>
-                <SelectItem value='male'>Male</SelectItem>
-                <SelectItem value='female'>Female</SelectItem>
-                <SelectItem value='other'>Other</SelectItem>
+              <SelectContent className="rounded-xl border-slate-100">
+                <SelectItem value="male">Male</SelectItem>
+                <SelectItem value="female">Female</SelectItem>
+                <SelectItem value="other">Other</SelectItem>
               </SelectContent>
             </Select>
           </div>
 
-          <div className='space-y-2'>
-            <Label htmlFor={`nationality-${index}`}>
-              Nationality <span className='text-red-500'>*</span>
+          <div className="space-y-2.5 lg:col-span-1">
+            <Label className="text-[11px] font-black uppercase tracking-widest text-slate-500 ml-1">
+              Nationality *
             </Label>
             <Popover open={open} onOpenChange={setOpen}>
               <PopoverTrigger asChild>
                 <Button
-                  variant='outline'
-                  role='combobox'
-                  aria-expanded={open}
+                  variant="outline"
                   className={cn(
-                    "w-full justify-between",
-                    hasError("nationality") && "border-red-500"
+                    "w-full h-14 justify-between bg-slate-50/80 border-none rounded-xl hover:bg-slate-100 font-medium text-base",
+                    hasError("nationality") && "bg-red-50 ring-2 ring-red-100",
                   )}
                 >
-                  {data.nationality || "Select nationality..."}
-                  <ChevronsUpDown className='ml-2 h-4 w-4 shrink-0 opacity-50' />
+                  {data.nationality || "Select country"}
+                  <ChevronsUpDown className="ml-2 h-5 w-5 shrink-0 opacity-40" />
                 </Button>
               </PopoverTrigger>
-              <PopoverContent className='w-full p-0' align='start'>
+              <PopoverContent
+                className="w-[320px] p-0 shadow-2xl border-none rounded-2xl overflow-hidden"
+                align="start"
+              >
                 <Command>
-                  <CommandInput placeholder='Search nationality...' />
-                  <CommandList>
+                  <CommandInput
+                    placeholder="Search nationality..."
+                    className="h-12 border-none focus:ring-0"
+                  />
+                  <CommandList className="max-h-[300px]">
                     <CommandEmpty>No nationality found.</CommandEmpty>
                     <CommandGroup>
                       {nationalities.map((nationality) => (
@@ -298,17 +287,18 @@ export default function TravelerForm({
                             const newValue =
                               currentValue === data.nationality.toLowerCase()
                                 ? ""
-                                : nationality.Name
-                            handleNationalityChange(newValue)
-                            setOpen(false)
+                                : nationality.Name;
+                            handleNationalityChange(newValue);
+                            setOpen(false);
                           }}
+                          className="py-3 px-4 cursor-pointer"
                         >
                           <Check
                             className={cn(
-                              "mr-2 h-4 w-4",
+                              "mr-3 h-4 w-4 text-emerald-500",
                               data.nationality === nationality.Name
                                 ? "opacity-100"
-                                : "opacity-0"
+                                : "opacity-0",
                             )}
                           />
                           {nationality.Name}
@@ -322,78 +312,108 @@ export default function TravelerForm({
           </div>
         </div>
 
-        {/* Payment Type and Note - Only for lead traveler */}
-        {isLead && paymentType !== undefined && setPaymentType && (
-          <>
-            <Separator className='my-6' />
+        {isLead && (
+          <div className="pt-10 space-y-12">
+            <Separator className="bg-slate-100" />
+            
+            {/* Payment and Requests Row */}
+            <div className="grid grid-cols-1 lg:grid-cols-2 gap-16">
+              {/* Payment Section */}
+              {paymentType !== undefined && setPaymentType && (
+                <div className="space-y-8">
+                  <div className="flex items-center gap-4">
+                    <div className="w-12 h-12 rounded-2xl bg-rose-50 flex items-center justify-center text-rose-500">
+                      <CreditCard size={22} />
+                    </div>
+                    <div>
+                      <h3 className="text-lg font-black uppercase tracking-tight text-[#0F172A]">
+                        Payment Method
+                      </h3>
+                      <p className="text-[10px] text-slate-400 font-bold uppercase tracking-widest mt-0.5">
+                        Secure transaction gateway
+                      </p>
+                    </div>
+                  </div>
 
-            <div className='space-y-4'>
-              <h3 className='font-semibold text-lg'>
-                Payment & Additional Information
-              </h3>
+                  <div className="space-y-2.5">
+                    <Label className="text-[11px] font-black uppercase tracking-widest text-slate-500 ml-1">
+                      Select Provider
+                    </Label>
+                    <Select
+                      value={paymentType}
+                      onValueChange={setPaymentType}
+                      disabled={paymentsLoading}
+                    >
+                      <SelectTrigger
+                        className={cn(
+                          "h-16 bg-slate-50/80 border-none rounded-2xl text-base font-semibold shadow-sm",
+                          validationErrors["paymentType"] &&
+                            "bg-red-50 ring-2 ring-red-100",
+                        )}
+                      >
+                        <SelectValue
+                          placeholder={
+                            paymentsLoading
+                              ? "Loading..."
+                              : "Choose payment provider"
+                          }
+                        />
+                      </SelectTrigger>
+                      <SelectContent className="rounded-2xl border-slate-100">
+                        {payments
+                          .filter((p: any) => p.status === "active")
+                          .map((payment: any) => (
+                            <SelectItem
+                              key={payment._id}
+                              value={payment.kind}
+                              className="py-4 px-4 font-medium"
+                            >
+                              {payment.name}
+                            </SelectItem>
+                          ))}
+                      </SelectContent>
+                    </Select>
+                  </div>
+                </div>
+              )}
 
-              <div className='space-y-2'>
-                <Label htmlFor='paymentType'>
-                  Payment Type <span className='text-red-500'>*</span>
-                </Label>
-                <Select
-                  value={paymentType}
-                  onValueChange={setPaymentType}
-                  disabled={paymentsLoading}
-                >
-                  <SelectTrigger
-                    className={cn(
-                      validationErrors["paymentType"] && "border-red-500"
-                    )}
-                  >
-                    <SelectValue
-                      placeholder={
-                        paymentsLoading
-                          ? "Loading payment methods..."
-                          : "Select payment method"
-                      }
-                    />
-                  </SelectTrigger>
-                  <SelectContent>
-                    {payments.length === 0 && !paymentsLoading ? (
-                      <SelectItem value='default' disabled>
-                        No payment methods available
-                      </SelectItem>
-                    ) : (
-                      payments
-                        .filter((payment: any) => payment.status === "active")
-                        .map((payment: any) => (
-                          <SelectItem key={payment._id} value={payment.kind}>
-                            {payment.name}
-                          </SelectItem>
-                        ))
-                    )}
-                  </SelectContent>
-                </Select>
-              </div>
-
+              {/* Special Requests Section */}
               {note !== undefined && setNote && (
-                <div className='space-y-2'>
-                  <Label htmlFor='note'>
-                    Additional Information (Optional)
-                  </Label>
-                  <Textarea
-                    id='note'
-                    value={note}
-                    onChange={(e) => setNote(e.target.value)}
-                    placeholder='Any special requests or additional information...'
-                    rows={4}
-                  />
-                  <p className='text-xs text-gray-500'>
-                    You can add dietary requirements, accessibility needs, or
-                    any other special requests here.
-                  </p>
+                <div className="space-y-8">
+                  <div className="flex items-center gap-4">
+                    <div className="w-12 h-12 rounded-2xl bg-slate-100 flex items-center justify-center text-slate-600">
+                      <MessageSquareQuote size={22} />
+                    </div>
+                    <div>
+                      <h3 className="text-lg font-black uppercase tracking-tight text-[#0F172A]">
+                        Special Requests
+                      </h3>
+                      <p className="text-[10px] text-slate-400 font-bold uppercase tracking-widest mt-0.5">
+                        Dietary or access needs
+                      </p>
+                    </div>
+                  </div>
+                  
+                  <div className="space-y-2.5">
+                     <Label className="text-[11px] font-black uppercase tracking-widest text-slate-500 ml-1">
+                      Your Message
+                    </Label>
+                    <Textarea
+                      value={note}
+                      onChange={(e) => setNote(e.target.value)}
+                      placeholder="Notes on dietary requirements, accessibility, etc."
+                      className="min-h-[140px] bg-slate-50/80 border-none rounded-2xl focus-visible:ring-2 focus-visible:ring-slate-200 resize-none p-6 text-base leading-relaxed"
+                    />
+                  </div>
                 </div>
               )}
             </div>
-          </>
+
+            {/* Action Button Area */}
+            
+          </div>
         )}
       </CardContent>
     </Card>
-  )
+  );
 }

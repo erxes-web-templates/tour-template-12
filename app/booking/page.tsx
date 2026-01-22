@@ -1,18 +1,18 @@
-"use client"
+"use client";
 
-import React, { useEffect } from "react"
-import { useSearchParams } from "next/navigation"
-import { useQuery, useMutation } from "@apollo/client"
-import { useAtom } from "jotai"
-import { TOUR_DETAIL_QUERY } from "@/graphql/queries"
-import orderMutations from "@/graphql/order/mutations"
-import orderQueries from "@/graphql/order/queries"
-import paymentMutations from "@/graphql/payment/mutations"
-import paymentQueries from "@/graphql/payment/queries"
-import PageLoader from "@/components/common/PageLoader"
-import { useAuthContext } from "@/lib/AuthContext"
-import { useFindOrCreateCustomer } from "@/hooks/useFindOrCreateCustomer"
-import { toast } from "sonner"
+import React, { useEffect } from "react";
+import { useSearchParams } from "next/navigation";
+import { useQuery, useMutation } from "@apollo/client";
+import { useAtom } from "jotai";
+import { TOUR_DETAIL_QUERY } from "@/graphql/queries";
+import orderMutations from "@/graphql/order/mutations";
+import orderQueries from "@/graphql/order/queries";
+import paymentMutations from "@/graphql/payment/mutations";
+import paymentQueries from "@/graphql/payment/queries";
+import PageLoader from "@/components/common/PageLoader";
+import { useAuthContext } from "@/lib/AuthContext";
+import { useFindOrCreateCustomer } from "@/hooks/useFindOrCreateCustomer";
+import { toast } from "sonner";
 import {
   travelersAtom,
   paymentTypeAtom,
@@ -24,40 +24,40 @@ import {
   validationErrorsAtom,
   clearBookingData,
   type TravelerData,
-} from "@/store/bookingStore"
+} from "@/store/bookingStore";
 
 // Components
-import { BookingProgressSteps } from "./_components/BookingProgressSteps"
-import { LoginPrompt } from "./_components/LoginPrompt"
-import { TourDetailsSidebar } from "./_components/TourDetailsSidebar"
-import { PriceSummary } from "./_components/PriceSummary"
-import { TravelerInfoStep } from "./_components/TravelerInfoStep"
-import { PaymentStep } from "./_components/PaymentStep"
+import { BookingProgressSteps } from "./_components/BookingProgressSteps";
+import { LoginPrompt } from "./_components/LoginPrompt";
+import { TourDetailsSidebar } from "./_components/TourDetailsSidebar";
+import { PriceSummary } from "./_components/PriceSummary";
+import { TravelerInfoStep } from "./_components/TravelerInfoStep";
+import { PaymentStep } from "./_components/PaymentStep";
 
 const BookingPage = () => {
-  const searchParams = useSearchParams()
-  const tourId = searchParams.get("tourId")
-  const existingOrderId = searchParams.get("orderId")
-  const numberOfPeople = parseInt(searchParams.get("people") || "1")
-  const selectedDate = searchParams.get("selectedDate")
+  const searchParams = useSearchParams();
+  const tourId = searchParams.get("tourId");
+  const existingOrderId = searchParams.get("orderId");
+  const numberOfPeople = parseInt(searchParams.get("people") || "1");
+  const selectedDate = searchParams.get("selectedDate");
 
   // Use Jotai atoms for persistent state
-  const [currentStep, setCurrentStep] = useAtom(currentStepAtom)
-  const [travelers, setTravelers] = useAtom(travelersAtom)
-  const [paymentType, setPaymentType] = useAtom(paymentTypeAtom)
-  const [note, setNote] = useAtom(noteAtom)
-  const [paymentData, setPaymentData] = useAtom(paymentDataAtom)
-  const [orderId, setOrderId] = useAtom(orderIdAtom)
-  const [invoiceId, setInvoiceId] = useAtom(invoiceIdAtom)
-  const [validationErrors, setValidationErrors] = useAtom(validationErrorsAtom)
+  const [currentStep, setCurrentStep] = useAtom(currentStepAtom);
+  const [travelers, setTravelers] = useAtom(travelersAtom);
+  const [paymentType, setPaymentType] = useAtom(paymentTypeAtom);
+  const [note, setNote] = useAtom(noteAtom);
+  const [paymentData, setPaymentData] = useAtom(paymentDataAtom);
+  const [orderId, setOrderId] = useAtom(orderIdAtom);
+  const [invoiceId, setInvoiceId] = useAtom(invoiceIdAtom);
+  const [validationErrors, setValidationErrors] = useAtom(validationErrorsAtom);
 
   // Transient state (not persisted)
-  const [isSubmitting, setIsSubmitting] = React.useState(false)
+  const [isSubmitting, setIsSubmitting] = React.useState(false);
 
   // Get current user from AuthContext
-  const { user: currentUser, loading: userLoading } = useAuthContext()
+  const { user: currentUser, loading: userLoading } = useAuthContext();
   const { handleFindOrCreateCustomer, loading: customerLoading } =
-    useFindOrCreateCustomer()
+    useFindOrCreateCustomer();
 
   // Fetch orders if we need to find an existing order
   const { data: ordersData, loading: ordersLoading } = useQuery(
@@ -66,57 +66,56 @@ const BookingPage = () => {
       variables: { customerId: currentUser?.erxesCustomerId },
       skip: !existingOrderId || !currentUser?.erxesCustomerId,
       fetchPolicy: "network-only",
-    }
-  )
+    },
+  );
 
   // Find the specific order from the list
   const existingOrder = React.useMemo(() => {
-    if (!existingOrderId || !ordersData?.bmOrders?.list) return null
-    return ordersData.bmOrders.list.find((order: any) => order._id === existingOrderId)
-  }, [existingOrderId, ordersData])
+    if (!existingOrderId || !ordersData?.bmOrders?.list) return null;
+    return ordersData.bmOrders.list.find(
+      (order: any) => order._id === existingOrderId,
+    );
+  }, [existingOrderId, ordersData]);
 
   // Determine which tourId to use (from URL or from existing order)
-  const effectiveTourId = tourId || existingOrder?.tourId
+  const effectiveTourId = tourId || existingOrder?.tourId;
 
   const { data, loading, error } = useQuery(TOUR_DETAIL_QUERY, {
     variables: { id: effectiveTourId },
     skip: !effectiveTourId,
-  })
+  });
 
   // Fetch payment methods to get selected payment _id
   const { data: paymentsData } = useQuery(paymentQueries.payments, {
     fetchPolicy: "cache-and-network",
-  })
+  });
 
-  const [invoiceCreate] = useMutation(paymentMutations.invoiceCreate)
-  const [transactionsAdd] = useMutation(paymentMutations.transactionsAdd)
+  const [invoiceCreate] = useMutation(paymentMutations.invoiceCreate);
+  const [transactionsAdd] = useMutation(paymentMutations.transactionsAdd);
 
   const [bmOrderAdd] = useMutation(orderMutations.bmOrderAdd, {
     onCompleted: async (orderData) => {
-      const createdOrderId = orderData?.bmOrderAdd?._id
-      const orderAmount = orderData?.bmOrderAdd?.amount
+      const createdOrderId = orderData?.bmOrderAdd?._id;
+      const orderAmount = orderData?.bmOrderAdd?.amount;
 
       if (!createdOrderId) {
-        toast.error("Order created but ID not found")
-        setIsSubmitting(false)
-        return
+        toast.error("Order created but ID not found");
+        setIsSubmitting(false);
+        return;
       }
 
-      // Store order ID
-      setOrderId(createdOrderId)
+      setOrderId(createdOrderId);
 
-      // Find selected payment _id from payments list
       const selectedPayment = paymentsData?.payments?.find(
-        (p: any) => p.kind === paymentType
-      )
+        (p: any) => p.kind === paymentType,
+      );
 
       if (!selectedPayment) {
-        toast.error("Selected payment method not found")
-        setIsSubmitting(false)
-        return
+        toast.error("Selected payment method not found");
+        setIsSubmitting(false);
+        return;
       }
 
-      // Create invoice
       try {
         const invoiceResponse = await invoiceCreate({
           variables: {
@@ -128,22 +127,20 @@ const BookingPage = () => {
             contentTypeId: createdOrderId,
             paymentIds: [selectedPayment._id],
           },
-        })
+        });
 
-        const invoiceData = invoiceResponse.data?.invoiceCreate
-        const createdInvoiceId = invoiceData?._id
-        const transaction = invoiceData?.transactions?.[0]
+        const invoiceData = invoiceResponse.data?.invoiceCreate;
+        const createdInvoiceId = invoiceData?._id;
+        const transaction = invoiceData?.transactions?.[0];
 
         if (!createdInvoiceId) {
-          toast.error("Invoice created but ID not found")
-          setIsSubmitting(false)
-          return
+          toast.error("Invoice created but ID not found");
+          setIsSubmitting(false);
+          return;
         }
 
-        // Store invoice ID
-        setInvoiceId(createdInvoiceId)
+        setInvoiceId(createdInvoiceId);
 
-        // Update transaction with additional details if transaction exists
         if (transaction?._id && transaction?.response) {
           try {
             const transactionResponse = await transactionsAdd({
@@ -158,129 +155,112 @@ const BookingPage = () => {
                   transactionId: transaction.response.transactionId || "",
                 },
               },
-            })
+            });
 
-            // Get payment data from transactionsAdd response
             const transactionData =
-              transactionResponse.data?.paymentTransactionsAdd
-            const paymentResponse = transactionData?.response
+              transactionResponse.data?.paymentTransactionsAdd;
+            const paymentResponse = transactionData?.response;
 
-            // Store payment data for PaymentStep
             setPaymentData({
               paymentKind:
-                transactionData?.paymentKind || transaction.paymentKind || paymentType,
-              invoice: paymentResponse?.invoice || transaction.response?.invoice || "",
+                transactionData?.paymentKind ||
+                transaction.paymentKind ||
+                paymentType,
+              invoice:
+                paymentResponse?.invoice || transaction.response?.invoice || "",
               socialDeeplink:
                 paymentResponse?.socialDeeplink ||
-                transaction.response?.socialDeeplink || "",
-            })
+                transaction.response?.socialDeeplink ||
+                "",
+            });
 
-            toast.success(
-              "Booking, invoice and transaction created successfully!"
-            )
-            setCurrentStep(2)
-            setIsSubmitting(false)
+            toast.success("Захиалга амжилттай үүслээ!");
+            setCurrentStep(2);
+            setIsSubmitting(false);
           } catch (transactionError: any) {
-            console.error("Transaction error:", transactionError)
+            console.error("Transaction error:", transactionError);
             toast.error(
-              "Invoice created but transaction update failed: " +
-                transactionError.message
-            )
-            // Still proceed to payment step even if transaction update fails
-            setCurrentStep(2)
-            setIsSubmitting(false)
+              "Нэхэмжлэх үүссэн боловч гүйлгээнд алдаа гарлаа: " +
+                transactionError.message,
+            );
+            setCurrentStep(2);
+            setIsSubmitting(false);
           }
         } else {
-          // If no transaction response, set basic payment data and proceed
-          // Store basic payment data
           setPaymentData({
             paymentKind: paymentType,
             invoice: "",
             socialDeeplink: "",
-          })
-          
-          toast.success("Booking and invoice created successfully!")
-          setCurrentStep(2)
-          setIsSubmitting(false)
+          });
+
+          toast.success("Захиалга үүслээ!");
+          setCurrentStep(2);
+          setIsSubmitting(false);
         }
       } catch (error: any) {
-        toast.error("Booking created but invoice failed: " + error.message)
-        setIsSubmitting(false)
+        toast.error("Алдаа гарлаа: " + error.message);
+        setIsSubmitting(false);
       }
     },
     onError: (error) => {
-      toast.error("Failed to create booking: " + error.message)
-      setIsSubmitting(false)
+      toast.error("Захиалга үүсгэхэд алдаа гарлаа: " + error.message);
+      setIsSubmitting(false);
     },
-  })
+  });
 
-  const tour = data?.bmTourDetail
+  const tour = data?.bmTourDetail;
 
-  // Ensure we're on step 2 if we have orderId and invoiceId (payment ready)
   useEffect(() => {
     if (orderId && invoiceId && currentStep !== 2 && !existingOrderId) {
-      setCurrentStep(2)
+      setCurrentStep(2);
     }
-  }, [orderId, invoiceId, currentStep, existingOrderId, setCurrentStep])
+  }, [orderId, invoiceId, currentStep, existingOrderId, setCurrentStep]);
 
-  // Track the last processed URL parameters to detect changes
-  const lastTourIdRef = React.useRef<string | null>(null)
-  const lastExistingOrderIdRef = React.useRef<string | null>(null)
+  const lastTourIdRef = React.useRef<string | null>(null);
+  const lastExistingOrderIdRef = React.useRef<string | null>(null);
 
-  // Clear previous order data when URL parameters change (tourId or existingOrderId)
-  // This ensures fresh booking doesn't show old payment data
   useEffect(() => {
-    const tourIdChanged = tourId !== lastTourIdRef.current
-    const orderIdChanged = existingOrderId !== lastExistingOrderIdRef.current
+    const tourIdChanged = tourId !== lastTourIdRef.current;
+    const orderIdChanged = existingOrderId !== lastExistingOrderIdRef.current;
 
     if (tourIdChanged || orderIdChanged) {
-      // URL parameters changed - clear all previous booking data
       if (existingOrderId) {
-        // Paying for existing order - clear but keep ref
-        setOrderId(null)
-        setInvoiceId(null)
-        setPaymentData(null)
-        setCurrentStep(1)
+        setOrderId(null);
+        setInvoiceId(null);
+        setPaymentData(null);
+        setCurrentStep(1);
       } else {
-        // Fresh booking - clear everything
-        setOrderId(null)
-        setInvoiceId(null)
-        setPaymentData(null)
+        setOrderId(null);
+        setInvoiceId(null);
+        setPaymentData(null);
         if (currentStep === 2) {
-          setCurrentStep(1)
+          setCurrentStep(1);
         }
       }
-
-      // Update refs
-      lastTourIdRef.current = tourId
-      lastExistingOrderIdRef.current = existingOrderId
+      lastTourIdRef.current = tourId;
+      lastExistingOrderIdRef.current = existingOrderId;
     }
-    // Only run when URL parameters change
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [tourId, existingOrderId])
+  }, [tourId, existingOrderId]);
 
-  // Create invoice for existing order
   const handlePayExistingOrder = React.useCallback(async () => {
     if (!existingOrder || !paymentType) {
-      toast.error("Order or payment method not found")
-      return
+      toast.error("Order or payment method not found");
+      return;
     }
 
-    setIsSubmitting(true)
+    setIsSubmitting(true);
 
     try {
-      // Find selected payment _id from payments list
       const selectedPayment = paymentsData?.payments?.find(
-        (p: any) => p.kind === paymentType
-      )
+        (p: any) => p.kind === paymentType,
+      );
 
       if (!selectedPayment) {
-        toast.error("Selected payment method not found")
-        setIsSubmitting(false)
-        return
+        toast.error("Selected payment method not found");
+        setIsSubmitting(false);
+        return;
       }
 
-      // Create invoice for existing order
       const invoiceResponse = await invoiceCreate({
         variables: {
           amount: existingOrder.amount,
@@ -291,22 +271,20 @@ const BookingPage = () => {
           contentTypeId: existingOrder._id,
           paymentIds: [selectedPayment._id],
         },
-      })
+      });
 
-      const invoiceData = invoiceResponse.data?.invoiceCreate
-      const createdInvoiceId = invoiceData?._id
-      const transaction = invoiceData?.transactions?.[0]
+      const invoiceData = invoiceResponse.data?.invoiceCreate;
+      const createdInvoiceId = invoiceData?._id;
+      const transaction = invoiceData?.transactions?.[0];
 
       if (!createdInvoiceId) {
-        toast.error("Invoice creation failed")
-        setIsSubmitting(false)
-        return
+        toast.error("Invoice creation failed");
+        setIsSubmitting(false);
+        return;
       }
 
-      // Store invoice ID
-      setInvoiceId(createdInvoiceId)
+      setInvoiceId(createdInvoiceId);
 
-      // Update transaction with additional details if transaction exists
       if (transaction?._id && transaction?.response) {
         try {
           const transactionResponse = await transactionsAdd({
@@ -321,14 +299,12 @@ const BookingPage = () => {
                 transactionId: transaction.response.transactionId,
               },
             },
-          })
+          });
 
-          // Get payment data from transactionsAdd response
           const transactionData =
-            transactionResponse.data?.paymentTransactionsAdd
-          const paymentResponse = transactionData?.response
+            transactionResponse.data?.paymentTransactionsAdd;
+          const paymentResponse = transactionData?.response;
 
-          // Store payment data for PaymentStep
           setPaymentData({
             paymentKind:
               transactionData?.paymentKind || transaction.paymentKind,
@@ -336,23 +312,20 @@ const BookingPage = () => {
             socialDeeplink:
               paymentResponse?.socialDeeplink ||
               transaction.response.socialDeeplink,
-          })
+          });
 
-          toast.success("Invoice created successfully!")
+          toast.success("Нэхэмжлэх үүслээ!");
         } catch (transactionError: any) {
-          toast.error(
-            "Invoice created but transaction update failed: " +
-              transactionError.message
-          )
+          toast.error("Алдаа: " + transactionError.message);
         }
       } else {
-        toast.success("Invoice created successfully!")
+        toast.success("Нэхэмжлэх үүслээ!");
       }
 
-      setIsSubmitting(false)
+      setIsSubmitting(false);
     } catch (error: any) {
-      toast.error("Failed to create invoice: " + error.message)
-      setIsSubmitting(false)
+      toast.error("Алдаа: " + error.message);
+      setIsSubmitting(false);
     }
   }, [
     existingOrder,
@@ -364,21 +337,25 @@ const BookingPage = () => {
     setInvoiceId,
     setPaymentData,
     setIsSubmitting,
-  ])
+  ]);
 
-  // If existing order is loaded, set it up for payment
   useEffect(() => {
     if (existingOrder && existingOrderId && orderId !== existingOrder._id) {
-      setOrderId(existingOrder._id)
+      setOrderId(existingOrder._id);
       if (existingOrder.type) {
-        setPaymentType(existingOrder.type)
+        setPaymentType(existingOrder.type);
       }
-      // Skip to payment step
-      setCurrentStep(2)
+      setCurrentStep(2);
     }
-  }, [existingOrder, existingOrderId, orderId, setOrderId, setPaymentType, setCurrentStep])
+  }, [
+    existingOrder,
+    existingOrderId,
+    orderId,
+    setOrderId,
+    setPaymentType,
+    setCurrentStep,
+  ]);
 
-  // Auto-create invoice when existing order is ready and we're on payment step
   useEffect(() => {
     if (
       existingOrder &&
@@ -390,7 +367,7 @@ const BookingPage = () => {
       !isSubmitting &&
       paymentsData?.payments
     ) {
-      handlePayExistingOrder()
+      handlePayExistingOrder();
     }
   }, [
     existingOrder,
@@ -402,235 +379,210 @@ const BookingPage = () => {
     isSubmitting,
     paymentsData,
     handlePayExistingOrder,
-  ])
+  ]);
 
-  // Initialize travelers with current user data for lead traveler
   useEffect(() => {
     if (currentUser && travelers.length === 0 && !existingOrderId) {
       const initialTravelers: TravelerData[] = Array.from(
         { length: numberOfPeople },
         (_, index) => {
           if (index === 0) {
-            // Lead traveler - use current user data
             return {
               firstName: currentUser.firstName || "",
               lastName: currentUser.lastName || "",
               email: currentUser.email || "",
               gender: "",
               nationality: "",
-            }
+            };
           }
-          // Additional travelers - empty
           return {
             firstName: "",
             lastName: "",
             email: "",
             gender: "",
             nationality: "",
-          }
-        }
-      )
-      setTravelers(initialTravelers)
+          };
+        },
+      );
+      setTravelers(initialTravelers);
     }
-  }, [currentUser, numberOfPeople, travelers.length])
+  }, [currentUser, numberOfPeople, travelers.length]);
 
-  // Store redirect URL for after login
   useEffect(() => {
     if (effectiveTourId && !currentUser && !userLoading) {
-      let currentUrl = `/booking?tourId=${effectiveTourId}&people=${numberOfPeople}`
-      if (selectedDate) currentUrl += `&selectedDate=${selectedDate}`
-      if (existingOrderId) currentUrl += `&orderId=${existingOrderId}`
-      localStorage.setItem("redirectAfterLogin", currentUrl)
+      let currentUrl = `/booking?tourId=${effectiveTourId}&people=${numberOfPeople}`;
+      if (selectedDate) currentUrl += `&selectedDate=${selectedDate}`;
+      if (existingOrderId) currentUrl += `&orderId=${existingOrderId}`;
+      localStorage.setItem("redirectAfterLogin", currentUrl);
     }
-  }, [effectiveTourId, currentUser, userLoading, numberOfPeople, selectedDate, existingOrderId])
+  }, [
+    effectiveTourId,
+    currentUser,
+    userLoading,
+    numberOfPeople,
+    selectedDate,
+    existingOrderId,
+  ]);
 
-  // Clear booking data when starting a new booking (different tour or parameters)
-  // Skip this if we're paying for an existing order OR if we have an active orderId (processing)
   useEffect(() => {
-    if (typeof window !== "undefined" && effectiveTourId && !existingOrderId && !orderId) {
-      const bookingKey = `current-booking-params`
+    if (
+      typeof window !== "undefined" &&
+      effectiveTourId &&
+      !existingOrderId &&
+      !orderId
+    ) {
+      const bookingKey = `current-booking-params`;
       const currentParams = {
         tourId: effectiveTourId,
         numberOfPeople,
         selectedDate: selectedDate || "",
-      }
-      const storedParams = localStorage.getItem(bookingKey)
+      };
+      const storedParams = localStorage.getItem(bookingKey);
 
       if (storedParams) {
-        const parsed = JSON.parse(storedParams)
-        // Check if any parameter has changed
+        const parsed = JSON.parse(storedParams);
         if (
           parsed.tourId !== effectiveTourId ||
           parsed.numberOfPeople !== numberOfPeople ||
           parsed.selectedDate !== (selectedDate || "")
         ) {
-          // Parameters changed - clear old booking data
-          clearBookingData()
-          setTravelers([])
-          setPaymentType("")
-          setNote("")
-          setCurrentStep(1)
-          setPaymentData(null)
-          setOrderId(null)
-          setInvoiceId(null)
-          setValidationErrors({})
+          clearBookingData();
+          setTravelers([]);
+          setPaymentType("");
+          setNote("");
+          setCurrentStep(1);
+          setPaymentData(null);
+          setOrderId(null);
+          setInvoiceId(null);
+          setValidationErrors({});
         }
       }
-
-      // Store current parameters
-      localStorage.setItem(bookingKey, JSON.stringify(currentParams))
+      localStorage.setItem(bookingKey, JSON.stringify(currentParams));
     }
-  }, [effectiveTourId, numberOfPeople, selectedDate, existingOrderId, orderId])
+  }, [effectiveTourId, numberOfPeople, selectedDate, existingOrderId, orderId]);
 
   if (!effectiveTourId) {
     return (
-      <div className='container mx-auto p-4 py-12 text-center'>
-        <h1 className='text-2xl font-bold text-gray-800'>No Tour Selected</h1>
-        <p className='text-gray-500 mt-2'>
-          Please select a tour to proceed with booking.
-        </p>
+      <div className="min-h-screen bg-slate-50 flex items-center justify-center p-4">
+        <div className="max-w-md w-full bg-white rounded-[2rem] p-10 text-center shadow-xl shadow-slate-200/50 border border-slate-100">
+          <h1 className="text-2xl font-black text-slate-900 uppercase tracking-tighter">
+            Аялал сонгоогүй байна
+          </h1>
+          <p className="text-slate-500 mt-4 font-light">
+            Та эхлээд аялалаа сонгож захиалгаа үргэлжлүүлнэ үү.
+          </p>
+        </div>
       </div>
-    )
+    );
   }
 
   if (userLoading || loading || (existingOrderId && ordersLoading)) {
-    return <PageLoader />
+    return <PageLoader />;
   }
 
-  // Show login prompt if user is not authenticated
   if (!currentUser) {
-    return <LoginPrompt />
+    return <LoginPrompt />;
   }
 
   if (error || !tour) {
     return (
-      <div className='container mx-auto p-4 py-12 text-center'>
-        <h1 className='text-2xl font-bold text-gray-800'>Tour Not Found</h1>
-        <p className='text-gray-500 mt-2'>
-          Unable to load tour details. Please try again.
-        </p>
+      <div className="min-h-screen bg-slate-50 flex items-center justify-center p-4">
+        <div className="max-w-md w-full bg-white rounded-[2rem] p-10 text-center shadow-xl shadow-slate-200/50 border border-slate-100">
+          <h1 className="text-2xl font-black text-slate-900 uppercase tracking-tighter">
+            Аялал олдсонгүй
+          </h1>
+          <p className="text-slate-500 mt-4 font-light">
+            Аяллын мэдээллийг ачаалахад алдаа гарлаа.
+          </p>
+        </div>
       </div>
-    )
+    );
   }
 
-  // Use existing order data if available, otherwise calculate
-  const effectiveNumberOfPeople = existingOrder?.numberOfPeople || numberOfPeople
-  const totalCost = existingOrder?.amount || (tour.cost * numberOfPeople)
+  const effectiveNumberOfPeople =
+    existingOrder?.numberOfPeople || numberOfPeople;
+  const totalCost = existingOrder?.amount || tour.cost * numberOfPeople;
 
   const handleTravelerChange = (
     index: number,
     field: keyof TravelerData,
-    value: string
+    value: string,
   ) => {
-    const updated = [...travelers]
-    updated[index] = { ...updated[index], [field]: value }
-    setTravelers(updated)
-  }
+    const updated = [...travelers];
+    updated[index] = { ...updated[index], [field]: value };
+    setTravelers(updated);
+  };
 
   const validateStep1 = () => {
-    const errors: { [key: string]: boolean } = {}
-    let hasErrors = false
-    let firstErrorMessage = ""
+    const errors: { [key: string]: boolean } = {};
+    let hasErrors = false;
+    let firstErrorMessage = "";
 
-    // Validate payment type
     if (!paymentType) {
-      errors["paymentType"] = true
-      hasErrors = true
-      firstErrorMessage = "Please select a payment method"
+      errors["paymentType"] = true;
+      hasErrors = true;
+      firstErrorMessage = "Төлбөрийн хэрэгсэл сонгоно уу";
     }
 
-    // Validate travelers
     for (let i = 0; i < travelers.length; i++) {
-      const traveler = travelers[i]
+      const traveler = travelers[i];
+      const label = i === 0 ? "Ахлагч" : `${i + 1}-р зорчигч`;
 
       if (!traveler.firstName) {
-        errors[`${i}-firstName`] = true
-        hasErrors = true
-        if (!firstErrorMessage) {
-          firstErrorMessage = `Please enter first name for ${
-            i === 0 ? "lead traveler" : `traveler ${i + 1}`
-          }`
-        }
+        errors[`${i}-firstName`] = true;
+        hasErrors = true;
+        if (!firstErrorMessage)
+          firstErrorMessage = `${label}-ийн нэрийг оруулна уу`;
       }
-
       if (!traveler.lastName) {
-        errors[`${i}-lastName`] = true
-        hasErrors = true
-        if (!firstErrorMessage) {
-          firstErrorMessage = `Please enter last name for ${
-            i === 0 ? "lead traveler" : `traveler ${i + 1}`
-          }`
-        }
+        errors[`${i}-lastName`] = true;
+        hasErrors = true;
+        if (!firstErrorMessage)
+          firstErrorMessage = `${label}-ийн овог оруулна уу`;
       }
-
       if (!traveler.email) {
-        errors[`${i}-email`] = true
-        hasErrors = true
-        if (!firstErrorMessage) {
-          firstErrorMessage = `Please enter email for ${
-            i === 0 ? "lead traveler" : `traveler ${i + 1}`
-          }`
-        }
+        errors[`${i}-email`] = true;
+        hasErrors = true;
+        if (!firstErrorMessage)
+          firstErrorMessage = `${label}-ийн и-мэйл оруулна уу`;
       }
-
       if (!traveler.gender) {
-        errors[`${i}-gender`] = true
-        hasErrors = true
-        if (!firstErrorMessage) {
-          firstErrorMessage = `Please select gender for ${
-            i === 0 ? "lead traveler" : `traveler ${i + 1}`
-          }`
-        }
+        errors[`${i}-gender`] = true;
+        hasErrors = true;
+        if (!firstErrorMessage)
+          firstErrorMessage = `${label}-ийн хүйс сонгоно уу`;
       }
-
       if (!traveler.nationality) {
-        errors[`${i}-nationality`] = true
-        hasErrors = true
-        if (!firstErrorMessage) {
-          firstErrorMessage = `Please select nationality for ${
-            i === 0 ? "lead traveler" : `traveler ${i + 1}`
-          }`
-        }
+        errors[`${i}-nationality`] = true;
+        hasErrors = true;
+        if (!firstErrorMessage)
+          firstErrorMessage = `${label}-ийн харьяалал сонгоно уу`;
       }
     }
 
-    setValidationErrors(errors)
-
+    setValidationErrors(errors);
     if (hasErrors) {
-      toast.error(firstErrorMessage)
-      return false
+      toast.error(firstErrorMessage);
+      return false;
     }
-
-    return true
-  }
+    return true;
+  };
 
   const handleSubmitBooking = async () => {
-    if (!validateStep1()) return
-
-    setIsSubmitting(true)
-
+    if (!validateStep1()) return;
+    setIsSubmitting(true);
     try {
-      // Use current user's customer ID directly
-      const leadCustomerId = currentUser?.erxesCustomerId
-
+      const leadCustomerId = currentUser?.erxesCustomerId;
       if (!leadCustomerId) {
-        toast.error("Customer ID not found. Please contact support.")
-        setIsSubmitting(false)
-        return
+        toast.error("Customer ID олдсонгүй.");
+        setIsSubmitting(false);
+        return;
       }
-
-      // Find or create customers for additional travelers (skip lead traveler at index 0)
-      const additionalCustomerIds: string[] = []
-
+      const additionalCustomerIds: string[] = [];
       for (let i = 1; i < travelers.length; i++) {
-        const traveler = travelers[i]
-        const customerId = await handleFindOrCreateCustomer(traveler)
-        if (customerId) {
-          additionalCustomerIds.push(customerId)
-        }
+        const customerId = await handleFindOrCreateCustomer(travelers[i]);
+        if (customerId) additionalCustomerIds.push(customerId);
       }
-
-      // Create order
       await bmOrderAdd({
         variables: {
           order: {
@@ -647,68 +599,121 @@ const BookingPage = () => {
                 : undefined,
           },
         },
-      })
+      });
     } catch (error) {
-      console.error("Error creating booking:", error)
-      setIsSubmitting(false)
+      console.error("Booking error:", error);
+      setIsSubmitting(false);
     }
-  }
+  };
 
   return (
-    <div className='container mx-auto p-4 md:p-6 lg:p-8'>
-      <div className='max-w-4xl mx-auto'>
-        <BookingProgressSteps currentStep={currentStep} />
+    <div className="min-h-screen bg-[#fafbfc] pt-24 pb-20">
+      <div className="max-w-7xl mx-auto px-6">
+        {/* Step Progress Container */}
+        <div className="mb-12">
+          <BookingProgressSteps currentStep={currentStep} />
+        </div>
 
-        <h1 className='text-3xl font-bold mb-2'>
-          {currentStep === 1 ? "Traveler Information" : "Payment"}
-        </h1>
-        <p className='text-gray-600 mb-8'>
-          {currentStep === 1
-            ? "Please provide information for all travelers"
-            : "Complete your payment"}
-        </p>
+        <div className="grid lg:grid-cols-12 gap-12 items-start">
+          {/* Main Content Area */}
+          <div className="lg:col-span-8 space-y-8">
+            <div className="flex flex-col gap-2">
+              <span className="text-[10px] font-black text-red-600 uppercase tracking-[0.3em]">
+                Step {currentStep === 1 ? "01" : "02"}
+              </span>
+              <h1 className="text-4xl md:text-5xl font-black text-slate-900 uppercase tracking-tighter">
+                {currentStep === 1 ? "Зорчигчийн мэдээлэл" : "Төлбөр төлөлт"}
+              </h1>
+              <p className="text-slate-500 font-light text-lg">
+                {currentStep === 1
+                  ? "Аяллын багт багтсан бүх зорчигчдын мэдээллийг үнэн зөв оруулна уу."
+                  : "Захиалгаа баталгаажуулахын тулд төлбөрөө төлнө үү."}
+              </p>
+            </div>
 
-        <div className='grid md:grid-cols-3 gap-6'>
-          {/* Main Content */}
-          <div className='md:col-span-2 space-y-6'>
-            {currentStep === 1 ? (
-              <TravelerInfoStep
-                travelers={travelers}
-                onTravelerChange={handleTravelerChange}
-                currentUser={currentUser}
-                paymentType={paymentType}
-                setPaymentType={setPaymentType}
-                note={note}
-                setNote={setNote}
-                onSubmit={handleSubmitBooking}
-                isSubmitting={isSubmitting}
-                customerLoading={customerLoading}
-                validationErrors={validationErrors}
-              />
-            ) : (
-              <PaymentStep
-                onBack={() => setCurrentStep(1)}
-                paymentData={paymentData}
-                loading={isSubmitting}
-                orderId={orderId}
-                invoiceId={invoiceId}
-              />
-            )}
+            <div className="bg-white rounded-[2.5rem] border border-slate-100 shadow-2xl shadow-slate-200/40 overflow-hidden transition-all duration-500">
+              <div className="p-8 md:p-12">
+                {currentStep === 1 ? (
+                  <TravelerInfoStep
+                    travelers={travelers}
+                    onTravelerChange={handleTravelerChange}
+                    currentUser={currentUser}
+                    paymentType={paymentType}
+                    setPaymentType={setPaymentType}
+                    note={note}
+                    setNote={setNote}
+                    onSubmit={handleSubmitBooking}
+                    isSubmitting={isSubmitting}
+                    customerLoading={customerLoading}
+                    validationErrors={validationErrors}
+                  />
+                ) : (
+                  <PaymentStep
+                    onBack={() => setCurrentStep(1)}
+                    paymentData={paymentData}
+                    loading={isSubmitting}
+                    orderId={orderId}
+                    invoiceId={invoiceId}
+                  />
+                )}
+              </div>
+            </div>
           </div>
 
-          {/* Sidebar */}
-          <div className='md:col-span-1 space-y-6'>
-            <TourDetailsSidebar tour={tour} numberOfPeople={effectiveNumberOfPeople} />
-            <PriceSummary
-              costPerPerson={tour.cost}
-              numberOfPeople={effectiveNumberOfPeople}
-              totalCost={totalCost}
-            />
+          {/* Sidebar Area */}
+          <div className="lg:col-span-4 space-y-6 lg:sticky lg:top-28">
+            <div className="group bg-slate-900 rounded-[2rem] p-8 text-white shadow-2xl shadow-slate-900/20 transition-transform duration-500 hover:scale-[1.02]">
+              <h3 className="text-xs font-black uppercase tracking-[0.2em] text-white/50 mb-6 flex items-center gap-2">
+                <div className="w-4 h-[1px] bg-red-500"></div> Захиалгын
+                хураангуй
+              </h3>
+              <TourDetailsSidebar
+                tour={tour}
+                numberOfPeople={effectiveNumberOfPeople}
+              />
+            </div>
+
+            <div className="bg-white rounded-[2rem] p-8 border border-slate-100 shadow-xl shadow-slate-200/50">
+              <PriceSummary
+                costPerPerson={tour.cost}
+                numberOfPeople={effectiveNumberOfPeople}
+                totalCost={totalCost}
+              />
+            </div>
+
+            <div className="bg-red-50 rounded-2xl p-6 border border-red-100 flex items-start gap-4">
+              <div className="bg-red-500 p-2 rounded-lg text-white">
+                <svg
+                  xmlns="http://www.w3.org/2000/svg"
+                  width="16"
+                  height="16"
+                  viewBox="0 0 24 24"
+                  fill="none"
+                  stroke="currentColor"
+                  strokeWidth="3"
+                  strokeLinecap="round"
+                  strokeLinejoin="round"
+                >
+                  <path d="M10.29 3.86L1.82 18a2 2 0 0 0 1.71 3h16.94a2 2 0 0 0 1.71-3L13.71 3.86a2 2 0 0 0-3.42 0z" />
+                  <line x1="12" y1="9" x2="12" y2="13" />
+                  <line x1="12" y1="17" x2="12.01" y2="17" />
+                </svg>
+              </div>
+              <div>
+                <h4 className="text-xs font-black text-red-900 uppercase">
+                  Санамж
+                </h4>
+                <p className="text-[11px] text-red-700/80 mt-1 leading-relaxed">
+                  Мэдээллээ дутуу оруулсан тохиолдолд захиалга баталгаажихгүй
+                  болохыг анхаарна уу.
+                </p>
+              </div>
+            </div>
           </div>
         </div>
       </div>
     </div>
-  )
-}
+  );
+};
 
-export default BookingPage
+export default BookingPage;

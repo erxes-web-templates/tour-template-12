@@ -12,6 +12,7 @@ import { useRouter } from "next/navigation"
 import PageLoader from "../components/common/PageLoader"
 
 interface User {
+  avatar: string
   _id: string
   firstName?: string
   lastName?: string

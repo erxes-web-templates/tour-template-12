@@ -1,99 +1,147 @@
-"use client"
+"use client";
 
-import { Button } from "@/components/ui/button"
-import {
-  Card,
-  CardContent,
-  CardDescription,
-  CardFooter,
-  CardHeader,
-  CardTitle,
-} from "@/components/ui/card"
-import React from "react"
-import Link from "next/link"
-import { useQuery } from "@apollo/client"
-import { TOURS_GROUP_QUERY, TOURS_QUERY } from "../../../graphql/queries"
-import {
-  getFileUrl,
-  templateUrl,
-  // templateUrlWithSlug,
-} from "@/lib/utils"
-import { isBuildMode } from "../../../lib/buildMode"
-import { toHtml } from "../../../lib/html"
-import { Section } from "../../../types/sections"
-import { TourGroup } from "../../../types/tours"
-import Image from "next/image"
-import dayjs from "dayjs"
+import React from "react";
+import Link from "next/link";
+import Image from "next/image";
+import { useQuery } from "@apollo/client";
+import { ArrowRight } from "lucide-react";
+import dayjs from "dayjs";
+
+import { TOURS_GROUP_QUERY } from "../../../graphql/queries";
+import { getFileUrl, templateUrl } from "@/lib/utils";
+import { isBuildMode } from "../../../lib/buildMode";
+import { Section } from "../../../types/sections";
+import { TourGroup } from "../../../types/tours";
 
 const ToursSection = ({ section }: { section: Section }) => {
-  const { data } = useQuery(TOURS_GROUP_QUERY, {
+  const isBuilder = isBuildMode();
+
+  const { data, loading } = useQuery(TOURS_GROUP_QUERY, {
     variables: {
       perPage: section?.config?.limit || 6,
       page: 1,
       status: "website",
     },
-  })
+  });
 
-  const tours = data?.bmToursGroup?.list || []
-  const isBuilder = isBuildMode()
+  const tours = data?.bmToursGroup?.list || [];
+
+  if (loading) return <div className="py-24 text-center font-bold">Аяллууд ачаалж байна...</div>;
 
   return (
-    <section className='py-16 bg-gray-100'>
-      <div className='container mx-auto px-4'>
-        <h2 className='text-3xl font-bold mb-8 text-center'>
-          {section?.config?.title || "Featured tours"}
-        </h2>
-        <div className='grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8'>
-          {tours.map((tour: TourGroup) => (
-            <Card key={tour.items[0]._id}>
-              <CardHeader>
-                {tour.items[0].imageThumbnail && (
-                  <div className='relative w-full h-[200px]'>
-                    <Image
-                      src={getFileUrl(tour.items[0].imageThumbnail)}
-                      alt={tour.items[0].name}
-                      fill
-                      className='rounded-md h-[200px]'
-                    />
-                  </div>
-                )}
-              </CardHeader>
-              <CardContent>
-                <CardTitle>{tour.items[0].name}</CardTitle>
-                <CardDescription
-                  dangerouslySetInnerHTML={toHtml(tour.items[0].content)}
-                />
-              </CardContent>
-              <CardFooter className='flex justify-between items-center'>
-                <span className='text-lg font-bold'>{tour.items[0].cost}</span>
-                <span className='text-lg font-bold'>
-                  {dayjs(tour.items[0].startDate).format("YYYY-MM-DD")}
-                </span>
-                <Link
-                  href={
-                    isBuilder
-                      ? templateUrl(`/tour&tourId=${tour.items[0]._id}`)
-                      : `/tours/${tour.items[0]._id}`
-                  }
-                >
-                  {" "}
-                  <Button>{`Book Now`}</Button>
-                </Link>
-              </CardFooter>
-            </Card>
-          ))}
+    <section id="featured-tours" className="bg-[#f7f5ef] py-24 scroll-mt-20 overflow-hidden">
+      <div className="mx-auto max-w-7xl px-6 md:px-10">
+        
+        {/* Header */}
+        <div className="mb-16 flex flex-col md:flex-row md:items-end justify-between gap-6">
+          <div className="text-left">
+            <h2 className="text-4xl md:text-5xl font-black  tracking-tighter mb-4 uppercase">
+              {section?.config?.title?.split(" ")[0] || "Санал болгож буй"}{" "}
+              <span className="text-[#692d91]">
+                {section?.config?.title?.split(" ").slice(1).join(" ") || "аяллууд"}
+              </span>
+            </h2>
+            <p className="text-gray-400 font-bold text-[11px] uppercase tracking-[0.3em]">
+              Таны заавал үзэх ёстой байгалийн үзэсгэлэнт газрууд
+            </p>
+          </div>
+          <div className="flex gap-2 text-slate-300 font-bold text-[10px] uppercase tracking-widest italic">
+            <span>Гүйлгэж үзнэ үү</span> <ArrowRight size={14} />
+          </div>
         </div>
-        <div className=' text-center mt-6 '>
+
+        {/* Horizontal Scroll Container */}
+        <div className="relative group">
+          <div className="flex gap-8 overflow-x-auto pb-12 snap-x snap-mandatory touch-pan-x cursor-grab active:cursor-grabbing scroll-smooth custom-scrollbar">
+            {tours.map((tour: TourGroup) => {
+              const item = tour.items[0]; // Эхний аяллын мэдээллийг авах
+              const tourId = item.groupCode;
+
+              return (
+                <div 
+                  key={tourId} 
+                  className="snap-center min-w-[320px] md:min-w-[400px] bg-white rounded-[40px] overflow-hidden shadow-sm hover:shadow-2xl hover:shadow-purple-100/50 transition-all duration-700 border border-slate-50 group/card"
+                >
+                  {/* Image Section */}
+                  <div className="relative h-80 overflow-hidden bg-gray-100">
+                    {item.imageThumbnail ? (
+                      <Image 
+                        src={getFileUrl(item.imageThumbnail)} 
+                        alt={item.name} 
+                        fill
+                        className="object-cover group-hover/card:scale-110 transition duration-1000 ease-in-out" 
+                      />
+                    ) : (
+                      <div className="flex items-center justify-center h-full text-gray-400">Зураггүй</div>
+                    )}
+                    
+                    {/* Үнэ */}
+                    <div className="absolute top-6 left-6 bg-[#692d91] text-white px-5 py-2 rounded-2xl text-[10px] font-black uppercase tracking-widest shadow-lg">
+                      {item.cost ? `${item.cost.toLocaleString()}₮` : "Үнэ тодорхойгүй"}
+                    </div>
+                  </div>
+
+                  {/* Content Section */}
+                  <div className="p-8">
+                    <div className="mb-8 h-28">
+                      <p className="text-[10px] font-black text-[#692d91] uppercase tracking-[0.2em] mb-2">
+                         📅 {dayjs(item.startDate).format("YYYY-MM-DD")}
+                      </p>
+                      <h3 className="font-black  text-2xl text-gray-900 tracking-tight line-clamp-2">
+                        {item.name}
+                      </h3>
+                    </div>
+                    
+                    <Link 
+                      href={
+                        isBuilder
+                          ? templateUrl(`/tour&tourId=${tourId}`)
+                          : `/tours/${tourId}`
+                      }
+                      className="group/btn relative bg-slate-900 text-white w-full py-5 rounded-[20px] font-black text-[11px] uppercase tracking-[2px] text-center block overflow-hidden transition-all duration-300"
+                    >
+                      <span className="relative z-10 flex items-center justify-center gap-3">
+                        Захиалах <ArrowRight size={16} className="group-hover/btn:translate-x-1 transition-transform" />
+                      </span>
+                      <div className="absolute inset-0 bg-[#692d91] translate-y-full group-hover/btn:translate-y-0 transition-transform duration-300"></div>
+                    </Link>
+                  </div>
+                </div>
+              );
+            })}
+          </div>
+        </div>
+
+        {/* Footer Link */}
+        <div className="text-center mt-6">
           <Link
-            className='underline'
+            className="text-[11px] font-black uppercase tracking-widest text-gray-400 hover:text-[#692d91] transition-colors"
             href={isBuilder ? templateUrl("/tours") : "/tours"}
           >
-            Show All tours
+            Бүх аяллуудыг үзэх
           </Link>
         </div>
       </div>
-    </section>
-  )
-}
 
-export default ToursSection
+      <style jsx>{`
+        .custom-scrollbar::-webkit-scrollbar {
+          height: 4px;
+        }
+        .custom-scrollbar::-webkit-scrollbar-track {
+          background: #f1f1f1;
+          border-radius: 10px;
+          margin-inline: 40px;
+        }
+        .custom-scrollbar::-webkit-scrollbar-thumb {
+          background: #e2e2e2;
+          border-radius: 10px;
+        }
+        .custom-scrollbar::-webkit-scrollbar-thumb:hover {
+          background: #692d91;
+        }
+      `}</style>
+    </section>
+  );
+};
+
+export default ToursSection;

@@ -1,33 +1,19 @@
 "use client";
 
-import {
-  Card,
-  CardContent,
-  CardDescription,
-  CardFooter,
-  CardHeader,
-  CardTitle,
-} from "@/components/ui/card";
-import { Button } from "@/components/ui/button";
-import { Badge } from "@/components/ui/badge";
-import Link from "next/link";
 import { useQuery } from "@apollo/client";
 import { TOUR_DETAIL_QUERY } from "@/graphql/queries";
 import { useRouter } from "next/navigation";
+import Link from "next/link";
+import { Briefcase, MapPin, ChevronRight, Trash2, Clock, Users } from "lucide-react";
 
 type Order = {
   _id: string;
-  branchId?: string | null;
-  customerId?: string | null;
   tourId?: string | null;
   amount?: number | null;
   status?: string | null;
   note?: string | null;
   numberOfPeople?: number | null;
   type?: string | null;
-  additionalCustomers?: any;
-  isChild?: boolean | null;
-  parent?: string | null;
 };
 
 type ProfileOrdersTabProps = {
@@ -35,6 +21,7 @@ type ProfileOrdersTabProps = {
   loading?: boolean;
 };
 
+// Аяллын нэрийг авах туслах компонент
 const TourInfo = ({ tourId }: { tourId: string }) => {
   const { data, loading } = useQuery(TOUR_DETAIL_QUERY, {
     variables: { id: tourId },
@@ -43,19 +30,10 @@ const TourInfo = ({ tourId }: { tourId: string }) => {
 
   const tour = data?.bmTourDetail;
 
-  if (loading) {
-    return <span className="font-medium">Ачааллаж байна...</span>;
-  }
+  if (loading) return <span className="opacity-50">Ачааллаж байна...</span>;
+  if (!tour) return <span>ID: {tourId.slice(-6)}</span>;
 
-  if (!tour) {
-    return <span className="font-medium">{tourId}</span>;
-  }
-
-  return (
-    <span className="font-medium">
-      {tour.name} (ID: {tour._id})
-    </span>
-  );
+  return <span className="font-black  tracking-tight">{tour.name}</span>;
 };
 
 const ProfileOrdersTab = ({ orders, loading }: ProfileOrdersTabProps) => {
@@ -63,17 +41,25 @@ const ProfileOrdersTab = ({ orders, loading }: ProfileOrdersTabProps) => {
 
   if (loading) {
     return (
-      <p className="text-sm text-muted-foreground">
-        Захиалгуудыг ачааллаж байна…
-      </p>
+      <div className="py-20 text-center">
+        <p className="text-[10px] font-black uppercase tracking-[0.3em] text-slate-300 animate-pulse">
+          Захиалгуудыг ачааллаж байна...
+        </p>
+      </div>
     );
   }
 
   if (!orders?.length) {
     return (
-      <p className="text-sm text-muted-foreground">
-        Таны захиалгын түүх хоосон байна.
-      </p>
+      <div className="py-20 text-center bg-slate-50 rounded-[40px] border border-dashed border-slate-200">
+        <Briefcase size={40} className="mx-auto mb-4 text-slate-200" />
+        <p className="text-sm font-black  text-slate-400 uppercase tracking-tighter">
+          Таны захиалгын түүх хоосон байна.
+        </p>
+        <Link href="/" className="inline-block mt-6 text-[10px] font-black uppercase tracking-widest text-[#692d91] border-b-2 border-purple-100 pb-1 hover:border-[#692d91] transition-all">
+          Аялал харах
+        </Link>
+      </div>
     );
   }
 
@@ -84,72 +70,96 @@ const ProfileOrdersTab = ({ orders, loading }: ProfileOrdersTabProps) => {
   };
 
   return (
-    <div className="space-y-4">
-      {orders.map((order) => (
-        <Card key={order._id} className="border border-muted">
-          <CardHeader className="flex flex-row items-center justify-between gap-3">
-            <div>
-              <CardTitle className="text-base font-semibold">
-                Захиалга #{order._id.slice(-6)}
-              </CardTitle>
-              <CardDescription>
-                Нийт:{" "}
-                <span className="font-medium text-foreground">
-                  ₮{Number(order.amount || 0).toLocaleString()}
+    <div className="space-y-6">
+      <div className="flex items-center justify-between mb-8">
+        <h3 className="text-2xl font-black  tracking-tighter uppercase">
+          Миний <span className="text-[#692d91]">Захиалгууд</span>
+        </h3>
+        <span className="text-[10px] font-black text-slate-300 uppercase tracking-widest">
+          {orders.length} захиалга
+        </span>
+      </div>
+
+      <div className="grid gap-6">
+        {orders.map((order) => {
+          const isPending = order.status?.toLowerCase() === "pending";
+
+          return (
+            <div
+              key={order._id}
+              className="group relative flex flex-col md:flex-row items-start md:items-center gap-6 p-6 rounded-[32px] border border-slate-100 bg-white hover:border-white hover:shadow-2xl hover:shadow-purple-100/50 transition-all duration-500"
+            >
+              {/* Status Badge */}
+              <div className="absolute -top-3 left-8">
+                <span className={`text-[8px] font-black px-3 py-1 rounded-full uppercase tracking-widest shadow-sm ${
+                  isPending 
+                    ? "bg-orange-50 text-orange-500 border border-orange-100" 
+                    : "bg-green-50 text-green-600 border border-green-100"
+                }`}>
+                  {order.status ?? "Тодорхойгүй"}
                 </span>
-                {order.numberOfPeople && (
-                  <span className="ml-2">
-                    · {order.numberOfPeople} хүн
+              </div>
+
+              {/* Icon Section */}
+              <div className={`w-16 h-16 rounded-2xl flex items-center justify-center shrink-0 transition-transform group-hover:scale-110 ${
+                isPending ? "bg-slate-50 text-slate-400" : "bg-purple-50 text-[#692d91]"
+              }`}>
+                <Briefcase size={24} />
+              </div>
+
+              {/* Main Info */}
+              <div className="flex-grow space-y-1">
+                <div className="flex items-center gap-2 text-[10px] font-black text-slate-300 uppercase tracking-widest">
+                  <span>ID: #{order._id.slice(-6)}</span>
+                  <span>•</span>
+                  <span className="flex items-center gap-1">
+                    <Users size={12} /> {order.numberOfPeople || 1} хүн
                   </span>
+                </div>
+                
+                <h4 className="text-xl font-black  tracking-tighter group-hover:text-[#692d91] transition-colors">
+                  {order.tourId ? <TourInfo tourId={order.tourId} /> : "Тодорхойгүй аялал"}
+                </h4>
+
+                <div className="flex items-center gap-4 text-sm">
+                  <span className="font-black text-lg tracking-tighter">
+                    ₮{Number(order.amount || 0).toLocaleString()}
+                  </span>
+                  {order.type && (
+                    <span className="text-[10px] font-black uppercase py-0.5 px-2 bg-slate-100 rounded text-slate-500">
+                      {order.type}
+                    </span>
+                  )}
+                </div>
+              </div>
+
+              {/* Actions */}
+              <div className="flex items-center gap-3 w-full md:w-auto justify-end border-t md:border-t-0 pt-4 md:pt-0">
+                {order.tourId && (
+                  <Link href={`/tours/${order.tourId}`}>
+                    <button className="px-5 py-2.5 rounded-xl border border-slate-100 text-[9px] font-black uppercase tracking-widest hover:bg-slate-50 transition-all">
+                      Дэлгэрэнгүй
+                    </button>
+                  </Link>
                 )}
-              </CardDescription>
+                
+                {isPending && (
+                  <button
+                    onClick={() => handlePayNow(order)}
+                    className="px-6 py-2.5 rounded-xl bg-[#692d91] text-white text-[9px] font-black uppercase tracking-widest hover:bg-[#522370] hover:scale-105 active:scale-95 transition-all shadow-lg shadow-purple-200"
+                  >
+                    Төлөх
+                  </button>
+                )}
+                
+                <div className="hidden md:block ml-2">
+                  <ChevronRight size={20} className="text-slate-200 group-hover:text-[#692d91] group-hover:translate-x-1 transition-all" />
+                </div>
+              </div>
             </div>
-            <Badge variant="outline">
-              {order.status ?? "Төлөв тодорхойгүй"}
-            </Badge>
-          </CardHeader>
-          <CardContent className="space-y-2">
-            <div className="grid gap-2 text-sm">
-              {order.tourId && (
-                <div className="flex justify-between">
-                  <span className="text-muted-foreground">Аялал:</span>
-                  <TourInfo tourId={order.tourId} />
-                </div>
-              )}
-              {order.type && (
-                <div className="flex justify-between">
-                  <span className="text-muted-foreground">Төрөл:</span>
-                  <span className="font-medium">{order.type}</span>
-                </div>
-              )}
-              {order.note && (
-                <div className="flex flex-col gap-1">
-                  <span className="text-muted-foreground">Тэмдэглэл:</span>
-                  <span className="text-sm">{order.note}</span>
-                </div>
-              )}
-            </div>
-          </CardContent>
-          <CardFooter className="flex justify-end gap-2">
-            {order.tourId && (
-              <Link href={`/tours/${order.tourId}`}>
-                <Button variant="outline" size="sm">
-                  Дэлгэрэнгүй харах
-                </Button>
-              </Link>
-            )}
-            {order.status?.toLowerCase() === "pending" && (
-              <Button
-                variant="default"
-                size="sm"
-                onClick={() => handlePayNow(order)}
-              >
-                Төлөх
-              </Button>
-            )}
-          </CardFooter>
-        </Card>
-      ))}
+          );
+        })}
+      </div>
     </div>
   );
 };

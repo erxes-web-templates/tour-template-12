@@ -1130,3 +1130,5 @@ export const nationalities = [
      Code: "AX"
   }
 ]
+
+export { isBuildMode }

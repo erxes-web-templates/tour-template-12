@@ -3,7 +3,7 @@
 import React, { useMemo, useState } from "react";
 import { useRouter } from "next/navigation";
 import { Section } from "../../../types/sections";
-import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
+import { Card, CardContent } from "@/components/ui/card";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Button } from "@/components/ui/button";
@@ -14,7 +14,7 @@ import {
   PopoverContent,
   PopoverTrigger,
 } from "@/components/ui/popover";
-import { CalendarIcon } from "lucide-react";
+import { CalendarIcon, Users, BedDouble, ChevronRight } from "lucide-react";
 import { format } from "date-fns";
 
 const BookingFormSection = ({ section }: { section: Section }) => {
@@ -27,15 +27,11 @@ const BookingFormSection = ({ section }: { section: Section }) => {
   const today = useMemo(() => new Date(new Date().setHours(0, 0, 0, 0)), []);
 
   const title = section.config?.title ?? section.content ?? "Book your stay";
-  const description =
-    section.config?.description ?? "Choose your dates to check availability.";
+  const description = section.config?.description ?? "Choose your dates to check availability.";
 
   const handleSubmit = (event: React.FormEvent<HTMLFormElement>) => {
     event.preventDefault();
-
-    if (!startDate || !endDate) {
-      return;
-    }
+    if (!startDate || !endDate) return;
 
     const base = templateUrl("/booking");
     const url = new URL(base, window.location.origin);
@@ -48,41 +44,41 @@ const BookingFormSection = ({ section }: { section: Section }) => {
   };
 
   return (
-    <section className="py-16 bg-gray-100">
-      <div className="container mx-auto px-4">
-        <div className="text-center mb-8">
-          <h2 className="text-3xl font-bold mb-2">{title}</h2>
-          <p className="text-muted-foreground max-w-2xl mx-auto">
+    <section className="py-24 bg-white relative overflow-hidden">
+      {/* Decorative background elements */}
+      <div className="absolute top-0 left-0 w-64 h-64 bg-purple-50 rounded-full blur-3xl opacity-60 -translate-x-1/2 -translate-y-1/2" />
+      
+      <div className="container mx-auto px-6 relative z-10">
+        <div className="text-center mb-12 space-y-4">
+          <div className="inline-flex items-center gap-2 px-4 py-1 bg-purple-100 text-[#692d91] rounded-full text-xs font-black uppercase tracking-widest">
+            <CalendarIcon size={14} /> Захиалга өгөх
+          </div>
+          <h2 className="text-4xl md:text-5xl font-black italic uppercase tracking-tighter text-gray-900 leading-tight">
+            {title}
+          </h2>
+          <p className="text-gray-500 font-medium max-w-xl mx-auto leading-relaxed">
             {description}
           </p>
         </div>
-        <Card className="max-w-3xl mx-auto">
-          <CardHeader>
-            <CardTitle className="text-lg">Availability check</CardTitle>
-          </CardHeader>
-          <CardContent>
-            <form
-              onSubmit={handleSubmit}
-              className="grid gap-4 md:grid-cols-6"
-            >
-              <div className="space-y-2">
-                <Label htmlFor="booking-start-date">Check-in</Label>
+
+        <Card className="max-w-5xl mx-auto border-none shadow-[0_32px_64px_-15px_rgba(105,45,145,0.15)] rounded-[40px] overflow-hidden bg-white/80 backdrop-blur-md border border-purple-50">
+          <CardContent className="p-8 md:p-12">
+            <form onSubmit={handleSubmit} className="grid gap-8 md:grid-cols-12 items-end">
+              
+              {/* Check-in Date */}
+              <div className="md:col-span-3 space-y-3">
+                <Label className="text-[10px] font-black uppercase tracking-[0.2em] text-gray-400 ml-1">Check-in</Label>
                 <Popover>
                   <PopoverTrigger asChild>
                     <Button
-                      id="booking-start-date"
                       variant="outline"
                       className={cn(
-                        "w-full justify-start text-left font-normal",
+                        "w-full h-16 justify-start text-left font-bold rounded-2xl border-slate-100 hover:border-[#692d91] transition-all px-6",
                         !startDate && "text-muted-foreground"
                       )}
                     >
-                      <CalendarIcon className="mr-2 h-4 w-4" />
-                      {startDate ? (
-                        format(startDate, "PPP")
-                      ) : (
-                        <span>Pick a date</span>
-                      )}
+                      <CalendarIcon className="mr-3 h-5 w-5 text-[#692d91]" />
+                      {startDate ? format(startDate, "MMM dd, yyyy") : <span>Эхлэх өдөр</span>}
                     </Button>
                   </PopoverTrigger>
                   <PopoverContent className="w-auto p-0" align="start">
@@ -91,9 +87,7 @@ const BookingFormSection = ({ section }: { section: Section }) => {
                       selected={startDate}
                       onSelect={(date) => {
                         setStartDate(date);
-                        if (endDate && date && endDate < date) {
-                          setEndDate(undefined);
-                        }
+                        if (endDate && date && endDate < date) setEndDate(undefined);
                       }}
                       disabled={(date) => date < today}
                       initialFocus
@@ -101,24 +95,21 @@ const BookingFormSection = ({ section }: { section: Section }) => {
                   </PopoverContent>
                 </Popover>
               </div>
-              <div className="space-y-2">
-                <Label htmlFor="booking-end-date">Check-out</Label>
+
+              {/* Check-out Date */}
+              <div className="md:col-span-3 space-y-3">
+                <Label className="text-[10px] font-black uppercase tracking-[0.2em] text-gray-400 ml-1">Check-out</Label>
                 <Popover>
                   <PopoverTrigger asChild>
                     <Button
-                      id="booking-end-date"
                       variant="outline"
                       className={cn(
-                        "w-full justify-start text-left font-normal",
+                        "w-full h-16 justify-start text-left font-bold rounded-2xl border-slate-100 hover:border-[#692d91] transition-all px-6",
                         !endDate && "text-muted-foreground"
                       )}
                     >
-                      <CalendarIcon className="mr-2 h-4 w-4" />
-                      {endDate ? (
-                        format(endDate, "PPP")
-                      ) : (
-                        <span>Pick a date</span>
-                      )}
+                      <CalendarIcon className="mr-3 h-5 w-5 text-[#692d91]" />
+                      {endDate ? format(endDate, "MMM dd, yyyy") : <span>Дуусах өдөр</span>}
                     </Button>
                   </PopoverTrigger>
                   <PopoverContent className="w-auto p-0" align="start">
@@ -126,57 +117,51 @@ const BookingFormSection = ({ section }: { section: Section }) => {
                       mode="single"
                       selected={endDate}
                       onSelect={setEndDate}
-                      disabled={(date) =>
-                        date < today || (startDate ? date < startDate : false)
-                      }
+                      disabled={(date) => date < today || (startDate ? date < startDate : false)}
                       initialFocus
                     />
                   </PopoverContent>
                 </Popover>
               </div>
-              <div className="space-y-2">
-                <Label htmlFor="booking-adults">Adults</Label>
-                <Input
-                  id="booking-adults"
-                  type="number"
-                  min={1}
-                  value={adults}
-                  onChange={(event) =>
-                    setAdults(Math.max(1, Number(event.target.value)))
-                  }
-                  required
-                />
+
+              {/* Guests/Adults */}
+              <div className="md:col-span-2 space-y-3">
+                <Label className="text-[10px] font-black uppercase tracking-[0.2em] text-gray-400 ml-1">Adults</Label>
+                <div className="relative">
+                  <Users className="absolute left-6 top-1/2 -translate-y-1/2 h-5 w-5 text-[#692d91]" />
+                  <Input
+                    type="number"
+                    min={1}
+                    value={adults}
+                    onChange={(e) => setAdults(Math.max(1, Number(e.target.value)))}
+                    className="h-16 pl-14 font-bold rounded-2xl border-slate-100 focus:ring-[#692d91]"
+                  />
+                </div>
               </div>
-              <div className="space-y-2">
-                <Label htmlFor="booking-children">Children</Label>
+
+              {/* Children */}
+              <div className="md:col-span-2 space-y-3">
+                <Label className="text-[10px] font-black uppercase tracking-[0.2em] text-gray-400 ml-1">Children</Label>
                 <Input
-                  id="booking-children"
                   type="number"
                   min={0}
                   value={children}
-                  onChange={(event) =>
-                    setChildren(Math.max(0, Number(event.target.value)))
-                  }
+                  onChange={(e) => setChildren(Math.max(0, Number(e.target.value)))}
+                  className="h-16 font-bold rounded-2xl border-slate-100"
                 />
               </div>
-              <div className="space-y-2">
-                <Label htmlFor="booking-rooms">Rooms</Label>
-                <Input
-                  id="booking-rooms"
-                  type="number"
-                  min={1}
-                  value={rooms}
-                  onChange={(event) =>
-                    setRooms(Math.max(1, Number(event.target.value)))
-                  }
-                  required
-                />
-              </div>
-              <div className="flex items-end md:col-span-6">
-                <Button type="submit" className="w-full">
-                  Check rooms
+
+              {/* Submit Button */}
+              <div className="md:col-span-2">
+                <Button 
+                  type="submit" 
+                  className="w-full h-16 bg-[#692d91] hover:bg-yellow-400 text-white hover:text-black rounded-2xl font-black uppercase italic tracking-tighter transition-all group shadow-lg hover:shadow-yellow-200"
+                >
+                  Шалгах
+                  <ChevronRight className="ml-1 h-5 w-5 transition-transform group-hover:translate-x-1" />
                 </Button>
               </div>
+
             </form>
           </CardContent>
         </Card>

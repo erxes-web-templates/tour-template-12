@@ -91,10 +91,7 @@ export const PaymentStep: React.FC<PaymentStepProps> = ({
 
   return (
     <div className='space-y-6'>
-      <div className='flex gap-2 items-center text-[#5F5F5F]'>
-        <Receipt className='w-4 h-4' />
-        <h2 className='text-lg font-semibold'>Payment</h2>
-      </div>
+    
 
       {paymentCompleted ? (
         <Card>

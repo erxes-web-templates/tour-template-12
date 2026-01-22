@@ -12,6 +12,7 @@ interface BmTour {
   images: string[]
   imageThumbnail: string
   groupSize: number
+groupCode: string
 }
 
 interface BmToursData {
