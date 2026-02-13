@@ -20,7 +20,7 @@ const YoutubeSection = ({ section }: { section: Section }) => {
           </div>
           
           <h2 className="text-4xl md:text-5xl font-black italic uppercase tracking-tighter text-gray-900 text-center leading-tight">
-            {section.config.title || "Enjoy your trip with us"}
+            {section.config.title || "Бидэнтэй хамт аялаарай!!!!!"}
           </h2>
           
           <div className="w-20 h-1.5 bg-[#692d91] rounded-full" />

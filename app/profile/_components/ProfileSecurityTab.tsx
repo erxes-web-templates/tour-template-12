@@ -10,7 +10,7 @@ type ProfileSecurityTabProps = { form: PasswordForm; loading?: boolean; onChange
 
 const ProfileSecurityTab = ({ form, loading, onChange, onSubmit }: ProfileSecurityTabProps) => (
 
-<div className="max-w-2xl"> {/* TITLE SECTION */} <div className="mb-10"> <h3 className="text-2xl font-black  tracking-tighter uppercase mb-2"> Аюулгүй <span className="text-[#692d91]">байдал</span> </h3> <p className="text-[10px] font-black uppercase tracking-widest text-slate-400 flex items-center gap-2"> <ShieldCheck size={14} className="text-[#692d91]" /> Нууц үг тогтмол шинэчлэх нь таны дансыг хамгаална </p> </div>
+<div className="max-w-2xl"> {/* TITLE SECTION */} <div className="mb-10"> <h3 className="text-2xl font-black  tracking-tighter uppercase mb-2">  <span className="text-[#692d91]"></span> </h3> <p className="text-[10px] font-black uppercase tracking-widest text-slate-400 flex items-center gap-2"> <ShieldCheck size={14} className="text-[#692d91]" /> Нууц үг тогтмол шинэчлэх нь таны дансыг хамгаална </p> </div>
 
 {/* FORM SECTION */}
 <form className="space-y-8" onSubmit={onSubmit}>

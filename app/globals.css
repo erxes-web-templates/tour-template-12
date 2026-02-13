@@ -77,3 +77,6 @@
     font-family: var(--font-heading, var(--font-body, Arial, Helvetica, sans-serif));
   }
 }
+body {
+  padding-right: 0px !important;
+}

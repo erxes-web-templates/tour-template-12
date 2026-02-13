@@ -2,7 +2,7 @@
 
 import React from "react";
 import { Badge } from "@/components/ui/badge";
-import { Calendar, Users, Hash, MapPin, ShieldCheck } from "lucide-react";
+import { Calendar, Users, Hash, MapPin, ShieldCheck, CheckCircle2 } from "lucide-react";
 
 interface TourDetailsSidebarProps {
   tour: {
@@ -23,46 +23,46 @@ export const TourDetailsSidebar: React.FC<TourDetailsSidebarProps> = ({
     <div className="space-y-8">
       {/* Tour Header & Title */}
       <div className="space-y-4">
-        <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-blue-500/10 border border-blue-500/20 text-blue-400">
-          <MapPin className="w-3 h-3" />
+        <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-purple-50 border border-purple-100 text-purple-600">
+          <MapPin className="w-3.5 h-3.5" />
           <span className="text-[10px] font-black uppercase tracking-widest">Баталгаажсан аялал</span>
         </div>
         
-        <h2 className="text-2xl font-black text-white leading-tight tracking-tighter">
+        <h2 className="text-2xl font-black text-slate-900 leading-tight tracking-tighter">
           {tour.name}
         </h2>
         
         <div className="flex gap-1">
-          <div className="h-1 w-12 bg-blue-600 rounded-full" />
-          <div className="h-1 w-4 bg-white/20 rounded-full" />
-          <div className="h-1 w-2 bg-white/10 rounded-full" />
+          <div className="h-1.5 w-12 bg-purple-600 rounded-full" />
+          <div className="h-1.5 w-4 bg-black-100 rounded-full" />
+          <div className="h-1.5 w-2 bg-black-50 rounded-full" />
         </div>
       </div>
 
       {/* Info List */}
       <div className="space-y-3">
         {/* Reference */}
-        <div className="group flex items-center justify-between p-4 rounded-2xl bg-white/5 border border-white/5 transition-colors hover:bg-white/10">
+        <div className="group flex items-center justify-between p-4 rounded-2xl bg-slate-50/50 border border-slate-100 transition-all hover:bg-white hover:shadow-md hover:shadow-slate-200/50">
           <div className="flex items-center gap-4">
-            <div className="p-2.5 bg-white-800 rounded-xl text-slate-400 group-hover:text-blue-400 transition-colors">
+            <div className="p-2.5 bg-white shadow-sm rounded-xl text-slate-400 text-purple-600 transition-colors border border-slate-50">
               <Hash className="h-4 w-4" />
             </div>
             <div>
-              <p className="text-[10px] font-bold text-slate-500 uppercase tracking-wider">Лавлах дугаар</p>
-              <p className="font-bold text-sm text-slate-200">{tour.refNumber}</p>
+              <p className="text-[10px] font-bold text-slate-400 uppercase tracking-wider">Лавлах дугаар</p>
+              <p className="font-bold text-sm text-slate-700">{tour.refNumber}</p>
             </div>
           </div>
         </div>
 
         {/* Departure Date */}
-        <div className="group flex items-center justify-between p-4 rounded-2xl bg-white/5 border border-white/5 transition-colors hover:bg-white/10">
+        <div className="group flex items-center justify-between p-4 rounded-2xl bg-slate-50/50 border border-slate-100 transition-all hover:bg-white hover:shadow-md hover:shadow-slate-200/50">
           <div className="flex items-center gap-4">
-            <div className="p-2.5 bg-slate-800 rounded-xl text-slate-400 group-hover:text-emerald-400 transition-colors">
+            <div className="p-2.5 bg-white shadow-sm rounded-xl text-slate-400 text-purple-600 transition-colors border border-slate-50">
               <Calendar className="h-4 w-4" />
             </div>
             <div>
-              <p className="text-[10px] font-bold text-slate-500 uppercase tracking-wider">Аялах огноо</p>
-              <p className="font-bold text-sm text-slate-200">
+              <p className="text-[10px] font-bold text-slate-400 uppercase tracking-wider">Аялах огноо</p>
+              <p className="font-bold text-sm text-slate-700">
                 {new Date(tour.startDate).toLocaleDateString("mn-MN", {
                   month: "long",
                   day: "numeric",
@@ -74,26 +74,26 @@ export const TourDetailsSidebar: React.FC<TourDetailsSidebarProps> = ({
         </div>
 
         {/* People Count */}
-        <div className="group flex items-center justify-between p-4 rounded-2xl bg-white/5 border border-white/5 transition-colors hover:bg-white/10">
+        <div className="group flex items-center justify-between p-4 rounded-2xl bg-slate-50/50 border border-slate-100 transition-all hover:bg-white hover:shadow-md hover:shadow-slate-200/50">
           <div className="flex items-center gap-4">
-            <div className="p-2.5 bg-slate-800 rounded-xl text-slate-400 group-hover:text-orange-400 transition-colors">
+            <div className="p-2.5 bg-white shadow-sm rounded-xl text-slate-400 text-orange-600 transition-colors border border-slate-50">
               <Users className="h-4 w-4" />
             </div>
             <div>
-              <p className="text-[10px] font-bold text-slate-500 uppercase tracking-wider">Зорчигчийн тоо</p>
-              <p className="font-bold text-sm text-slate-200">{numberOfPeople} зорчигч</p>
+              <p className="text-[10px] font-bold text-slate-400 uppercase tracking-wider">Зорчигчийн тоо</p>
+              <p className="font-bold text-sm text-slate-700">{numberOfPeople} зорчигч</p>
             </div>
           </div>
-          <Badge className="bg-white/10 text-white border-none rounded-lg px-2 text-[10px]">x{numberOfPeople}</Badge>
+          <Badge className="bg-slate-100 text-slate-600 border-none rounded-lg px-2 text-[10px] font-black">x{numberOfPeople}</Badge>
         </div>
       </div>
 
       {/* Verification Footer */}
-      <div className="pt-4 mt-4 border-t border-white/5">
-        <div className="flex items-center gap-3 text-slate-500">
-          <ShieldCheck className="w-5 h-5 text-emerald-500" />
-          <p className="text-[11px] font-medium leading-relaxed">
-            Таны сонгосон аялал баталгаажсан бөгөөд суудлын тоо хязгаартай.
+      <div className="pt-5 mt-4 border-t border-slate-100">
+        <div className="flex items-start gap-3 p-3 rounded-xl bg-purple-50/50 border border-purple-50">
+          <CheckCircle2 className="w-5 h-5 text-purple-500 shrink-0" />
+          <p className="text-[11px] font-medium text-purple-800 leading-relaxed">
+            Таны сонгосон аялал системд <span className="font-black uppercase tracking-tighter">баталгаажсан</span> бөгөөд суудлын тоо хязгаартай байгааг анхаарна уу.
           </p>
         </div>
       </div>

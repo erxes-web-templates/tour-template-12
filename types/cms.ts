@@ -54,6 +54,7 @@ type CPDetail = {
 };
 
 type CmsPost = {
+  createdAt: string | number | Date;
   _id: string;
   slug: string;
   title: string;

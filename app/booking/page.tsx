@@ -463,7 +463,7 @@ const BookingPage = () => {
 
   if (!effectiveTourId) {
     return (
-      <div className="min-h-screen bg-slate-50 flex items-center justify-center p-4">
+      <div className="min-h-screen bg-white-50 flex items-center justify-center p-4">
         <div className="max-w-md w-full bg-white rounded-[2rem] p-10 text-center shadow-xl shadow-slate-200/50 border border-slate-100">
           <h1 className="text-2xl font-black text-slate-900 uppercase tracking-tighter">
             Аялал сонгоогүй байна
@@ -618,7 +618,7 @@ const BookingPage = () => {
           {/* Main Content Area */}
           <div className="lg:col-span-8 space-y-8">
             <div className="flex flex-col gap-2">
-              <span className="text-[10px] font-black text-red-600 uppercase tracking-[0.3em]">
+              <span className="text-[10px] font-black text-purple-600 uppercase tracking-[0.3em]">
                 Step {currentStep === 1 ? "01" : "02"}
               </span>
               <h1 className="text-4xl md:text-5xl font-black text-slate-900 uppercase tracking-tighter">
@@ -662,9 +662,9 @@ const BookingPage = () => {
 
           {/* Sidebar Area */}
           <div className="lg:col-span-4 space-y-6 lg:sticky lg:top-28">
-            <div className="group bg-slate-900 rounded-[2rem] p-8 text-white shadow-2xl shadow-slate-900/20 transition-transform duration-500 hover:scale-[1.02]">
-              <h3 className="text-xs font-black uppercase tracking-[0.2em] text-white/50 mb-6 flex items-center gap-2">
-                <div className="w-4 h-[1px] bg-red-500"></div> Захиалгын
+            <div className="group bg-white-900 rounded-[2rem] p-8 text-white shadow-2xl shadow-slate-900/20 transition-transform duration-500 hover:scale-[1.02]">
+              <h3 className="text-xs font-black uppercase tracking-[0.2em] text-black/50 mb-6 flex items-center gap-2">
+                <div className="w-4 h-[1px] bg-purple-500"></div> Захиалгын
                 хураангуй
               </h3>
               <TourDetailsSidebar
@@ -682,7 +682,8 @@ const BookingPage = () => {
             </div>
 
             <div className="bg-red-50 rounded-2xl p-6 border border-red-100 flex items-start gap-4">
-              <div className="bg-red-500 p-2 rounded-lg text-white">
+              <div className="bg-purple
+              -500 p-2 rounded-lg text-white">
                 <svg
                   xmlns="http://www.w3.org/2000/svg"
                   width="16"
@@ -700,10 +701,10 @@ const BookingPage = () => {
                 </svg>
               </div>
               <div>
-                <h4 className="text-xs font-black text-red-900 uppercase">
+                <h4 className="text-xs font-black text-purple-900 uppercase">
                   Санамж
                 </h4>
-                <p className="text-[11px] text-red-700/80 mt-1 leading-relaxed">
+                <p className="text-[11px] text-purple-700/80 mt-1 leading-relaxed">
                   Мэдээллээ дутуу оруулсан тохиолдолд захиалга баталгаажихгүй
                   болохыг анхаарна уу.
                 </p>

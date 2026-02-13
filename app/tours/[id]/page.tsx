@@ -1,7 +1,7 @@
+"use client"
+
+import React, { useState, useEffect } from "react"
 import Image from "next/image"
-import Link from "next/link"
-import { isBuildMode } from "../../../lib/buildMode"
-import TourDetailPageClient from "../../_client/TourDetailPage"
 import { fetchBmToursGroupDetail } from "../../../lib/fetchTours"
 import { getFileUrl } from "../../../lib/utils"
 import {
@@ -11,151 +11,123 @@ import {
   AccordionTrigger,
 } from "../../../components/ui/accordion"
 import PaymentTabs from "../_components/PaymentTabs"
-import { Calendar, Tag, ShieldCheck, Info, MapPin } from "lucide-react"
+import { Calendar, Tag, Info, MapPin, Globe, ShieldCheck } from "lucide-react"
 import ImageSwiper from "../_components/ImageSwiper"
 
-type PageProps = {
-  params: Promise<{ id: string }>
-}
+export default function TourDetailPage({ params: paramsPromise }: { params: Promise<{ id: string }> }) {
+  const [tour, setTour] = useState<any>(null)
+  const [displayTour, setDisplayTour] = useState<any>(null)
+  const [loading, setLoading] = useState(true)
+  const [id, setId] = useState<string>("")
 
-export default async function TourDetailPage(props: PageProps) {
-  const params = await props.params
-  const { id } = params
+  useEffect(() => {
+    paramsPromise.then(p => {
+      setId(p.id)
+      loadTour(p.id)
+    })
+  }, [])
 
-  if (isBuildMode()) {
-    return <TourDetailPageClient initialTourId={id} />
+  const loadTour = async (tourId: string) => {
+    const groupDetail = await fetchBmToursGroupDetail(tourId)
+    const initialTour = groupDetail && Array.isArray(groupDetail) && groupDetail.length > 0 ? groupDetail[0] : null
+    setTour(initialTour)
+    setDisplayTour(initialTour)
+    setLoading(false)
   }
 
-  const groupDetail = await fetchBmToursGroupDetail(id)
-  const tour = groupDetail && Array.isArray(groupDetail) && groupDetail.length > 0
-    ? groupDetail[0]
-    : null
-
-  if (!tour) {
-    return (
-      <div className='container mx-auto p-4 py-32 text-center'>
-        <h1 className='text-2xl font-bold text-gray-800 uppercase italic'>Tour not found</h1>
-        <p className='text-gray-500 mt-2 font-medium'>Уучлаарай, аялал олдсонгүй.</p>
-      </div>
-    )
+  // PaymentTabs-аас огноо солигдох үед дуудагдах функц
+  const handleDateChange = (selectedDateTour: any) => {
+    setDisplayTour((prev: any) => ({
+      ...prev,
+      startDate: selectedDateTour.startDate,
+      cost: selectedDateTour.cost,
+    }));
   }
 
-  const tourId = id
+  if (loading) return <div className="py-32 text-center font-bold">Уншиж байна...</div>
+  if (!tour) return <div className="py-32 text-center font-bold uppercase italic">Tour not found</div>
+
+  const defaultDay = tour.itinerary?.groupDays?.[0] ? `day-${tour.itinerary.groupDays[0].day}` : undefined
 
   return (
-    <div className='container mx-auto p-4 mt-32 relative z-0 space-y-10'>
-      
-      {/* 1. ГАЛЕРЕЙ ХЭСЭГ */}
-      <div className="space-y-4">
+    <div className='bg-white min-h-screen'>
+      {/* 1. HERO ХЭСЭГ - Динамик утгууд */}
+      <div className="container mx-auto px-4 pt-32 space-y-6">
         {tour.imageThumbnail && (
-          <div className='relative w-full h-[500px]'>
+          <div className='relative w-full h-[400px] md:h-[600px] overflow-hidden rounded-[40px] shadow-2xl group'>
             <Image
               src={getFileUrl(tour.imageThumbnail)}
               alt={tour.name}
               fill
               priority
-              className='rounded-[32px] object-cover shadow-xl'
+              className='object-cover transition-transform duration-1000 group-hover:scale-105'
             />
-            <div className="absolute inset-0 bg-gradient-to-t from-black/50 via-transparent to-transparent rounded-[32px]" />
-            <h1 className="absolute bottom-8 left-8 text-3xl md:text-5xl font-black italic uppercase text-white tracking-tighter max-w-3xl">
-              {tour.name}
-            </h1>
+            <div className="absolute inset-0 bg-gradient-to-t from-black/80 via-black/20 to-transparent" />
+            <div className="absolute bottom-10 left-6 md:left-12 space-y-4">
+              <h1 className="text-4xl md:text-7xl font-black italic uppercase text-white tracking-tighter max-w-4xl leading-[0.9]">
+                {tour.name}
+              </h1>
+            </div>
           </div>
         )}
-        <div className='flex gap-3 overflow-x-auto pb-4 scrollbar-hide'>
-          {tour.images &&
-            tour.images.map((image: string, index: number) => (
-              <div key={index} className='relative flex-shrink-0 w-[320px] h-[210px]'>
-                <Image
-                  src={getFileUrl(image)}
-                  alt={tour.name}
-                  fill
-                  className='rounded-[24px] object-cover shadow-md hover:scale-[1.02] transition-transform'
-                />
-              </div>
-            ))}
+
+        <div className='flex gap-4 overflow-x-auto pb-6 scrollbar-hide px-2'>
+          {tour.images?.map((image: string, index: number) => (
+            <div key={index} className='relative flex-shrink-0 w-[280px] h-[180px] group cursor-pointer'>
+              <Image src={getFileUrl(image)} alt={tour.name} fill className='rounded-[24px] object-cover shadow-lg group-hover:border-purple-500 transition-all border-2 border-transparent' />
+            </div>
+          ))}
         </div>
       </div>
 
-      {/* 2. ҮНДСЭН ГРИД (Зүүн талд мэдээлэл, Баруун талд төлбөрийн хэсэг) */}
-      <div className='grid lg:grid-cols-12 gap-10 items-start'>
-        
-        {/* ЗҮҮН ТАЛ - Мэдээллүүд (8 багана) */}
-        <div className='lg:col-span-8 space-y-10'>
+      <div className="container mx-auto px-4 py-12">
+        <div className='grid lg:grid-cols-12 gap-12 items-start'>
           
-          {/* Quick Stats */}
-          <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
-            <div className="bg-slate-50 p-5 rounded-[24px] border border-slate-100 flex flex-col items-center text-center">
-              <Calendar size={20} className="text-[#692d91] mb-2" />
-              <p className="text-[9px] font-black uppercase text-slate-400 tracking-widest">Start Date</p>
-              <p className="text-xs font-black italic">{new Date(tour.startDate).toLocaleDateString()}</p>
+          <div className='lg:col-span-8 space-y-16'>
+            {/* Quick Stats - Огноо сонгоход энд өөрчлөгдөнө */}
+            <div className="grid grid-cols-2 md:grid-cols-3 gap-6">
+              {[
+                { icon: Calendar, label: "Start Date", val: new Date(displayTour.startDate).toLocaleDateString(), color: "bg-blue-50 text-blue-600" },
+                { icon: Tag, label: "Base Cost", val: `₮${displayTour.cost.toLocaleString()}`, color: "bg-emerald-50 text-emerald-600" },
+                { icon: Info, label: "Ref Number", val: tour.refNumber, color: "bg-purple-50 text-purple-600" }
+              ].map((stat, i) => (
+                <div key={i} className="bg-slate-50/50 p-6 rounded-[32px] border border-slate-100 hover:bg-white hover:shadow-xl transition-all group">
+                  <div className={`w-10 h-10 ${stat.color} rounded-2xl flex items-center justify-center mb-4 group-hover:scale-110 transition-transform`}>
+                    <stat.icon size={20} />
+                  </div>
+                  <p className="text-[10px] font-black uppercase text-slate-400 tracking-widest mb-1">{stat.label}</p>
+                  <p className="text-sm font-black italic text-slate-900">{stat.val}</p>
+                </div>
+              ))}
             </div>
-            <div className="bg-slate-50 p-5 rounded-[24px] border border-slate-100 flex flex-col items-center text-center">
-              <Tag size={20} className="text-[#692d91] mb-2" />
-              <p className="text-[9px] font-black uppercase text-slate-400 tracking-widest">Cost</p>
-              <p className="text-xs font-black italic">${tour.cost.toLocaleString()}</p>
-            </div>
-            <div className="bg-slate-50 p-5 rounded-[24px] border border-slate-100 flex flex-col items-center text-center">
-              <ShieldCheck size={20} className="text-[#692d91] mb-2" />
-              <p className="text-[9px] font-black uppercase text-slate-400 tracking-widest">Status</p>
-              <p className="text-xs font-black italic uppercase">{tour.status}</p>
-            </div>
-            <div className="bg-slate-50 p-5 rounded-[24px] border border-slate-100 flex flex-col items-center text-center">
-              <Info size={20} className="text-[#692d91] mb-2" />
-              <p className="text-[9px] font-black uppercase text-slate-400 tracking-widest">Ref No</p>
-              <p className="text-xs font-black italic">{tour.refNumber}</p>
-            </div>
-          </div>
 
-          {/* ITINERARY */}
-          <div className='space-y-6'>
-            <h2 className='text-2xl font-black italic uppercase tracking-tight border-l-4 border-[#692d91] pl-4 text-[#692d91]'>
-              ITINERARY
-            </h2>
-            {tour?.itinerary?.groupDays && tour.itinerary.groupDays.length > 0 ? (
-              <Accordion type="single" collapsible className="w-full space-y-4">
-                {tour.itinerary.groupDays.map((day: any, index: number) => (
-                  <AccordionItem 
-                    key={index} 
-                    value={`day-${day.day}`} 
-                    className="border rounded-[24px] px-2 bg-white shadow-sm border-slate-100 overflow-hidden"
-                  >
-                    <AccordionTrigger className="hover:no-underline py-4 px-4 group">
-                      <div className="flex items-center text-left gap-4">
-                        <div className="bg-[#692d91]/10 rounded-full p-2 group-hover:bg-[#692d91] transition-colors">
-                          <MapPin size={18} className="text-[#692d91] group-hover:text-white" />
+            {/* ITINERARY */}
+            <div className='space-y-8'>
+              <div className="flex items-center gap-4">
+                <div className="w-2 h-10 bg-purple-600 rounded-full" />
+                <h2 className='text-3xl font-black italic uppercase tracking-tighter text-slate-900'>Itinerary</h2>
+              </div>
+              <Accordion type="single" collapsible defaultValue={defaultDay} className="w-full space-y-6">
+                {tour.itinerary?.groupDays?.map((day: any, index: number) => (
+                  <AccordionItem key={index} value={`day-${day.day}`} className="border-none rounded-[32px] bg-slate-50/50 px-4 data-[state=open]:bg-white data-[state=open]:shadow-2xl border border-transparent data-[state=open]:border-slate-100">
+                    <AccordionTrigger className="hover:no-underline py-6 px-4 group">
+                      <div className="flex items-center text-left gap-6">
+                        <div className="w-14 h-14 bg-white rounded-2xl shadow-sm flex flex-col items-center justify-center group-data-[state=open]:bg-purple-600 group-data-[state=open]:text-white">
+                          <span className="text-[8px] font-black uppercase opacity-60">Day</span>
+                          <span className="text-xl font-black italic leading-none">{day.day}</span>
                         </div>
-                        <div className="flex flex-col">
-                          <span className="text-[#692d91] font-black italic text-sm">DAY {day.day}</span>
-                          <span className="text-slate-800 font-bold uppercase text-xs tracking-wide">
-                            {day.elements && day.elements.length > 0
-                              ? day.elements.map((el: any) => el.element?.name).filter(Boolean).join(", ")
-                              : "LOCATION"}
-                          </span>
+                        <div className="flex flex-col gap-1">
+                           <span className="text-slate-900 font-black uppercase text-sm group-data-[state=open]:text-purple-600">
+                             {day.elements?.map((el: any) => el.element?.name).filter(Boolean).join(" • ") || "Daily Exploration"}
+                           </span>
                         </div>
                       </div>
                     </AccordionTrigger>
-                    <AccordionContent className="px-6 pb-6 pt-2">
-                      <div className="flex flex-col lg:flex-row gap-6 border-t border-slate-50 pt-4">
-                        <div className="flex-1 space-y-4">
-                          {day.content && (
-                            <div 
-                              className="text-slate-600 leading-relaxed font-normal prose prose-sm max-w-none"
-                              dangerouslySetInnerHTML={{ __html: day.content }}
-                            />
-                          )}
-                          {day.elementsQuick && day.elementsQuick.length > 0 && (
-                            <div className='flex flex-wrap gap-2 mt-2'>
-                              {day.elementsQuick.map((el: any, idx: number) => (
-                                <span key={idx} className='text-[10px] bg-slate-100 text-slate-500 font-bold py-1 px-3 rounded-full uppercase'>
-                                  {el?.element?.name || ""}
-                                </span>
-                              ))}
-                            </div>
-                          )}
-                        </div>
-                        {day.images && day.images.length > 0 && (
-                          <div className='lg:w-72 flex-shrink-0'>
+                    <AccordionContent className="px-6 pb-8 pt-2">
+                      <div className="flex flex-col lg:flex-row gap-8 border-t border-slate-100 pt-6">
+                        <div className="flex-1" dangerouslySetInnerHTML={{ __html: day.content }} />
+                        {day.images?.length > 0 && (
+                          <div className='lg:w-80 shrink-0'>
                             <ImageSwiper images={day.images} dayNumber={day.day} />
                           </div>
                         )}
@@ -164,30 +136,30 @@ export default async function TourDetailPage(props: PageProps) {
                   </AccordionItem>
                 ))}
               </Accordion>
-            ) : (
-              <p className="text-sm text-slate-400 italic bg-slate-50 p-6 rounded-[24px]">
-                Аяллын хөтөлбөр одоогоор ороогүй байна.
-              </p>
-            )}
-          </div>
+            </div>
 
-          {/* DESCRIPTION */}
-          <div className="space-y-4 pb-20">
-            <h2 className='text-xl font-black italic uppercase tracking-tight border-l-4 border-[#692d91] pl-4'>Description</h2>
-            <div className="bg-slate-50 p-8 rounded-[32px] border border-slate-100">
-              <p className="text-slate-600 leading-relaxed font-medium whitespace-pre-line text-sm" 
-                 dangerouslySetInnerHTML={{ __html: tour.content }} />
+            <div className="space-y-6 pb-20">
+              <div className="flex items-center gap-4"><div className="w-2 h-10 bg-purple-600 rounded-full" /><h2 className='text-3xl font-black italic uppercase tracking-tighter text-slate-900'>Description</h2></div>
+              <div className="bg-slate-50 p-10 rounded-[40px] border border-slate-100">
+                <div className="text-slate-600 leading-relaxed font-medium" dangerouslySetInnerHTML={{ __html: tour.content }} />
+              </div>
             </div>
           </div>
-        </div>
 
-        {/* БАРУУН ТАЛ - PAYMENT TABS (STICKY CARD - 4 багана) */}
-        <div className='lg:col-span-4'>
-          <div className='lg:sticky lg:top-32 space-y-4'>
-             <PaymentTabs tourId={tourId} tour={tour} />
+          <div className='lg:col-span-4'>
+            <div className='lg:sticky lg:top-32'>
+              <div className="relative p-1 bg-gradient-to-b from-purple-100 to-transparent rounded-[42px]">
+                {/* ЭНД handleDateChange-ийг дамжуулж байна */}
+                <PaymentTabs tourId={id} tour={tour} onDateChange={handleDateChange} />
+              </div>
+              <div className="mt-6 px-6 py-4 bg-slate-50 rounded-3xl border border-slate-100 flex items-center gap-4">
+                  <ShieldCheck className="text-emerald-500" size={24} />
+                  <p className="text-[10px] font-black uppercase">Аюулгүй байдал хангагдсан</p>
+              </div>
+            </div>
           </div>
-        </div>
 
+        </div>
       </div>
     </div>
   )

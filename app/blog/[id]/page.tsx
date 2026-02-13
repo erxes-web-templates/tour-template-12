@@ -21,8 +21,23 @@ export default async function PostDetailPage({ params }: PageProps) {
 
   return (
     <div className="container mx-auto p-4 mt-20">
-      <h1 className="text-2xl font-bold mb-4">{post.title}</h1>
-      <p>{post.createdAt}</p>
+      {/* HEADER */}
+      <div className="max-w-4xl mx-auto mb-10 text-center">
+        <h1 className="text-3xl md:text-5xl font-extrabold text-slate-900 leading-tight tracking-tight mb-4">
+          {post.title}
+        </h1>
+
+        <div className="flex items-center justify-center gap-3 text-sm text-slate-500">
+          <span>
+            {new Date(post.createdAt).toLocaleDateString("en-US", {
+              year: "numeric",
+              month: "long",
+              day: "numeric",
+            })}
+          </span>
+        </div>
+      </div>
+
       <div className="gap-4">
         <div>
           {post.thumbnail && (

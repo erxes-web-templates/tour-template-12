@@ -9,7 +9,7 @@ import {
   redirect,
 } from "next/navigation"
 import { useMutation, useQuery } from "@apollo/client"
-import { User as UserIcon, Mail, Phone, ShieldCheck, Settings, ArrowRight } from "lucide-react"
+import { User as UserIcon, Mail, Phone, ShieldCheck,  ArrowRight } from "lucide-react"
 import authQueries from "../../graphql/auth/queries"
 import authMutations from "../../graphql/auth/mutations"
 import orderQueries from "../../graphql/order/queries"
@@ -163,7 +163,7 @@ export default function ProfilePage() {
         {/* TOP BAR */}
         <div className="flex flex-col md:flex-row justify-between items-start md:items-center gap-6 mb-16">
           <div>
-            <h1 className="text-4xl font-black  tracking-tighter uppercase text-slate-900 mb-2">Хувийн <span className="text-[#692d91]">Орон зай</span></h1>
+            <h1 className="text-4xl font-black  tracking-tighter uppercase text-slate-900 mb-2 mt-5">Хувийн <span className="text-[#692d91]">Орон зай</span></h1>
             <div className="flex items-center gap-3">
                <span className="h-[1px] w-8 bg-[#692d91]"></span>
                <p className="text-[10px] font-bold text-slate-400 uppercase tracking-widest">{cardTitleMap[activeTab]}</p>
@@ -178,7 +178,7 @@ export default function ProfilePage() {
           
           {/* SIDE NAVIGATION */}
           <aside className="space-y-6">
-            <div className="bg-white p-2 rounded-[32px] border border-slate-100 shadow-sm">
+            <div >
               <ProfileSidebar
                 items={SIDEBAR_ITEMS}
                 activeId={activeTab}
@@ -204,9 +204,7 @@ export default function ProfilePage() {
                   <h2 className="text-xl font-black  uppercase tracking-tight text-slate-900">{cardTitleMap[activeTab]}</h2>
                   <p className="text-[11px] font-medium text-slate-400 mt-1">{cardDescriptionMap[activeTab]}</p>
                 </div>
-                <div className="p-3 bg-slate-50 rounded-2xl text-[#692d91]">
-                  <Settings size={20} className="animate-spin-slow" />
-                </div>
+                
               </div>
 
               {activeTab === "profile" && (

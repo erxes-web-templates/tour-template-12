@@ -34,7 +34,6 @@ import {
   ChevronsUpDown,
   CreditCard,
   MessageSquareQuote,
-  ArrowRight
 } from "lucide-react";
 import { cn } from "@/lib/utils";
 import { nationalities } from "@/lib/utils";
@@ -162,32 +161,30 @@ export default function TravelerForm({
 
   return (
     <Card className="w-full border-none shadow-none bg-transparent">
-      {/* Header Section */}
       <div className="flex items-center gap-4 mb-10">
         <div className="w-12 h-12 rounded-full bg-[#0F172A] flex items-center justify-center text-white shadow-lg shadow-slate-200">
           <User size={22} />
         </div>
         <div>
           <h3 className="text-xl font-black uppercase tracking-tight text-[#0F172A]">
-            {isLead ? "Lead Traveler" : `Traveler ${index + 1}`}
+            {isLead ? "Үндсэн аялагч" : `Аялагч ${index + 1}`}
           </h3>
           <p className="text-[11px] text-slate-400 font-bold uppercase tracking-[0.2em] mt-0.5">
-            {isLead ? "Primary Contact Information" : "Passenger Details"}
+            {isLead ? "Холбоо барих үндсэн мэдээлэл" : "Зорчигчийн мэдээлэл"}
           </p>
         </div>
       </div>
 
       <CardContent className="p-0 space-y-12">
-        {/* Input Grid - Full Width Layout */}
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-x-10 gap-y-8">
           <div className="space-y-2.5">
             <Label className="text-[11px] font-black uppercase tracking-widest text-slate-500 ml-1">
-              First Name *
+              Нэр *
             </Label>
             <Input
               value={data.firstName}
               onChange={(e) => onChange(index, "firstName", e.target.value)}
-              placeholder="Enter first name"
+              placeholder="Нэрээ оруулна уу"
               disabled={isLead}
               className={cn(
                 "h-14 bg-slate-50/80 border-none rounded-xl text-base font-medium focus-visible:ring-2 focus-visible:ring-slate-200 transition-all",
@@ -198,12 +195,12 @@ export default function TravelerForm({
 
           <div className="space-y-2.5">
             <Label className="text-[11px] font-black uppercase tracking-widest text-slate-500 ml-1">
-              Last Name *
+              Овог *
             </Label>
             <Input
               value={data.lastName}
               onChange={(e) => onChange(index, "lastName", e.target.value)}
-              placeholder="Enter last name"
+              placeholder="Овогоо оруулна уу"
               disabled={isLead}
               className={cn(
                 "h-14 bg-slate-50/80 border-none rounded-xl text-base font-medium focus-visible:ring-2 focus-visible:ring-slate-200 transition-all",
@@ -214,7 +211,7 @@ export default function TravelerForm({
 
           <div className="space-y-2.5">
             <Label className="text-[11px] font-black uppercase tracking-widest text-slate-500 ml-1">
-              Email Address *
+              Имэйл хаяг *
             </Label>
             <Input
               type="email"
@@ -231,7 +228,7 @@ export default function TravelerForm({
 
           <div className="space-y-2.5">
             <Label className="text-[11px] font-black uppercase tracking-widest text-slate-500 ml-1">
-              Gender *
+              Хүйс *
             </Label>
             <Select value={data.gender} onValueChange={handleGenderChange}>
               <SelectTrigger
@@ -240,19 +237,19 @@ export default function TravelerForm({
                   hasError("gender") && "bg-red-50 ring-2 ring-red-100",
                 )}
               >
-                <SelectValue placeholder="Select gender" />
+                <SelectValue placeholder="Хүйс сонгох" />
               </SelectTrigger>
               <SelectContent className="rounded-xl border-slate-100">
-                <SelectItem value="male">Male</SelectItem>
-                <SelectItem value="female">Female</SelectItem>
-                <SelectItem value="other">Other</SelectItem>
+                <SelectItem value="male">Эрэгтэй</SelectItem>
+                <SelectItem value="female">Эмэгтэй</SelectItem>
+                <SelectItem value="other">Бусад</SelectItem>
               </SelectContent>
             </Select>
           </div>
 
           <div className="space-y-2.5 lg:col-span-1">
             <Label className="text-[11px] font-black uppercase tracking-widest text-slate-500 ml-1">
-              Nationality *
+              Иргэншил *
             </Label>
             <Popover open={open} onOpenChange={setOpen}>
               <PopoverTrigger asChild>
@@ -263,7 +260,7 @@ export default function TravelerForm({
                     hasError("nationality") && "bg-red-50 ring-2 ring-red-100",
                   )}
                 >
-                  {data.nationality || "Select country"}
+                  {data.nationality || "Улс сонгох"}
                   <ChevronsUpDown className="ml-2 h-5 w-5 shrink-0 opacity-40" />
                 </Button>
               </PopoverTrigger>
@@ -273,11 +270,11 @@ export default function TravelerForm({
               >
                 <Command>
                   <CommandInput
-                    placeholder="Search nationality..."
+                    placeholder="Иргэншил хайх..."
                     className="h-12 border-none focus:ring-0"
                   />
                   <CommandList className="max-h-[300px]">
-                    <CommandEmpty>No nationality found.</CommandEmpty>
+                    <CommandEmpty>Иргэншил олдсонгүй.</CommandEmpty>
                     <CommandGroup>
                       {nationalities.map((nationality) => (
                         <CommandItem
@@ -295,7 +292,7 @@ export default function TravelerForm({
                         >
                           <Check
                             className={cn(
-                              "mr-3 h-4 w-4 text-emerald-500",
+                              "mr-3 h-4 w-4 text-purple-500",
                               data.nationality === nationality.Name
                                 ? "opacity-100"
                                 : "opacity-0",
@@ -316,28 +313,26 @@ export default function TravelerForm({
           <div className="pt-10 space-y-12">
             <Separator className="bg-slate-100" />
             
-            {/* Payment and Requests Row */}
-            <div className="grid grid-cols-1 lg:grid-cols-2 gap-16">
-              {/* Payment Section */}
+            <div className="flex flex-col gap-12">
               {paymentType !== undefined && setPaymentType && (
-                <div className="space-y-8">
+                <div className="space-y-8 max-w-2xl">
                   <div className="flex items-center gap-4">
                     <div className="w-12 h-12 rounded-2xl bg-rose-50 flex items-center justify-center text-rose-500">
                       <CreditCard size={22} />
                     </div>
                     <div>
                       <h3 className="text-lg font-black uppercase tracking-tight text-[#0F172A]">
-                        Payment Method
+                        Төлбөрийн хэрэгсэл
                       </h3>
                       <p className="text-[10px] text-slate-400 font-bold uppercase tracking-widest mt-0.5">
-                        Secure transaction gateway
+                        Аюулгүй гүйлгээний гарц
                       </p>
                     </div>
                   </div>
 
                   <div className="space-y-2.5">
                     <Label className="text-[11px] font-black uppercase tracking-widest text-slate-500 ml-1">
-                      Select Provider
+                      Үйлчилгээ үзүүлэгчийг сонгох
                     </Label>
                     <Select
                       value={paymentType}
@@ -354,8 +349,8 @@ export default function TravelerForm({
                         <SelectValue
                           placeholder={
                             paymentsLoading
-                              ? "Loading..."
-                              : "Choose payment provider"
+                              ? "Уншиж байна..."
+                              : "Төлбөрийн хэрэгслээ сонгоно уу"
                           }
                         />
                       </SelectTrigger>
@@ -377,7 +372,6 @@ export default function TravelerForm({
                 </div>
               )}
 
-              {/* Special Requests Section */}
               {note !== undefined && setNote && (
                 <div className="space-y-8">
                   <div className="flex items-center gap-4">
@@ -386,31 +380,28 @@ export default function TravelerForm({
                     </div>
                     <div>
                       <h3 className="text-lg font-black uppercase tracking-tight text-[#0F172A]">
-                        Special Requests
+                        Нэмэлт хүсэлт
                       </h3>
                       <p className="text-[10px] text-slate-400 font-bold uppercase tracking-widest mt-0.5">
-                        Dietary or access needs
+                        Хоолны дэглэм эсвэл тусгай хэрэгцээ
                       </p>
                     </div>
                   </div>
                   
                   <div className="space-y-2.5">
                      <Label className="text-[11px] font-black uppercase tracking-widest text-slate-500 ml-1">
-                      Your Message
+                      Таны зурвас
                     </Label>
                     <Textarea
                       value={note}
                       onChange={(e) => setNote(e.target.value)}
-                      placeholder="Notes on dietary requirements, accessibility, etc."
+                      placeholder="Хоолны дэглэм, хүртээмжтэй холбоотой тэмдэглэл гэх мэт."
                       className="min-h-[140px] bg-slate-50/80 border-none rounded-2xl focus-visible:ring-2 focus-visible:ring-slate-200 resize-none p-6 text-base leading-relaxed"
                     />
                   </div>
                 </div>
               )}
             </div>
-
-            {/* Action Button Area */}
-            
           </div>
         )}
       </CardContent>

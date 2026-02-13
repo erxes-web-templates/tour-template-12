@@ -12,7 +12,7 @@ export const LoginPrompt: React.FC = () => {
     <div className='min-h-[80vh] flex items-center justify-center bg-gray-50/50 px-4 py-12'>
       <div className='w-full max-w-xl mx-auto'>
         {/* Арын чимэглэл (Background blob) */}
-        <div className="absolute -z-10 w-64 h-64 bg-emerald-100/50 rounded-full blur-3xl -top-10 -left-10" />
+        <div className="absolute -z-10 w-64 h-64 bg-purple-100/50 rounded-full blur-3xl -top-10 -left-10" />
         <div className="absolute -z-10 w-64 h-64 bg-blue-100/50 rounded-full blur-3xl -bottom-10 -right-10" />
 
         <Card className="border-none shadow-2xl shadow-gray-200/50 rounded-[2.5rem] overflow-hidden bg-white/80 backdrop-blur-sm">

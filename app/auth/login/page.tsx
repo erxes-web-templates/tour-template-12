@@ -79,13 +79,9 @@ export default function LoginPage() {
         description: "Та системд нэвтэрлээ.",
       })
 
-      const redirectUrl = localStorage.getItem("redirectAfterLogin")
-      if (redirectUrl) {
-        localStorage.removeItem("redirectAfterLogin")
-        window.location.href = redirectUrl
-      } else {
-        window.location.href = templateUrl("/")
-      }
+      // ШИНЭЧЛЭЛТ: Booking хаяг хадгалагдсан байсан ч үл хамааран Home руу үсрүүлнэ
+      localStorage.removeItem("redirectAfterLogin")
+      window.location.href = templateUrl("/")
     },
   })
 
@@ -110,10 +106,10 @@ export default function LoginPage() {
   }
 
   return (
-    <div className='min-h-screen flex items-center justify-center bg-[#fafafa] px-6 py-20 selection:bg-[#692d91]/10'>
+    <div className='fixed inset-0 z-[100] flex items-center justify-center bg-[#fafafa] px-6 selection:bg-[#692d91]/10 overflow-y-auto py-10'>
       <div className="absolute top-0 left-0 w-full h-1 bg-[#692d91]/10" />
       
-      <Card className='w-full max-w-[440px] border-none shadow-[0_20px_50px_rgba(0,0,0,0.04)] rounded-[40px] overflow-hidden bg-white'>
+      <Card className='relative w-full max-w-[440px] border-none shadow-[0_20px_50px_rgba(0,0,0,0.04)] rounded-[40px] overflow-hidden bg-white z-10'>
         <CardHeader className='space-y-4 text-center pt-12 pb-8'>
           <div className="mx-auto w-16 h-16 bg-[#692d91] rounded-2xl flex items-center justify-center text-white rotate-3 shadow-xl shadow-purple-100 mb-2">
             <Lock size={28} />
@@ -215,7 +211,6 @@ export default function LoginPage() {
         </CardFooter>
       </Card>
 
-      {/* Background Decorative Elements */}
       <div className="fixed -bottom-20 -left-20 w-80 h-80 bg-purple-50 rounded-full blur-3xl opacity-50 -z-10" />
       <div className="fixed -top-20 -right-20 w-80 h-80 bg-slate-100 rounded-full blur-3xl opacity-50 -z-10" />
     </div>
